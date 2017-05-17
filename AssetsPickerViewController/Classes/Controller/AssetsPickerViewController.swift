@@ -8,10 +8,12 @@
 
 import UIKit
 
+// MARK: - AssetsPickerViewControllerDelegate
 public protocol AssetsPickerViewControllerDelegate {
     
 }
 
+// MARK: - AssetsPickerViewController
 open class AssetsPickerViewController: UISplitViewController {
     
     open var pickerDelegate: AssetsPickerViewControllerDelegate?

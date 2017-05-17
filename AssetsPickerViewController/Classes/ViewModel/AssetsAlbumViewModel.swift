@@ -8,6 +8,21 @@
 
 import UIKit
 
-open class AssetsAlbumViewModel {
+// MARK: - AssetsAlbumViewModelProtocol
+public protocol AssetsAlbumViewModelProtocol {
+    var count: Int { get }
+}
+
+// MARK: - AssetsAlbumViewModelDelegate
+public protocol AssetsAlbumViewModelDelegate {
     
+    
+}
+
+// MARK: - AssetsAlbumViewModel
+open class AssetsAlbumViewModel: AssetsAlbumViewModelProtocol {
+    var delegate: AssetsAlbumViewModelDelegate?
+    public var count: Int {
+        return 0
+    }
 }

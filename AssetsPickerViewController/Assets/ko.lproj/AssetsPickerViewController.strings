@@ -1,5 +1,11 @@
 
-/* Navigation Bar */
+/* Common */
 "Cancel" = "취소";
 "Done" = "완료";
-"Title" = "사진";
+
+/* Albums */
+"Title_Albums" = "앨범";
+
+/* Assets */
+"Title_Assets" = "사진";
+

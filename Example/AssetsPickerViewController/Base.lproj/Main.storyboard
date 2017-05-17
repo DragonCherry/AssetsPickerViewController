@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Main View Controller-->
+        <!--Examples-->
         <scene sceneID="29u-Vi-BT1">
             <objects>
                 <tableViewController id="ffw-MQ-NfS" customClass="MainViewController" customModule="AssetsPickerViewController_Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -82,7 +82,7 @@
                             <outlet property="delegate" destination="ffw-MQ-NfS" id="IbM-oH-OqU"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="JaI-xQ-Do9"/>
+                    <navigationItem key="navigationItem" title="Examples" id="JaI-xQ-Do9"/>
                     <nil key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ho1-9f-9be" userLabel="First Responder" sceneMemberID="firstResponder"/>

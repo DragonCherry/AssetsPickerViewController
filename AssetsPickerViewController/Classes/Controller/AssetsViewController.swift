@@ -53,12 +53,13 @@ open class AssetsViewController: UIViewController {
 // MARK: - Initial Setups
 extension AssetsViewController {
     open func setupCommon() {
-        title = String(key: "Title")
+        title = String(key: "Title_Assets")
         view.backgroundColor = .white
     }
     
     open func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
+        navigationItem.rightBarButtonItem = doneButtonItem
     }
     
     open func setupGestureRecognizer() {

@@ -8,10 +8,12 @@
 
 import UIKit
 
+// MARK: - AssetsViewModelDelegate
 public protocol AssetsViewModelDelegate {
     
 }
 
+// MARK: - AssetsViewModel
 open class AssetsViewModel {
     
     var delegate: AssetsViewModelDelegate?

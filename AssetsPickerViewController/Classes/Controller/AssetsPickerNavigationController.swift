@@ -8,6 +8,7 @@
 
 import UIKit
 
+// MARK: - AssetsPickerNavigationController
 open class AssetsPickerNavigationController: UINavigationController {
     
 }

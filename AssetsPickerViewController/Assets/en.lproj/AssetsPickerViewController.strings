@@ -1,5 +1,11 @@
 
-/* Navigation Bar */
+/* Common */
 "Cancel" = "Cancel";
 "Done" = "Done";
-"Title" = "All Photos";
+
+/* Albums */
+"Title_Albums" = "Albums";
+
+/* Assets */
+"Title_Assets" = "All Photos";
+

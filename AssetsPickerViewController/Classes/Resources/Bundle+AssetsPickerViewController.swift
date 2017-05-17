@@ -9,7 +9,6 @@
 import Foundation
 
 extension Bundle {
-    
     static var assetsPickerBundle: Bundle {
         if let path = Bundle(for: AssetsPickerViewController.classForCoder()).path(forResource: "AssetsPickerViewController", ofType: "bundle") {
             if let bundle = Bundle(path: path) {
