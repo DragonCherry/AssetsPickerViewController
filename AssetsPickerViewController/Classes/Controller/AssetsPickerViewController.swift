@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import TinyLog
 
 // MARK: - AssetsPickerViewControllerDelegate
 public protocol AssetsPickerViewControllerDelegate {
@@ -49,6 +50,12 @@ open class AssetsPickerViewController: UISplitViewController {
         preferredDisplayMode = .allVisible
         delegate = self
         
+        AssetsFetchManager.default.registerObserver()
+    }
+    
+    deinit {
+        AssetsFetchManager.default.unregisterObserver()
+        logd("Released \(type(of: self))")
     }
 }
 

@@ -46,7 +46,7 @@ open class AssetsViewController: UIViewController {
     }
     
     deinit {
-        logd("Released AssetsViewController.")
+        logd("Released \(type(of: self))")
     }
 }
 
