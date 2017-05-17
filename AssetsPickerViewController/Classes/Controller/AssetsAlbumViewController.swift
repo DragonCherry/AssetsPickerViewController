@@ -6,4 +6,8 @@
 //
 //
 
-import Foundation
+import UIKit
+
+open class AssetsAlbumViewController: UITableViewController {
+    
+}
