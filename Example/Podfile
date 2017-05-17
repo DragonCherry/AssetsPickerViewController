@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'AssetsPickerViewController_Example' do
+  pod 'AssetsPickerViewController', :path => '../'
+
+  target 'AssetsPickerViewController_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
