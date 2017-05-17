@@ -12,6 +12,6 @@ public protocol AssetAlbumCellProtocol {
     
 }
 
-open class AssetAlbumCell: UITableViewCell, AssetAlbumCellProtocol {
+open class AssetAlbumCell: UICollectionViewCell, AssetAlbumCellProtocol {
     
 }

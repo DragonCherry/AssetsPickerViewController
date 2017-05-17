@@ -8,6 +8,20 @@
 
 import Foundation
 
+public protocol AssetsAlbumChangedDelegate {
+    
+}
+
+public protocol AssetsChangedDelegate {
+    
+}
+
 open class AssetsFetchManager {
+    open static var `default`: AssetsFetchManager = { return AssetsFetchManager() }()
+    private init() {}
+    
+    open var assetsAlbumChangedDelegate: AssetsAlbumChangedDelegate?
+    open var assetsChangedDelegate: AssetsChangedDelegate?
+    
     
 }

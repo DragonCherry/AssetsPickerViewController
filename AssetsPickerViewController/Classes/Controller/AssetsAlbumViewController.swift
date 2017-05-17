@@ -7,7 +7,14 @@
 //
 
 import UIKit
+import PureLayout
 
-open class AssetsAlbumViewController: UITableViewController {
+open class AssetsAlbumViewController: UIViewController {
     
+    
+    
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        
+    }
 }
