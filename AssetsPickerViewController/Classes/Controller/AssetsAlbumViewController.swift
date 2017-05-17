@@ -1,5 +1,5 @@
 //
-//  AssetCollectionViewModel.swift
+//  AssetsAlbumViewController.swift
 //  Pods
 //
 //  Created by DragonCherry on 5/17/17.
