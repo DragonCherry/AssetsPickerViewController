@@ -5,6 +5,7 @@
 
 /* Albums */
 "Title_Albums" = "앨범";
+"Title_Section_MyAlbums" = "나의 앨범";
 
 /* Assets */
 "Title_Assets" = "사진";

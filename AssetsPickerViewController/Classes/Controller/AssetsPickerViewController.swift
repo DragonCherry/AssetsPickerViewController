@@ -19,13 +19,13 @@ open class AssetsPickerViewController: UISplitViewController {
     
     open var pickerDelegate: AssetsPickerViewControllerDelegate?
     
-    open var assetsPickerNavigation: AssetsPickerNavigationController = {
+    open var pickerNavigation: AssetsPickerNavigationController = {
         let controller = AssetsPickerNavigationController()
         return controller
     }()
     
-    open var assetsViewController: AssetsViewController = {
-        let controller = AssetsViewController()
+    open var photoViewController: AssetsPhotoViewController = {
+        let controller = AssetsPhotoViewController()
         return controller
     }()
     
@@ -40,7 +40,7 @@ open class AssetsPickerViewController: UISplitViewController {
     }
     
     func commonInit() {
-        viewControllers = [assetsPickerNavigation, assetsViewController]
+        viewControllers = [pickerNavigation, photoViewController]
     }
     
     open override func viewDidLoad() {
@@ -50,11 +50,9 @@ open class AssetsPickerViewController: UISplitViewController {
         preferredDisplayMode = .allVisible
         delegate = self
         
-        AssetsFetchManager.default.registerObserver()
     }
     
     deinit {
-        AssetsFetchManager.default.unregisterObserver()
         logd("Released \(type(of: self))")
     }
 }

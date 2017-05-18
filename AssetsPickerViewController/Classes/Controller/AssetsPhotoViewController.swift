@@ -1,5 +1,5 @@
 //
-//  AssetsViewController.swift
+//  AssetsPhotoViewController.swift
 //  Pods
 //
 //  Created by DragonCherry on 5/17/17.
@@ -9,8 +9,8 @@
 import UIKit
 import TinyLog
 
-// MARK: - AssetsViewController
-open class AssetsViewController: UIViewController {
+// MARK: - AssetsPhotoViewController
+open class AssetsPhotoViewController: UIViewController {
     
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
@@ -51,7 +51,7 @@ open class AssetsViewController: UIViewController {
 }
 
 // MARK: - Initial Setups
-extension AssetsViewController {
+extension AssetsPhotoViewController {
     open func setupCommon() {
         title = String(key: "Title_Assets")
         view.backgroundColor = .white
@@ -81,7 +81,7 @@ extension AssetsViewController {
 }
 
 // MARK: - UI Event Handlers
-extension AssetsViewController {
+extension AssetsPhotoViewController {
     
     func pressedCancel(button: UIBarButtonItem) {
         splitViewController?.dismiss(animated: true, completion: nil)
@@ -99,6 +99,6 @@ extension AssetsViewController {
 }
 
 // MARK: - AssetsViewModelDelegate
-extension AssetsViewController: AssetsViewModelDelegate {
+extension AssetsPhotoViewController: AssetsViewModelDelegate {
     
 }
