@@ -10,20 +10,21 @@ import UIKit
 import Photos
 import TinyLog
 import PureLayout
+import OptionalTypes
 
 // MARK: - AssetsAlbumViewController
 open class AssetsAlbumViewController: UIViewController {
     
+    open var cellType: AnyClass = AssetsAlbumCell.classForCoder()
+    
     let cellReuseIdentifier: String = UUID().uuidString
     let headerReuseIdentifier: String = UUID().uuidString
     
-    open var cellType: AnyClass = AssetsAlbumCell.classForCoder()
     let defaultSpace: CGFloat = { return 20 }()
     lazy var cellWidth: CGFloat = {
-        let deviceSize = UIScreen.main.bounds.size
-        return (deviceSize.width - 3 * self.defaultSpace) / 2
+        let count = CGFloat(self.numberOfCell(isPortrait: true))
+        return (UIScreen.main.portraitSize.width - (count + 1) * self.defaultSpace) / count
     }()
-    var interitemSpace: CGFloat { return self.defaultSpace }
     
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
@@ -40,14 +41,18 @@ open class AssetsAlbumViewController: UIViewController {
     
     lazy var collectionView: UICollectionView = {
         
-        let flowLayout = AssetsAlbumLayout()
+        let isPortrait = UIApplication.shared.statusBarOrientation.isPortrait
+        let initialSize = isPortrait ? UIScreen.main.portraitSize : UIScreen.main.landscapeSize
+        let space = self.itemSpace(size: initialSize, columnCount: self.numberOfCell(isPortrait: isPortrait))
+    
+        let layout = AssetsAlbumLayout()
+        layout.scrollDirection = .vertical
         
-        flowLayout.scrollDirection = .vertical
-        
-        let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
+        let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         view.configureForAutoLayout()
         view.register(AssetsAlbumCell.classForCoder(), forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsAlbumHeaderView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: self.headerReuseIdentifier)
+        view.contentInset = UIEdgeInsets(top: self.defaultSpace, left: space, bottom: self.defaultSpace, right: space)
         view.backgroundColor = UIColor.clear
         view.dataSource = self
         view.delegate = self
@@ -56,8 +61,7 @@ open class AssetsAlbumViewController: UIViewController {
         }
         view.showsHorizontalScrollIndicator = false
         view.showsVerticalScrollIndicator = true
-        view.decelerationRate = UIScrollViewDecelerationRateFast
-        view.contentInset = UIEdgeInsets(top: self.defaultSpace, left: self.defaultSpace, bottom: self.defaultSpace, right: self.defaultSpace)
+        
         return view
     }()
     
@@ -89,7 +93,7 @@ open class AssetsAlbumViewController: UIViewController {
         view.addSubview(collectionView)
         view.setNeedsUpdateConstraints()
         
-        viewModel.start()
+        viewModel.fetchAlbums()
     }
     
     open override func viewDidLoad() {
@@ -109,27 +113,36 @@ open class AssetsAlbumViewController: UIViewController {
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        let space = itemSpace(size: size, columnCount: numberOfCell(isPortrait: size.height > size.width))
+        let insets = collectionView.contentInset
+        collectionView.contentInset = UIEdgeInsets(top: insets.top, left: space, bottom: insets.bottom, right: space)
         collectionView.collectionViewLayout.invalidateLayout()
     }
 }
 
-// MARK: - Initial Setups
+// MARK: - Internal
 extension AssetsAlbumViewController {
-    open func setupCommon() {
+    func setupCommon() {
         title = String(key: "Title_Albums")
-//        navigationItem.titleView
         view.backgroundColor = .white
     }
     
-    open func setupBarButtonItems() {
+    func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
+    }
+    
+    func numberOfCell(isPortrait: Bool) -> Int { return isPortrait ? 2 : 3 }
+    
+    func itemSpace(size: CGSize, columnCount count: Int) -> CGFloat {
+        let space = (size.width - CGFloat(count) * cellWidth) / CGFloat(count + 1)
+        return space
     }
 }
 
 // MARK: - UICollectionViewDelegate
 extension AssetsAlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+        log("[\(indexPath.section)][\(indexPath.row)]")
     }
 }
 
@@ -144,7 +157,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath)
-        guard let albumCell = cell as? AssetsAlbumCellProtocol else {
+        guard let _ = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return cell
         }
@@ -168,7 +181,20 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
             return
         }
         albumCell.titleLabel.text = viewModel.title(at: indexPath)
-        albumCell.countLabel.text = "\(viewModel.numberOfAssets(at: indexPath))"
+        albumCell.countLabel.text = NumberFormatter.decimalString(value: viewModel.numberOfAssets(at: indexPath))
+        let fetchResult = viewModel.fetchesArray[indexPath.section][indexPath.row]
+        if let asset = fetchResult.firstObject {
+            PHImageManager.default().requestImage(
+                for: asset,
+                targetSize: CGSize(width: cellWidth * 2, height: cellWidth * 2),
+                contentMode: .aspectFill,
+                options: nil,
+                resultHandler: { (image, info) in
+                    albumCell.imageView.image = image
+            })
+        } else {
+            albumCell.imageView.image = nil
+        }
     }
 }
 
@@ -176,10 +202,6 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
 extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: cellWidth, height: cellWidth * 1.25)
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

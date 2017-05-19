@@ -14,9 +14,10 @@ import TinyLog
 public protocol AssetsAlbumViewModelProtocol {
     
     var albumsArray: [[PHAssetCollection]] { get }
+    var fetchesArray: [[PHFetchResult<PHAsset>]] { get }
     var numberOfSections: Int { get }
     
-    func start()
+    func fetchAlbums()
     func numberOfItems(inSection: Int) -> Int
     func numberOfAssets(at indexPath: IndexPath) -> Int
     func title(at indexPath: IndexPath) -> String?
@@ -35,8 +36,8 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     
     weak var delegate: AssetsAlbumViewModelDelegate?
     
-    fileprivate var albumMap = [String: PHAssetCollection]()
-    fileprivate var fetchResults = [[PHFetchResult<PHAsset>]]()
+    fileprivate var albumsMap = [String: PHAssetCollection]()
+    fileprivate var fetchesMap = [String: PHFetchResult<PHAsset>]()
     
     public override init() {
         super.init()
@@ -50,29 +51,58 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     
     // MARK: AssetsAlbumViewModelProtocol
     fileprivate(set) open var albumsArray = [[PHAssetCollection]]()
+    fileprivate(set) open var fetchesArray = [[PHFetchResult<PHAsset>]]()
     
     open var numberOfSections: Int {
         return albumsArray.count
     }
     
-    open func start() {
+    open func fetchAlbums() {
         logi("Start fetching...")
+        
         let smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         var smartAlbums = [PHAssetCollection]()
+        var smartAlbumFetches = [PHFetchResult<PHAsset>]()
+        
+        // smart album
         smartAlbumFetchResult.enumerateObjects({ (album, _, _) in
-            smartAlbums.append(album)
+            // fetch assets
+            let fetchResult = PHAsset.fetchAssets(in: album, options: nil)
             
-            self.albumMap[album.localIdentifier] = album
+            // cache fetch result
+            smartAlbumFetches.append(fetchResult)
+            self.fetchesMap[album.localIdentifier] = fetchResult
+            
+            // cache album
+            smartAlbums.append(album)
+            self.albumsMap[album.localIdentifier] = album
         })
+        
+        // append smart album fetch results
+        fetchesArray.append(smartAlbumFetches)
         albumsArray.append(smartAlbums)
         delegate?.assetsAlbumViewModel(viewModel: self, createdSection: 0)
     
+        // my album
         let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
         var albums = [PHAssetCollection]()
+        var albumFetches = [PHFetchResult<PHAsset>]()
+        
         albumFetchResult.enumerateObjects({ (album, _, _) in
+            // fetch assets
+            let fetchResult = PHAsset.fetchAssets(in: album, options: nil)
+            
+            // cache fetch result
+            albumFetches.append(fetchResult)
+            self.fetchesMap[album.localIdentifier] = fetchResult
+            
+            // cache album
             albums.append(album)
-            self.albumMap[album.localIdentifier] = album
+            self.albumsMap[album.localIdentifier] = album
         })
+        
+        // append my album fetch result
+        fetchesArray.append(albumFetches)
         albumsArray.append(albums)
         delegate?.assetsAlbumViewModel(viewModel: self, createdSection: 1)
         
@@ -84,8 +114,7 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     }
     
     open func numberOfAssets(at indexPath: IndexPath) -> Int {
-//        let fetchResult = PHAsset.fetchAssets(in: <#T##PHAssetCollection#>, options: <#T##PHFetchOptions?#>)
-        return 0
+        return fetchesArray[indexPath.section][indexPath.row].count
     }
     
     open func title(at indexPath: IndexPath) -> String? {
@@ -102,25 +131,21 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
 extension AssetsAlbumViewModel {
     
     func clearAlbums() {
-        albumMap.removeAll()
+        albumsMap.removeAll()
         albumsArray.removeAll()
     }
     
-    func append(albums: [PHAssetCollection], inSection: Int) {
-        
-    }
-    
     func append(album: PHAssetCollection, inSection: Int) {
-        if let album = albumMap[album.localIdentifier] {
+        if let album = albumsMap[album.localIdentifier] {
             log("Album already exists: \(album.localizedTitle ?? album.localIdentifier)")
         } else {
-            albumMap[album.localIdentifier] = album
+            albumsMap[album.localIdentifier] = album
             albumsArray[inSection].append(album)
         }
     }
     
     func insert(album: PHAssetCollection, at indexPath: IndexPath) {
-        albumMap[album.localIdentifier] = album
+        albumsMap[album.localIdentifier] = album
         albumsArray[indexPath.section].insert(album, at: indexPath.row)
     }
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Dimmer
 import PureLayout
 
 public protocol AssetsAlbumCellProtocol {
@@ -22,7 +23,11 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     
     open override var isSelected: Bool {
         didSet {
-            
+            if isSelected {
+                imageView.dim()
+            } else {
+                imageView.undim()
+            }
         }
     }
     
@@ -32,12 +37,6 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
         view.layer.cornerRadius = 5
-        return view
-    }()
-    
-    open let bottomView: UIView = {
-        let view = UIView.newAutoLayout()
-        view.backgroundColor = .clear
         return view
     }()
     
@@ -68,9 +67,8 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     private func commonInit() {
         contentView.configureForAutoLayout()
         contentView.addSubview(imageView)
-        contentView.addSubview(bottomView)
-        bottomView.addSubview(titleLabel)
-        bottomView.addSubview(countLabel)
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(countLabel)
     }
     
     open override func updateConstraints() {
@@ -81,16 +79,15 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
             imageView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
             imageView.autoMatch(.height, to: .width, of: contentView)
             
-            bottomView.autoPinEdge(.top, to: .bottom, of: imageView)
-            bottomView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            titleLabel.autoPinEdge(.top, to: .bottom, of: imageView, withOffset: 7)
+            titleLabel.autoPinEdge(toSuperviewEdge: .leading)
+            titleLabel.autoPinEdge(toSuperviewEdge: .trailing)
+            titleLabel.autoSetDimension(.height, toSize: titleLabel.font.pointSize)
             
-            titleLabel.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
-            titleLabel.autoMatch(.height, to: .height, of: countLabel)
-            titleLabel.autoPinEdge(.bottom, to: .top, of: countLabel)
-            
-            countLabel.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            countLabel.autoMatch(.height, to: .height, of: titleLabel)
-            countLabel.autoPinEdge(.top, to: .bottom, of: titleLabel)
+            countLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 3)
+            countLabel.autoPinEdge(toSuperviewEdge: .leading)
+            countLabel.autoPinEdge(toSuperviewEdge: .trailing)
+            countLabel.autoSetDimension(.height, toSize: countLabel.font.pointSize)
             
             didSetupConstraints = true
         }
