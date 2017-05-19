@@ -13,7 +13,6 @@ import OptionalTypes
 
 // MARK: - AssetsManagerDelegate
 public protocol AssetsManagerDelegate: class {
-    func assetsManagerLoaded(manager: AssetsManager)
     func assetsManager(manager: AssetsManager, removedSection section: Int)
     func assetsManager(manager: AssetsManager, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath])
     func assetsManager(manager: AssetsManager, addedAlbums: [PHAssetCollection], at indexPaths: [IndexPath])
@@ -22,25 +21,22 @@ public protocol AssetsManagerDelegate: class {
 // MARK: - AssetsManager
 open class AssetsManager: NSObject {
     
-    open static let `default`: AssetsManager = { return AssetsManager() }()
+    open static let shared = AssetsManager()
     
     fileprivate let imageManager = PHCachingImageManager()
     fileprivate var subscribers = [AssetsManagerDelegate]()
     fileprivate var albumsMap = [String: PHAssetCollection]()
     fileprivate var fetchesMap = [String: PHFetchResult<PHAsset>]()
     
-    fileprivate var isRunning: Bool = false
+    fileprivate var isFetchedAlbums: Bool = false
+    fileprivate var isFetchedPhotos: Bool = false
     
     private override init() {
         super.init()
         registerObserver()
     }
     
-    deinit {
-        logd("Released \(type(of: self))")
-        imageManager.stopCachingImagesForAllAssets()
-        unregisterObserver()
-    }
+    deinit { logd("Released \(type(of: self))") }
     
     fileprivate var albumsArray = [[PHAssetCollection]]()
     fileprivate var fetchesArray = [[PHFetchResult<PHAsset>]]()
@@ -60,23 +56,51 @@ extension AssetsManager {
         }
     }
     
-    open func removeAll() {
+    open func clear() {
+        
+        unregisterObserver()
+        imageManager.stopCachingImagesForAllAssets()
         subscribers.removeAll()
-        clear()
+        
+        fetchesMap.removeAll()
+        fetchesArray.removeAll()
+        albumsMap.removeAll()
+        albumsArray.removeAll()
+        
+        isFetchedAlbums = false
+        isFetchedPhotos = false
     }
     
     open var numberOfSections: Int {
         return albumsArray.count
     }
     
-    open func fetchAlbums(cacheSize: CGSize) {
-        if !isRunning {
-            fetchAlbum(albumType: .smartAlbum, cacheSize: cacheSize)
-            fetchAlbum(albumType: .album, cacheSize: cacheSize)
-            isRunning = true
+    open func fetchAlbums(completion: (([[PHAssetCollection]]) -> Void)? = nil) {
+        if !isFetchedAlbums {
+            fetchAlbum(albumType: .smartAlbum)
+            fetchAlbum(albumType: .album)
+            isFetchedAlbums = true
         }
         // notify
-        for subscriber in subscribers { subscriber.assetsManagerLoaded(manager: self) }
+        completion?(albumsArray)
+    }
+    
+    open func cacheAlbums(cacheSize: CGSize) {
+        if isFetchedAlbums {
+            for fetchResults in fetchesArray {
+                for fetchResult in fetchResults {
+                    if let asset = fetchResult.firstObject {
+                        self.imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+                    }
+                }
+            }
+        }
+    }
+    
+    open func fetchPhotos(album: PHAssetCollection? = nil) {
+        if !isFetchedPhotos {
+            
+        }
     }
     
     open func numberOfItems(inSection: Int) -> Int {
@@ -122,7 +146,7 @@ extension AssetsManager {
 // MARK: - Album Model Control
 extension AssetsManager {
     
-    fileprivate func fetchAlbum(albumType: PHAssetCollectionType, cacheSize: CGSize) {
+    fileprivate func fetchAlbum(albumType: PHAssetCollectionType) {
         // my album
         let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: albumType, subtype: .any, options: nil)
         var albums = [PHAssetCollection]()
@@ -133,11 +157,6 @@ extension AssetsManager {
         albumFetchResult.enumerateObjects({ (album, _, _) in
             // fetch assets
             let fetchResult = PHAsset.fetchAssets(in: album, options: fetchOptions)
-            
-            // cache
-            if let asset = fetchResult.firstObject {
-                self.imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
-            }
             
             // cache fetch result
             self.fetchesMap[album.localIdentifier] = fetchResult
@@ -158,13 +177,6 @@ extension AssetsManager {
         // append album fetch result
         fetchesArray.append(albumFetches)
         albumsArray.append(albums)
-    }
-    
-    fileprivate func clear() {
-        fetchesMap.removeAll()
-        fetchesArray.removeAll()
-        albumsMap.removeAll()
-        albumsArray.removeAll()
     }
     
     fileprivate func append(album: PHAssetCollection, inSection: Int) {

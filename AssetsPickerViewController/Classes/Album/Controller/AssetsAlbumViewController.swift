@@ -103,8 +103,11 @@ open class AssetsAlbumViewController: UIViewController {
         view.addSubview(collectionView)
         view.setNeedsUpdateConstraints()
         
-        AssetsManager.default.subscribe(subscriber: self)
-        AssetsManager.default.fetchAlbums(cacheSize: imageSize)
+        AssetsManager.shared.subscribe(subscriber: self)
+        AssetsManager.shared.fetchAlbums { (albumsArray) in
+            self.collectionView.reloadData()
+        }
+        AssetsManager.shared.cacheAlbums(cacheSize: imageSize)
     }
     
     open override func viewDidLoad() {
@@ -156,9 +159,9 @@ extension AssetsAlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         log("[\(indexPath.section)][\(indexPath.row)]")
         dismiss(animated: true, completion: {
-            AssetsManager.default.unsubscribe(subscriber: self)
+            AssetsManager.shared.unsubscribe(subscriber: self)
         })
-        delegate?.assetsAlbumViewController(controller: self, selected: AssetsManager.default.album(at: indexPath))
+        delegate?.assetsAlbumViewController(controller: self, selected: AssetsManager.shared.album(at: indexPath))
     }
 }
 
@@ -166,13 +169,13 @@ extension AssetsAlbumViewController: UICollectionViewDelegate {
 extension AssetsAlbumViewController: UICollectionViewDataSource {
     
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
-        logi("\(AssetsManager.default.numberOfSections)")
-        return AssetsManager.default.numberOfSections
+        logi("\(AssetsManager.shared.numberOfSections)")
+        return AssetsManager.shared.numberOfSections
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         logi("\(section)")
-        return AssetsManager.default.numberOfItems(inSection: section)
+        return AssetsManager.shared.numberOfItems(inSection: section)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -202,10 +205,10 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
             logw("Failed to cast UICollectionViewCell.")
             return
         }
-        albumCell.titleLabel.text = AssetsManager.default.title(at: indexPath)
-        albumCell.countLabel.text = NumberFormatter.decimalString(value: AssetsManager.default.numberOfAssets(at: indexPath))
+        albumCell.titleLabel.text = AssetsManager.shared.title(at: indexPath)
+        albumCell.countLabel.text = NumberFormatter.decimalString(value: AssetsManager.shared.numberOfAssets(at: indexPath))
         
-        AssetsManager.default.image(at: indexPath, size: imageSize) { (image) in
+        AssetsManager.shared.image(at: indexPath, size: imageSize) { (image) in
             albumCell.imageView.image = image
         }
     }
@@ -226,7 +229,7 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if AssetsManager.default.numberOfSections - 1 == section {
+        if AssetsManager.shared.numberOfSections - 1 == section {
             return CGSize(width: collectionView.frame.size.width, height: 60)
         } else {
             return .zero
@@ -246,7 +249,7 @@ extension AssetsAlbumViewController {
     
     func pressedCancel(button: UIBarButtonItem) {
         navigationController?.dismiss(animated: true, completion: {
-            AssetsManager.default.unsubscribe(subscriber: self)
+            AssetsManager.shared.unsubscribe(subscriber: self)
         })
         delegate?.assetsAlbumViewControllerCancelled(controller: self)
     }
@@ -258,10 +261,6 @@ extension AssetsAlbumViewController {
 
 // MARK: - AssetsManagerDelegate
 extension AssetsAlbumViewController: AssetsManagerDelegate {
-    
-    public func assetsManagerLoaded(manager: AssetsManager) {
-        collectionView.reloadData()
-    }
     
     public func assetsManager(manager: AssetsManager, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         

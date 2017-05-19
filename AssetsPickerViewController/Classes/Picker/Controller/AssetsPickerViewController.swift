@@ -53,6 +53,7 @@ open class AssetsPickerViewController: UISplitViewController {
     }
     
     deinit {
+        AssetsManager.shared.clear()
         logd("Released \(type(of: self))")
     }
 }

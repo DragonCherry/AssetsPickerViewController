@@ -29,6 +29,8 @@ open class AssetsPhotoViewController: UIViewController {
         super.viewDidLoad()
         setupCommon()
         setupBarButtonItems()
+        AssetsManager.shared.fetchAlbums()
+        AssetsManager.shared.fetchPhotos()
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -111,9 +113,6 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
 // MARK: - AssetsManagerDelegate
 extension AssetsPhotoViewController: AssetsManagerDelegate {
     
-    public func assetsManagerLoaded(manager: AssetsManager) {
-        
-    }
     public func assetsManager(manager: AssetsManager, removedSection section: Int) {
         
     }
