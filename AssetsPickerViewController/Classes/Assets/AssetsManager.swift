@@ -25,8 +25,9 @@ open class AssetsManager: NSObject {
     
     fileprivate let imageManager = PHCachingImageManager()
     fileprivate var subscribers = [AssetsManagerDelegate]()
-    fileprivate var albumsMap = [String: PHAssetCollection]()
-    fileprivate var fetchesMap = [String: PHFetchResult<PHAsset>]()
+    fileprivate var albumMap = [String: PHAssetCollection]()
+    fileprivate var fetcheMap = [String: PHFetchResult<PHAsset>]()
+    fileprivate var photoMap = [String: PHAsset]()
     
     fileprivate var isFetchedAlbums: Bool = false
     fileprivate var isFetchedPhotos: Bool = false
@@ -63,10 +64,11 @@ extension AssetsManager {
         imageManager.stopCachingImagesForAllAssets()
         subscribers.removeAll()
         
-        fetchesMap.removeAll()
+        fetcheMap.removeAll()
         fetchesArray.removeAll()
-        albumsMap.removeAll()
+        albumMap.removeAll()
         albumsArray.removeAll()
+        photoMap.removeAll()
         photoArray.removeAll()
         
         isFetchedAlbums = false
@@ -102,17 +104,27 @@ extension AssetsManager {
     open func fetchPhotos(album: PHAssetCollection? = nil, cacheSize: CGSize? = nil, completion: (([PHAsset]) -> Void)? = nil) {
         fetchAlbums()
         if !isFetchedPhotos {
-            for fetchResults in fetchesArray {
-                for fetchResult in fetchResults {
-                    for i in 0..<fetchResult.count {
-                        let asset = fetchResult.object(at: i)
-                        if let cacheSize = cacheSize {
-                            imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+            if let _ = album {
+                
+            } else {
+                for fetchResults in fetchesArray {
+                    for fetchResult in fetchResults {
+                        for i in 0..<fetchResult.count {
+                            let asset = fetchResult.object(at: i)
+                            if let _ = photoMap[asset.localIdentifier] {
+                                // duplicated
+                            } else {
+                                photoMap[asset.localIdentifier] = asset
+                                if let cacheSize = cacheSize {
+                                    imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+                                }
+                                photoArray.append(asset)
+                            }
                         }
-                        photoArray.append(asset)
                     }
                 }
             }
+            
             photoArray = AssetsUtility.sortedAssets(photoArray, recentFirst: false)
             isFetchedPhotos = true
         }
@@ -191,15 +203,15 @@ extension AssetsManager {
             let fetchResult = PHAsset.fetchAssets(in: album, options: fetchOptions)
             
             // cache fetch result
-            self.fetchesMap[album.localIdentifier] = fetchResult
+            self.fetcheMap[album.localIdentifier] = fetchResult
             
             // cache album
-            self.albumsMap[album.localIdentifier] = album
+            self.albumMap[album.localIdentifier] = album
             albums.append(album)
         })
-        albums.sort(by: { Int(self.fetchesMap[$0.localIdentifier]?.count) > Int(self.fetchesMap[$1.localIdentifier]?.count) })
+        albums.sort(by: { Int(self.fetcheMap[$0.localIdentifier]?.count) > Int(self.fetcheMap[$1.localIdentifier]?.count) })
         for album in albums {
-            if let fetchResult = fetchesMap[album.localIdentifier] {
+            if let fetchResult = fetcheMap[album.localIdentifier] {
                 albumFetches.append(fetchResult)
             } else {
                 logw("Failed to get fetch result from fetchesMap.")
@@ -212,16 +224,16 @@ extension AssetsManager {
     }
     
     fileprivate func append(album: PHAssetCollection, inSection: Int) {
-        if let album = albumsMap[album.localIdentifier] {
+        if let album = albumMap[album.localIdentifier] {
             log("Album already exists: \(album.localizedTitle ?? album.localIdentifier)")
         } else {
-            albumsMap[album.localIdentifier] = album
+            albumMap[album.localIdentifier] = album
             albumsArray[inSection].append(album)
         }
     }
     
     fileprivate func insert(album: PHAssetCollection, at indexPath: IndexPath) {
-        albumsMap[album.localIdentifier] = album
+        albumMap[album.localIdentifier] = album
         albumsArray[indexPath.section].insert(album, at: indexPath.row)
     }
 }

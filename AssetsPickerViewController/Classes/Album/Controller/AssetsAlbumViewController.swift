@@ -60,7 +60,7 @@ open class AssetsAlbumViewController: UIViewController {
         
         let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         view.configureForAutoLayout()
-        view.register(AssetsAlbumCell.classForCoder(), forCellWithReuseIdentifier: self.cellReuseIdentifier)
+        view.register(self.cellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsAlbumHeaderView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: self.headerReuseIdentifier)
         view.contentInset = UIEdgeInsets(top: self.defaultSpace, left: space, bottom: self.defaultSpace, right: space)
         view.backgroundColor = UIColor.clear

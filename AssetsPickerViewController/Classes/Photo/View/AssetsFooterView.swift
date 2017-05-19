@@ -1,5 +1,5 @@
 //
-//  AssetsFooterView.swift
+//  AssetsPhotoFooterView.swift
 //  Pods
 //
 //  Created by DragonCherry on 5/18/17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-open class AssetsFooterView: UICollectionReusableView {
+open class AssetsPhotoFooterView: UICollectionReusableView {
     
     private var didSetupConstraints: Bool = false
     
