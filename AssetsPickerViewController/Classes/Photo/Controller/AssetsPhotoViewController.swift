@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos
 import TinyLog
 
 // MARK: - AssetsPhotoViewController
@@ -28,6 +29,7 @@ open class AssetsPhotoViewController: UIViewController {
     }()
     
     fileprivate var tapGesture: UITapGestureRecognizer?
+    fileprivate var selectedAlbum: PHAssetCollection?
     
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,8 +95,22 @@ extension AssetsPhotoViewController {
     
     func pressedTitle(gesture: UITapGestureRecognizer) {
         let navigationController = UINavigationController()
-        navigationController.viewControllers = [AssetsAlbumViewController()]
+        let controller = AssetsAlbumViewController()
+        controller.delegate = self
+        navigationController.viewControllers = [controller]
         present(navigationController, animated: true, completion: nil)
+    }
+}
+
+// MARK: - AssetsAlbumViewControllerDelegate
+extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
+    
+    public func assetsAlbumViewControllerCancelled(controller: AssetsAlbumViewController) {
+        log("")
+    }
+    
+    public func assetsAlbumViewController(controller: AssetsAlbumViewController, selected album: PHAssetCollection) {
+        selectedAlbum = album
     }
 }
 

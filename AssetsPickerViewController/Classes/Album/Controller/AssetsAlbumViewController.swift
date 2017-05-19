@@ -12,10 +12,17 @@ import TinyLog
 import PureLayout
 import OptionalTypes
 
+// MARK: - AssetsAlbumViewControllerDelegate
+public protocol AssetsAlbumViewControllerDelegate {
+    func assetsAlbumViewControllerCancelled(controller: AssetsAlbumViewController)
+    func assetsAlbumViewController(controller: AssetsAlbumViewController, selected album: PHAssetCollection)
+}
+
 // MARK: - AssetsAlbumViewController
 open class AssetsAlbumViewController: UIViewController {
     
     open var cellType: AnyClass = AssetsAlbumCell.classForCoder()
+    open var delegate: AssetsAlbumViewControllerDelegate?
     
     let cellReuseIdentifier: String = UUID().uuidString
     let headerReuseIdentifier: String = UUID().uuidString
@@ -25,9 +32,18 @@ open class AssetsAlbumViewController: UIViewController {
         let count = CGFloat(self.numberOfCell(isPortrait: true))
         return (UIScreen.main.portraitSize.width - (count + 1) * self.defaultSpace) / count
     }()
+    var imageSize: CGSize {
+        let width = cellWidth * 2
+        return CGSize(width: width, height: width)
+    }
     
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
+        return buttonItem
+    }()
+    
+    lazy var searchButtonItem: UIBarButtonItem = {
+        let buttonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(pressedSearch(button:)))
         return buttonItem
     }()
     
@@ -93,7 +109,7 @@ open class AssetsAlbumViewController: UIViewController {
         view.addSubview(collectionView)
         view.setNeedsUpdateConstraints()
         
-        viewModel.fetchAlbums()
+        viewModel.fetchAlbums(cacheSize: imageSize)
     }
     
     open override func viewDidLoad() {
@@ -129,6 +145,7 @@ extension AssetsAlbumViewController {
     
     func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
+        navigationItem.rightBarButtonItem = searchButtonItem
     }
     
     func numberOfCell(isPortrait: Bool) -> Int { return isPortrait ? 2 : 3 }
@@ -143,6 +160,7 @@ extension AssetsAlbumViewController {
 extension AssetsAlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         log("[\(indexPath.section)][\(indexPath.row)]")
+        delegate?.assetsAlbumViewController(controller: self, selected: viewModel.album(at: indexPath))
     }
 }
 
@@ -175,25 +193,16 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        logi("[\(indexPath.section)][\(indexPath.row)]")
+        //log("[\(indexPath.section)][\(indexPath.row)]")
         guard let albumCell = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return
         }
         albumCell.titleLabel.text = viewModel.title(at: indexPath)
         albumCell.countLabel.text = NumberFormatter.decimalString(value: viewModel.numberOfAssets(at: indexPath))
-        let fetchResult = viewModel.fetchesArray[indexPath.section][indexPath.row]
-        if let asset = fetchResult.firstObject {
-            PHImageManager.default().requestImage(
-                for: asset,
-                targetSize: CGSize(width: cellWidth * 2, height: cellWidth * 2),
-                contentMode: .aspectFill,
-                options: nil,
-                resultHandler: { (image, info) in
-                    albumCell.imageView.image = image
-            })
-        } else {
-            albumCell.imageView.image = nil
+        
+        viewModel.image(at: indexPath, size: imageSize) { (image) in
+            albumCell.imageView.image = image
         }
     }
 }
@@ -233,6 +242,11 @@ extension AssetsAlbumViewController {
     
     func pressedCancel(button: UIBarButtonItem) {
         navigationController?.dismiss(animated: true, completion: nil)
+        delegate?.assetsAlbumViewControllerCancelled(controller: self)
+    }
+    
+    func pressedSearch(button: UIBarButtonItem) {
+        
     }
 }
 

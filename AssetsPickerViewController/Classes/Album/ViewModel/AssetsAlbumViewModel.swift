@@ -9,6 +9,7 @@
 import UIKit
 import Photos
 import TinyLog
+import OptionalTypes
 
 // MARK: - AssetsAlbumViewModelProtocol
 public protocol AssetsAlbumViewModelProtocol {
@@ -17,10 +18,12 @@ public protocol AssetsAlbumViewModelProtocol {
     var fetchesArray: [[PHFetchResult<PHAsset>]] { get }
     var numberOfSections: Int { get }
     
-    func fetchAlbums()
+    func fetchAlbums(cacheSize: CGSize)
     func numberOfItems(inSection: Int) -> Int
     func numberOfAssets(at indexPath: IndexPath) -> Int
     func title(at indexPath: IndexPath) -> String?
+    func image(at indexPath: IndexPath, size: CGSize, completion: @escaping ((UIImage?) -> Void))
+    func album(at indexPath: IndexPath) -> PHAssetCollection
 }
 
 // MARK: - AssetsAlbumViewModelDelegate
@@ -38,6 +41,7 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     
     fileprivate var albumsMap = [String: PHAssetCollection]()
     fileprivate var fetchesMap = [String: PHFetchResult<PHAsset>]()
+    fileprivate let imageManager = PHCachingImageManager()
     
     public override init() {
         super.init()
@@ -46,6 +50,7 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     
     deinit {
         logd("Released \(type(of: self))")
+        imageManager.stopCachingImagesForAllAssets()
         unregisterObserver()
     }
     
@@ -57,30 +62,46 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
         return albumsArray.count
     }
     
-    open func fetchAlbums() {
+    open func fetchAlbums(cacheSize: CGSize) {
         logi("Start fetching...")
         
         let smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
         var smartAlbums = [PHAssetCollection]()
         var smartAlbumFetches = [PHFetchResult<PHAsset>]()
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         
         // smart album
         smartAlbumFetchResult.enumerateObjects({ (album, _, _) in
             // fetch assets
-            let fetchResult = PHAsset.fetchAssets(in: album, options: nil)
+            let fetchResult = PHAsset.fetchAssets(in: album, options: fetchOptions)
+            
+            // cache
+            if let asset = fetchResult.firstObject {
+                self.imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+            }
             
             // cache fetch result
-            smartAlbumFetches.append(fetchResult)
             self.fetchesMap[album.localIdentifier] = fetchResult
             
             // cache album
-            smartAlbums.append(album)
             self.albumsMap[album.localIdentifier] = album
+            smartAlbums.append(album)
         })
+        smartAlbums.sort(by: { Int(self.fetchesMap[$0.localIdentifier]?.count) > Int(self.fetchesMap[$1.localIdentifier]?.count) })
+        for smartAlbum in smartAlbums {
+            if let fetchResult = fetchesMap[smartAlbum.localIdentifier] {
+                smartAlbumFetches.append(fetchResult)
+            } else {
+                logw("Failed to get fetch result from fetchesMap.")
+            }
+        }
         
         // append smart album fetch results
         fetchesArray.append(smartAlbumFetches)
         albumsArray.append(smartAlbums)
+        
+        // notify
         delegate?.assetsAlbumViewModel(viewModel: self, createdSection: 0)
     
         // my album
@@ -90,20 +111,34 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
         
         albumFetchResult.enumerateObjects({ (album, _, _) in
             // fetch assets
-            let fetchResult = PHAsset.fetchAssets(in: album, options: nil)
+            let fetchResult = PHAsset.fetchAssets(in: album, options: fetchOptions)
+            
+            // cache
+            if let asset = fetchResult.firstObject {
+                self.imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+            }
             
             // cache fetch result
-            albumFetches.append(fetchResult)
             self.fetchesMap[album.localIdentifier] = fetchResult
             
             // cache album
-            albums.append(album)
             self.albumsMap[album.localIdentifier] = album
+            albums.append(album)
         })
+        albums.sort(by: { Int(self.fetchesMap[$0.localIdentifier]?.count) > Int(self.fetchesMap[$1.localIdentifier]?.count) })
+        for album in albums {
+            if let fetchResult = fetchesMap[album.localIdentifier] {
+                albumFetches.append(fetchResult)
+            } else {
+                logw("Failed to get fetch result from fetchesMap.")
+            }
+        }
         
         // append my album fetch result
         fetchesArray.append(albumFetches)
         albumsArray.append(albums)
+        
+        // notify
         delegate?.assetsAlbumViewModel(viewModel: self, createdSection: 1)
         
         logi("Finish fetching...")
@@ -120,6 +155,26 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     open func title(at indexPath: IndexPath) -> String? {
         let album = albumsArray[indexPath.section][indexPath.row]
         return album.localizedTitle
+    }
+    
+    open func image(at indexPath: IndexPath, size: CGSize, completion: @escaping ((UIImage?) -> Void)) {
+        let fetchResult = fetchesArray[indexPath.section][indexPath.row]
+        if let asset = fetchResult.firstObject {
+            imageManager.requestImage(
+                for: asset,
+                targetSize: size,
+                contentMode: .aspectFill,
+                options: nil,
+                resultHandler: { (image, info) in
+                    completion(image)
+            })
+        } else {
+            completion(nil)
+        }
+    }
+    
+    open func album(at indexPath: IndexPath) -> PHAssetCollection {
+        return albumsArray[indexPath.section][indexPath.row]
     }
     
     // MARK: Observers
