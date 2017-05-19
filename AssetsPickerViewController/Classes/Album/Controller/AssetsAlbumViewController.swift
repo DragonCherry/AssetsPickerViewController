@@ -175,7 +175,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         logi("\(section)")
-        return AssetsManager.shared.numberOfItems(inSection: section)
+        return AssetsManager.shared.numberOfAlbums(inSection: section)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -208,7 +208,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
         albumCell.titleLabel.text = AssetsManager.shared.title(at: indexPath)
         albumCell.countLabel.text = NumberFormatter.decimalString(value: AssetsManager.shared.numberOfAssets(at: indexPath))
         
-        AssetsManager.shared.image(at: indexPath, size: imageSize) { (image) in
+        AssetsManager.shared.imageOfAlbum(at: indexPath, size: imageSize) { (image) in
             albumCell.imageView.image = image
         }
     }

@@ -38,8 +38,9 @@ open class AssetsManager: NSObject {
     
     deinit { logd("Released \(type(of: self))") }
     
-    fileprivate var albumsArray = [[PHAssetCollection]]()
     fileprivate var fetchesArray = [[PHFetchResult<PHAsset>]]()
+    fileprivate var albumsArray = [[PHAssetCollection]]()
+    fileprivate(set) open var photoArray = [PHAsset]()
 }
 
 // MARK: - APIs
@@ -66,6 +67,7 @@ extension AssetsManager {
         fetchesArray.removeAll()
         albumsMap.removeAll()
         albumsArray.removeAll()
+        photoArray.removeAll()
         
         isFetchedAlbums = false
         isFetchedPhotos = false
@@ -90,20 +92,34 @@ extension AssetsManager {
             for fetchResults in fetchesArray {
                 for fetchResult in fetchResults {
                     if let asset = fetchResult.firstObject {
-                        self.imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+                        imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
                     }
                 }
             }
         }
     }
     
-    open func fetchPhotos(album: PHAssetCollection? = nil) {
+    open func fetchPhotos(album: PHAssetCollection? = nil, cacheSize: CGSize? = nil, completion: (([PHAsset]) -> Void)? = nil) {
+        fetchAlbums()
         if !isFetchedPhotos {
-            
+            for fetchResults in fetchesArray {
+                for fetchResult in fetchResults {
+                    for i in 0..<fetchResult.count {
+                        let asset = fetchResult.object(at: i)
+                        if let cacheSize = cacheSize {
+                            imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+                        }
+                        photoArray.append(asset)
+                    }
+                }
+            }
+            photoArray = AssetsUtility.sortedAssets(photoArray, recentFirst: false)
+            isFetchedPhotos = true
         }
+        completion?(photoArray)
     }
     
-    open func numberOfItems(inSection: Int) -> Int {
+    open func numberOfAlbums(inSection: Int) -> Int {
         return albumsArray[inSection].count
     }
     
@@ -116,7 +132,7 @@ extension AssetsManager {
         return album.localizedTitle
     }
     
-    open func image(at indexPath: IndexPath, size: CGSize, completion: @escaping ((UIImage?) -> Void)) {
+    open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, completion: @escaping ((UIImage?) -> Void)) {
         let fetchResult = fetchesArray[indexPath.section][indexPath.row]
         if let asset = fetchResult.firstObject {
             imageManager.requestImage(
@@ -132,6 +148,19 @@ extension AssetsManager {
         } else {
             completion(nil)
         }
+    }
+    
+    open func image(at index: Int, size: CGSize, completion: @escaping ((UIImage?) -> Void)) {
+        imageManager.requestImage(
+            for: photoArray[index],
+            targetSize: size,
+            contentMode: .aspectFill,
+            options: nil,
+            resultHandler: { (image, info) in
+                DispatchQueue.main.async {
+                    completion(image)
+                }
+        })
     }
     
     open func album(at indexPath: IndexPath) -> PHAssetCollection {
@@ -152,7 +181,10 @@ extension AssetsManager {
         var albums = [PHAssetCollection]()
         var albumFetches = [PHFetchResult<PHAsset>]()
         let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+        fetchOptions.sortDescriptors = [
+            NSSortDescriptor(key: "creationDate", ascending: true),
+            NSSortDescriptor(key: "modificationDate", ascending: true)
+        ]
         
         albumFetchResult.enumerateObjects({ (album, _, _) in
             // fetch assets
