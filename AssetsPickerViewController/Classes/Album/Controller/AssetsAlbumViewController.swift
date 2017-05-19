@@ -47,12 +47,6 @@ open class AssetsAlbumViewController: UIViewController {
         return buttonItem
     }()
     
-    lazy var viewModel: AssetsAlbumViewModelProtocol = {
-        let vm = AssetsAlbumViewModel()
-        vm.delegate = self
-        return vm
-    }()
-    
     var didSetupConstraints = false
     
     lazy var collectionView: UICollectionView = {
@@ -109,7 +103,8 @@ open class AssetsAlbumViewController: UIViewController {
         view.addSubview(collectionView)
         view.setNeedsUpdateConstraints()
         
-        viewModel.fetchAlbums(cacheSize: imageSize)
+        AssetsManager.default.subscribe(subscriber: self)
+        AssetsManager.default.fetchAlbums(cacheSize: imageSize)
     }
     
     open override func viewDidLoad() {
@@ -160,17 +155,24 @@ extension AssetsAlbumViewController {
 extension AssetsAlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         log("[\(indexPath.section)][\(indexPath.row)]")
-        delegate?.assetsAlbumViewController(controller: self, selected: viewModel.album(at: indexPath))
+        dismiss(animated: true, completion: {
+            AssetsManager.default.unsubscribe(subscriber: self)
+        })
+        delegate?.assetsAlbumViewController(controller: self, selected: AssetsManager.default.album(at: indexPath))
     }
 }
 
 // MARK: - UICollectionViewDataSource
 extension AssetsAlbumViewController: UICollectionViewDataSource {
     
-    public func numberOfSections(in collectionView: UICollectionView) -> Int { return viewModel.numberOfSections }
+    public func numberOfSections(in collectionView: UICollectionView) -> Int {
+        logi("\(AssetsManager.default.numberOfSections)")
+        return AssetsManager.default.numberOfSections
+    }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.numberOfItems(inSection: section)
+        logi("\(section)")
+        return AssetsManager.default.numberOfItems(inSection: section)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -179,6 +181,8 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
             logw("Failed to cast UICollectionViewCell.")
             return cell
         }
+        cell.setNeedsUpdateConstraints()
+        cell.updateConstraintsIfNeeded()
         return cell
     }
     
@@ -193,15 +197,15 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        //log("[\(indexPath.section)][\(indexPath.row)]")
+        log("[\(indexPath.section)][\(indexPath.row)]")
         guard let albumCell = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return
         }
-        albumCell.titleLabel.text = viewModel.title(at: indexPath)
-        albumCell.countLabel.text = NumberFormatter.decimalString(value: viewModel.numberOfAssets(at: indexPath))
+        albumCell.titleLabel.text = AssetsManager.default.title(at: indexPath)
+        albumCell.countLabel.text = NumberFormatter.decimalString(value: AssetsManager.default.numberOfAssets(at: indexPath))
         
-        viewModel.image(at: indexPath, size: imageSize) { (image) in
+        AssetsManager.default.image(at: indexPath, size: imageSize) { (image) in
             albumCell.imageView.image = image
         }
     }
@@ -222,7 +226,7 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if viewModel.numberOfSections - 1 == section {
+        if AssetsManager.default.numberOfSections - 1 == section {
             return CGSize(width: collectionView.frame.size.width, height: 60)
         } else {
             return .zero
@@ -241,7 +245,9 @@ extension AssetsAlbumViewController: UICollectionViewDataSourcePrefetching {
 extension AssetsAlbumViewController {
     
     func pressedCancel(button: UIBarButtonItem) {
-        navigationController?.dismiss(animated: true, completion: nil)
+        navigationController?.dismiss(animated: true, completion: {
+            AssetsManager.default.unsubscribe(subscriber: self)
+        })
         delegate?.assetsAlbumViewControllerCancelled(controller: self)
     }
     
@@ -250,25 +256,22 @@ extension AssetsAlbumViewController {
     }
 }
 
-// MARK: - AssetsViewModelDelegate
-extension AssetsAlbumViewController: AssetsAlbumViewModelDelegate {
+// MARK: - AssetsManagerDelegate
+extension AssetsAlbumViewController: AssetsManagerDelegate {
     
-    public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, createdSection section: Int) {
-        if section > 0 {
-            collectionView.insertSections(IndexSet(integer: section))
-        }
-        collectionView.reloadSections(IndexSet(integer: section))
+    public func assetsManagerLoaded(manager: AssetsManager) {
+        collectionView.reloadData()
     }
     
-    public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+    public func assetsManager(manager: AssetsManager, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         
     }
     
-    public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, removedSection section: Int) {
+    public func assetsManager(manager: AssetsManager, removedSection section: Int) {
         
     }
     
-    public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, addedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+    public func assetsManager(manager: AssetsManager, addedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         
     }
 }

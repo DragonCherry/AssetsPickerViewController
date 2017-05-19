@@ -22,12 +22,6 @@ open class AssetsPhotoViewController: UIViewController {
         return buttonItem
     }()
     
-    lazy var viewModel: AssetsViewModel = {
-        let vm = AssetsViewModel()
-        vm.delegate = self
-        return vm
-    }()
-    
     fileprivate var tapGesture: UITapGestureRecognizer?
     fileprivate var selectedAlbum: PHAssetCollection?
     
@@ -114,7 +108,19 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
     }
 }
 
-// MARK: - AssetsViewModelDelegate
-extension AssetsPhotoViewController: AssetsViewModelDelegate {
+// MARK: - AssetsManagerDelegate
+extension AssetsPhotoViewController: AssetsManagerDelegate {
     
+    public func assetsManagerLoaded(manager: AssetsManager) {
+        
+    }
+    public func assetsManager(manager: AssetsManager, removedSection section: Int) {
+        
+    }
+    public func assetsManager(manager: AssetsManager, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        
+    }
+    public func assetsManager(manager: AssetsManager, addedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        
+    }
 }
