@@ -13,20 +13,19 @@ import TinyLog
 // MARK: - AssetsAlbumViewModelProtocol
 public protocol AssetsAlbumViewModelProtocol {
     
-    var smartAlbumArray: [PHAssetCollection] { get }
-    var albumArray: [PHAssetCollection] { get }
+    var albumsArray: [[PHAssetCollection]] { get }
     var numberOfSections: Int { get }
     
     func start()
-    func count(ofType type: PHAssetCollectionType) -> Int
-    func section(ofType type: PHAssetCollectionType) -> Int
+    func numberOfItems(inSection: Int) -> Int
+    func title(at indexPath: IndexPath) -> String?
 }
 
 // MARK: - AssetsAlbumViewModelDelegate
 public protocol AssetsAlbumViewModelDelegate: class {
-    func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, loadedAlbums: [PHAssetCollection], ofType type: PHAssetCollectionType)
+    func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, createdSection section: Int)
+    func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, removedSection section: Int)
     func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath])
-    func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, removedAlbumsOfType type: PHAssetCollectionType)
     func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, addedAlbums: [PHAssetCollection], at indexPaths: [IndexPath])
 }
 
@@ -35,20 +34,7 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     
     weak var delegate: AssetsAlbumViewModelDelegate?
     
-    
-    
-    // MARK: Albums
-    fileprivate var smartAlbumMap = [String: PHAssetCollection]()
-    fileprivate(set) open var smartAlbumArray = [PHAssetCollection]()
     fileprivate var albumMap = [String: PHAssetCollection]()
-    fileprivate(set) open var albumArray = [PHAssetCollection]()
-    
-    open var numberOfSections: Int {
-        var sectionCount: Int = 0
-        if smartAlbumArray.count > 0 { sectionCount += 1 }
-        if albumArray.count > 0 { sectionCount += 1 }
-        return sectionCount
-    }
     
     public override init() {
         super.init()
@@ -60,46 +46,43 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
         unregisterObserver()
     }
     
+    // MARK: AssetsAlbumViewModelProtocol
+    fileprivate(set) open var albumsArray = [[PHAssetCollection]]()
+    
+    open var numberOfSections: Int {
+        return albumsArray.count
+    }
+    
     open func start() {
         logi("Start fetching...")
         let smartAlbumFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
-        for i in 0..<smartAlbumFetchResult.count {
-            let album = smartAlbumFetchResult.object(at: i)
-            append(album: album, ofType: .smartAlbum)
-        }
-        delegate?.assetsAlbumViewModel(viewModel: self, loadedAlbums: smartAlbumArray, ofType: .smartAlbum)
-        
+        var smartAlbums = [PHAssetCollection]()
+        smartAlbumFetchResult.enumerateObjects({ (album, _, _) in
+            smartAlbums.append(album)
+            self.albumMap[album.localIdentifier] = album
+        })
+        albumsArray.append(smartAlbums)
+        delegate?.assetsAlbumViewModel(viewModel: self, createdSection: 0)
+    
         let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-        for i in 0..<albumFetchResult.count {
-            let album = albumFetchResult.object(at: i)
-            append(album: album, ofType: .album)
-        }
-        if albumArray.count > 0 {
-            delegate?.assetsAlbumViewModel(viewModel: self, loadedAlbums: albumArray, ofType: .album)
-        }
+        var albums = [PHAssetCollection]()
+        albumFetchResult.enumerateObjects({ (album, _, _) in
+            albums.append(album)
+            self.albumMap[album.localIdentifier] = album
+        })
+        albumsArray.append(albums)
+        delegate?.assetsAlbumViewModel(viewModel: self, createdSection: 1)
+        
         logi("Finish fetching...")
     }
     
-    open func count(ofType type: PHAssetCollectionType) -> Int {
-        switch type {
-        case .smartAlbum:
-            return smartAlbumArray.count
-        case .album:
-            return albumArray.count
-        default:
-            return 0
-        }
+    open func numberOfItems(inSection: Int) -> Int {
+        return albumsArray[inSection].count
     }
     
-    open func section(ofType type: PHAssetCollectionType) -> Int {
-        switch type {
-        case .smartAlbum:
-            return smartAlbumArray.count == 0 ? -1 : 0
-        case .album:
-            return smartAlbumArray.count == 0 ? 0 : 1
-        default:
-            return -1
-        }
+    open func title(at indexPath: IndexPath) -> String? {
+        let album = albumsArray[indexPath.section][indexPath.row]
+        return album.localizedTitle
     }
     
     // MARK: Observers
@@ -112,47 +95,25 @@ extension AssetsAlbumViewModel {
     
     func clearAlbums() {
         albumMap.removeAll()
-        albumArray.removeAll()
+        albumsArray.removeAll()
     }
     
-    func append(album: PHAssetCollection, ofType type: PHAssetCollectionType) {
+    func append(albums: [PHAssetCollection], inSection: Int) {
         
-        switch type {
-        case .smartAlbum:
-            if let album = smartAlbumMap[album.localIdentifier] {
-                log("Album already exists: \(album.localizedTitle ?? album.localIdentifier)")
-            } else {
-                smartAlbumMap[album.localIdentifier] = album
-                smartAlbumArray.append(album)
-            }
-        case .album:
-            if let album = albumMap[album.localIdentifier] {
-                log("Album already exists: \(album.localizedTitle ?? album.localIdentifier)")
-            } else {
-                albumMap[album.localIdentifier] = album
-                albumArray.append(album)
-            }
-        default:
-            logw("Album type \(type) is not supported.")
+    }
+    
+    func append(album: PHAssetCollection, inSection: Int) {
+        if let album = albumMap[album.localIdentifier] {
+            log("Album already exists: \(album.localizedTitle ?? album.localIdentifier)")
+        } else {
+            albumMap[album.localIdentifier] = album
+            albumsArray[inSection].append(album)
         }
     }
     
-    func remove(album: PHAssetCollection, ofType type: PHAssetCollectionType) {
-        
-        switch type {
-        case .smartAlbum:
-            if let album = smartAlbumMap[album.localIdentifier], let albumIndex = smartAlbumArray.index(where: { $0.localIdentifier == album.localIdentifier }) {
-                smartAlbumMap.removeValue(forKey: album.localIdentifier)
-                smartAlbumArray.remove(at: albumIndex)
-            }
-        case .album:
-            if let album = albumMap[album.localIdentifier], let albumIndex = albumArray.index(where: { $0.localIdentifier == album.localIdentifier }) {
-                albumMap.removeValue(forKey: album.localIdentifier)
-                albumArray.remove(at: albumIndex)
-            }
-        default:
-            logw("Album type \(type) is not supported.")
-        }
+    func insert(album: PHAssetCollection, at indexPath: IndexPath) {
+        albumMap[album.localIdentifier] = album
+        albumsArray[indexPath.section].insert(album, at: indexPath.row)
     }
 }
 

@@ -26,21 +26,32 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
         }
     }
     
-    open var imageView: UIImageView {
+    open let imageView: UIImageView = {
         let view = UIImageView.newAutoLayout()
-        
+        view.backgroundColor = UIColor(rgbHex: 0xF0F0F0)
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 5
         return view
-    }
+    }()
     
-    open var titleLabel: UILabel = {
+    open let bottomView: UIView = {
+        let view = UIView.newAutoLayout()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    open let titleLabel: UILabel = {
         let label = UILabel.newAutoLayout()
-        
+        label.textColor = .black
+        label.font = UIFont.systemFont(forStyle: .caption1)
         return label
     }()
     
-    open var countLabel: UILabel = {
+    open let countLabel: UILabel = {
         let label = UILabel.newAutoLayout()
-        
+        label.textColor = UIColor(rgbHex: 0x8C8C91)
+        label.font = UIFont.systemFont(forStyle: .caption1)
         return label
     }()
     
@@ -55,12 +66,32 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     }
     
     private func commonInit() {
-        backgroundColor = .cyan
-        addSubview(imageView)
+        contentView.configureForAutoLayout()
+        contentView.addSubview(imageView)
+        contentView.addSubview(bottomView)
+        bottomView.addSubview(titleLabel)
+        bottomView.addSubview(countLabel)
     }
     
     open override func updateConstraints() {
         if !didSetupConstraints {
+            
+            contentView.autoPinEdgesToSuperviewEdges()
+            
+            imageView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+            imageView.autoMatch(.height, to: .width, of: contentView)
+            
+            bottomView.autoPinEdge(.top, to: .bottom, of: imageView)
+            bottomView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            
+            titleLabel.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
+            titleLabel.autoMatch(.height, to: .height, of: countLabel)
+            titleLabel.autoPinEdge(.bottom, to: .top, of: countLabel)
+            
+            countLabel.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            countLabel.autoMatch(.height, to: .height, of: titleLabel)
+            countLabel.autoPinEdge(.top, to: .bottom, of: titleLabel)
+            
             didSetupConstraints = true
         }
         super.updateConstraints()

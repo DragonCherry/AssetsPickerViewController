@@ -18,12 +18,12 @@ open class AssetsAlbumViewController: UIViewController {
     let headerReuseIdentifier: String = UUID().uuidString
     
     var cellType: AnyClass = AssetsAlbumCell.classForCoder()
-    let space: CGFloat = { return 20 }()
+    let defaultSpace: CGFloat = { return 20 }()
     lazy var cellWidth: CGFloat = {
         let deviceSize = UIScreen.main.bounds.size
-        return (deviceSize.width - 3 * self.space) / 2
+        return (deviceSize.width - 3 * self.defaultSpace) / 2
     }()
-    var interitemSpace: CGFloat { return self.space }
+    var interitemSpace: CGFloat { return self.defaultSpace }
     
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
@@ -57,7 +57,7 @@ open class AssetsAlbumViewController: UIViewController {
         view.showsHorizontalScrollIndicator = false
         view.showsVerticalScrollIndicator = true
         view.decelerationRate = UIScrollViewDecelerationRateFast
-        view.contentInset = UIEdgeInsets(top: self.space, left: self.space, bottom: self.space, right: self.space)
+        view.contentInset = UIEdgeInsets(top: self.defaultSpace, left: self.defaultSpace, bottom: self.defaultSpace, right: self.defaultSpace)
         return view
     }()
     
@@ -138,15 +138,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     public func numberOfSections(in collectionView: UICollectionView) -> Int { return viewModel.numberOfSections }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        logi("")
-        switch section {
-        case 0:
-            return viewModel.count(ofType: .smartAlbum)
-        case 1:
-            return viewModel.count(ofType: .album)
-        default:
-            return 0
-        }
+        return viewModel.numberOfItems(inSection: section)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -176,7 +168,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: cellWidth, height: cellWidth * 1.2)
+        return CGSize(width: cellWidth, height: cellWidth * 1.25)
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -184,11 +176,11 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return space
+        return defaultSpace
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return space
+        return defaultSpace
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -218,25 +210,18 @@ extension AssetsAlbumViewController {
 // MARK: - AssetsViewModelDelegate
 extension AssetsAlbumViewController: AssetsAlbumViewModelDelegate {
     
-    public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, loadedAlbums: [PHAssetCollection], ofType type: PHAssetCollectionType) {
-        switch type {
-        case .smartAlbum:
-            collectionView.reloadSections(IndexSet(integer: 0))
-        case .album:
-            if collectionView.numberOfSections == 1 {
-                collectionView.insertSections(IndexSet(integer: 1))
-                collectionView.reloadSections(IndexSet(integer: 1))
-            }
-        default:
-            break
+    public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, createdSection section: Int) {
+        if section > 0 {
+            collectionView.insertSections(IndexSet(integer: section))
         }
+        collectionView.reloadSections(IndexSet(integer: section))
     }
     
     public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         
     }
     
-    public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, removedAlbumsOfType type: PHAssetCollectionType) {
+    public func assetsAlbumViewModel(viewModel: AssetsAlbumViewModel, removedSection section: Int) {
         
     }
     

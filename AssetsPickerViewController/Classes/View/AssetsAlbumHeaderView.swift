@@ -16,8 +16,7 @@ open class AssetsAlbumHeaderView: UICollectionReusableView {
     internal lazy var titleLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textColor = UIColor(rgbHex: 0x8C8C91)
-        let font = UIFont.preferredFont(forTextStyle: .title2)
-        label.font = UIFont.systemFont(ofSize: font.pointSize, weight: UIFontWeightRegular)
+        label.font = UIFont.systemFont(forStyle: .title3)
         label.text = String(key: "Title_Section_MyAlbums")
         return label
     }()
