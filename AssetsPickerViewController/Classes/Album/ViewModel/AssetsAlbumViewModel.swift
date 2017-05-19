@@ -18,6 +18,7 @@ public protocol AssetsAlbumViewModelProtocol {
     
     func start()
     func numberOfItems(inSection: Int) -> Int
+    func numberOfAssets(at indexPath: IndexPath) -> Int
     func title(at indexPath: IndexPath) -> String?
 }
 
@@ -35,6 +36,7 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     weak var delegate: AssetsAlbumViewModelDelegate?
     
     fileprivate var albumMap = [String: PHAssetCollection]()
+    fileprivate var fetchResults = [[PHFetchResult<PHAsset>]]()
     
     public override init() {
         super.init()
@@ -59,6 +61,7 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
         var smartAlbums = [PHAssetCollection]()
         smartAlbumFetchResult.enumerateObjects({ (album, _, _) in
             smartAlbums.append(album)
+            
             self.albumMap[album.localIdentifier] = album
         })
         albumsArray.append(smartAlbums)
@@ -78,6 +81,11 @@ open class AssetsAlbumViewModel: NSObject, AssetsAlbumViewModelProtocol {
     
     open func numberOfItems(inSection: Int) -> Int {
         return albumsArray[inSection].count
+    }
+    
+    open func numberOfAssets(at indexPath: IndexPath) -> Int {
+//        let fetchResult = PHAsset.fetchAssets(in: <#T##PHAssetCollection#>, options: <#T##PHFetchOptions?#>)
+        return 0
     }
     
     open func title(at indexPath: IndexPath) -> String? {

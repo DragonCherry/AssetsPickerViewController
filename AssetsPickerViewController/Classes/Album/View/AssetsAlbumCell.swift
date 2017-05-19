@@ -44,14 +44,14 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     open let titleLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textColor = .black
-        label.font = UIFont.systemFont(forStyle: .caption1)
+        label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
     
     open let countLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textColor = UIColor(rgbHex: 0x8C8C91)
-        label.font = UIFont.systemFont(forStyle: .caption1)
+        label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
     

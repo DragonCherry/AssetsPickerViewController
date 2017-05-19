@@ -17,7 +17,7 @@ open class AssetsAlbumViewController: UIViewController {
     let cellReuseIdentifier: String = UUID().uuidString
     let headerReuseIdentifier: String = UUID().uuidString
     
-    var cellType: AnyClass = AssetsAlbumCell.classForCoder()
+    open var cellType: AnyClass = AssetsAlbumCell.classForCoder()
     let defaultSpace: CGFloat = { return 20 }()
     lazy var cellWidth: CGFloat = {
         let deviceSize = UIScreen.main.bounds.size
@@ -117,6 +117,7 @@ open class AssetsAlbumViewController: UIViewController {
 extension AssetsAlbumViewController {
     open func setupCommon() {
         title = String(key: "Title_Albums")
+//        navigationItem.titleView
         view.backgroundColor = .white
     }
     
@@ -143,11 +144,11 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath)
-        guard let albumCell = cell as? AssetsAlbumCell else {
+        guard let albumCell = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return cell
         }
-        return albumCell
+        return cell
     }
     
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -162,6 +163,12 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         logi("[\(indexPath.section)][\(indexPath.row)]")
+        guard let albumCell = cell as? AssetsAlbumCellProtocol else {
+            logw("Failed to cast UICollectionViewCell.")
+            return
+        }
+        albumCell.titleLabel.text = viewModel.title(at: indexPath)
+        albumCell.countLabel.text = "\(viewModel.numberOfAssets(at: indexPath))"
     }
 }
 
