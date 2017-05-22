@@ -29,6 +29,7 @@ open class AssetsPhotoViewController: UIViewController {
     
     fileprivate var tapGesture: UITapGestureRecognizer?
     fileprivate var selectedAlbum: PHAssetCollection?
+    fileprivate var syncOffsetRatio: CGFloat = -1
     
     var didSetupConstraints = false
     
@@ -88,11 +89,13 @@ open class AssetsPhotoViewController: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
         let isPortrait = size.height > size.width
         
+        if let photoLayout = collectionView.collectionViewLayout as? AssetsPhotoLayout {
+            photoLayout.changingSize = size
+        }
+        
         let changedContext = collectionView.collectionViewLayout.invalidationContext(forBoundsChange: CGRect(origin: .zero, size: size))
         updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
         collectionView.collectionViewLayout.invalidateLayout(with: changedContext)
-        
-        
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -174,7 +177,7 @@ extension AssetsPhotoViewController {
 // MARK: - UIScrollViewDelegate
 extension AssetsPhotoViewController: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        log("\(scrollView.contentOffset)")
+        log("\(scrollView.contentOffset), \(scrollView.contentSize)")
     }
 }
 
@@ -214,7 +217,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        log("[\(indexPath.section)][\(indexPath.row)]")
+        //log("[\(indexPath.section)][\(indexPath.row)]")
         guard let photoCell = cell as? AssetsPhotoCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return

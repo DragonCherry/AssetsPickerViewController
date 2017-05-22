@@ -122,6 +122,13 @@ extension AssetsManager {
 //                                    imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
                                 }
                                 photoArray.append(asset)
+                                
+                                if photoArray.count > 100 {
+                                    photoArray = AssetsUtility.sortedAssets(photoArray, recentFirst: false)
+                                    isFetchedPhotos = true
+                                    completion?(photoArray)
+                                    return
+                                }
                             }
                         }
                     }
