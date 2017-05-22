@@ -88,14 +88,18 @@ open class AssetsPhotoViewController: UIViewController {
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         let isPortrait = size.height > size.width
-        
+        if isPortrait {
+            
+        } else {
+            
+        }
         if let photoLayout = collectionView.collectionViewLayout as? AssetsPhotoLayout {
             photoLayout.changingSize = size
+            photoLayout.currentOffset = collectionView.contentOffset
         }
-        
-        let changedContext = collectionView.collectionViewLayout.invalidationContext(forBoundsChange: CGRect(origin: .zero, size: size))
+//        let changedContext = collectionView.collectionViewLayout.invalidationContext(forBoundsChange: CGRect(origin: .zero, size: size))
         updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
-        collectionView.collectionViewLayout.invalidateLayout(with: changedContext)
+//        collectionView.collectionViewLayout.invalidateLayout(with: changedContext)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -177,7 +181,9 @@ extension AssetsPhotoViewController {
 // MARK: - UIScrollViewDelegate
 extension AssetsPhotoViewController: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        log("\(scrollView.contentOffset), \(scrollView.contentSize)")
+        guard scrollView.bounds != .zero else { return }
+        let ratio = (collectionView.contentOffset.y) / (collectionView.contentSize.height - collectionView.bounds.height)
+        log("\(scrollView.contentOffset)/\(scrollView.contentSize) : \(ratio)")
     }
 }
 
