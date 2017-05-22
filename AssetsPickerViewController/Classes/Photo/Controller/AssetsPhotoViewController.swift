@@ -32,18 +32,10 @@ open class AssetsPhotoViewController: UIViewController {
     
     var didSetupConstraints = false
     
-    lazy var cellWidth: CGFloat = {
-        let count = CGFloat(self.numberOfCell(isPortrait: true))
-        return (UIScreen.main.portraitSize.width - (count - 1)) / count
-    }()
-    var imageSize: CGSize {
-        let width = cellWidth * 2
-        return CGSize(width: width, height: width)
-    }
-    
     lazy var collectionView: UICollectionView = {
         
         let layout = AssetsPhotoLayout()
+        self.updateLayout(layout: layout, isPortrait: UIApplication.shared.statusBarOrientation.isPortrait)
         layout.scrollDirection = .vertical
         
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -68,13 +60,12 @@ open class AssetsPhotoViewController: UIViewController {
         super.loadView()
         view = UIView()
         view.backgroundColor = .white
-        
         view.addSubview(collectionView)
         view.setNeedsUpdateConstraints()
         
         AssetsManager.shared.subscribe(subscriber: self)
         AssetsManager.shared.fetchAlbums()
-        AssetsManager.shared.fetchPhotos(album: nil, cacheSize: imageSize) { _ in
+        AssetsManager.shared.fetchPhotos(album: nil, cacheSize: PhotoAttributes.thumbnailCacheSize) { _ in
             self.collectionView.reloadData()
         }
     }
@@ -86,28 +77,22 @@ open class AssetsPhotoViewController: UIViewController {
     }
     
     open override func updateViewConstraints() {
-        super.updateViewConstraints()
-        
         if !didSetupConstraints {
             collectionView.autoPinEdgesToSuperviewEdges()
             didSetupConstraints = true
         }
+        super.updateViewConstraints()
     }
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         let isPortrait = size.height > size.width
-        let space = itemSpace(size: size, columnCount: numberOfCell(isPortrait: isPortrait))
-        var insets = collectionView.contentInset
-        if isPortrait {
-            insets.left = 0
-            insets.right = 0
-        } else {
-            insets.left = space / 2
-            insets.right = space / 2
-        }
-        collectionView.contentInset = insets
-        collectionView.collectionViewLayout.invalidateLayout()
+        
+        let changedContext = collectionView.collectionViewLayout.invalidationContext(forBoundsChange: CGRect(origin: .zero, size: size))
+        updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
+        collectionView.collectionViewLayout.invalidateLayout(with: changedContext)
+        
+        
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -157,12 +142,12 @@ extension AssetsPhotoViewController {
 
 // MARK: - Internal Utility
 extension AssetsPhotoViewController {
-    
-    func numberOfCell(isPortrait: Bool) -> Int { return isPortrait ? 4 : 7 }
-    
-    func itemSpace(size: CGSize, columnCount count: Int) -> CGFloat {
-        let space = (size.width - CGFloat(count) * cellWidth) / CGFloat(count)
-        return space
+    func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
+        if let flowLayout = layout as? UICollectionViewFlowLayout {
+            flowLayout.itemSize = isPortrait ? PhotoAttributes.portraitCellSize : PhotoAttributes.landscapeCellSize
+            flowLayout.minimumLineSpacing = isPortrait ? PhotoAttributes.portraitLineSpace : PhotoAttributes.landscapeLineSpace
+            flowLayout.minimumInteritemSpacing = isPortrait ? PhotoAttributes.portraitInteritemSpace : PhotoAttributes.landscapeInteritemSpace
+        }
     }
 }
 
@@ -183,6 +168,13 @@ extension AssetsPhotoViewController {
         controller.delegate = self
         navigationController.viewControllers = [controller]
         present(navigationController, animated: true, completion: nil)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension AssetsPhotoViewController: UIScrollViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        log("\(scrollView.contentOffset)")
     }
 }
 
@@ -227,7 +219,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             logw("Failed to cast UICollectionViewCell.")
             return
         }
-        AssetsManager.shared.image(at: indexPath.row, size: imageSize, completion: { (image) in
+        AssetsManager.shared.image(at: indexPath.row, size: PhotoAttributes.thumbnailCacheSize, completion: { (image) in
             photoCell.imageView.image = image
         })
     }
@@ -235,18 +227,6 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = cellWidth
-        return CGSize(width: width, height: width)
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 1
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 1
-    }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if AssetsManager.shared.numberOfSections - 1 == section {
@@ -260,6 +240,10 @@ extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDataSourcePrefetching
 extension AssetsPhotoViewController: UICollectionViewDataSourcePrefetching {
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         
     }
 }

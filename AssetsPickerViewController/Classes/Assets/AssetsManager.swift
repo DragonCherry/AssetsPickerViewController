@@ -80,6 +80,7 @@ extension AssetsManager {
     }
     
     open func fetchAlbums(completion: (([[PHAssetCollection]]) -> Void)? = nil) {
+        logi("Before")
         if !isFetchedAlbums {
             fetchAlbum(albumType: .smartAlbum)
             fetchAlbum(albumType: .album)
@@ -87,6 +88,7 @@ extension AssetsManager {
         }
         // notify
         completion?(albumsArray)
+        logi("After")
     }
     
     open func cacheAlbums(cacheSize: CGSize) {
@@ -102,10 +104,11 @@ extension AssetsManager {
     }
     
     open func fetchPhotos(album: PHAssetCollection? = nil, cacheSize: CGSize? = nil, completion: (([PHAsset]) -> Void)? = nil) {
+        logi("Before")
         fetchAlbums()
         if !isFetchedPhotos {
             if let _ = album {
-                
+                // TODO: fetch photos of selected album
             } else {
                 for fetchResults in fetchesArray {
                     for fetchResult in fetchResults {
@@ -116,7 +119,7 @@ extension AssetsManager {
                             } else {
                                 photoMap[asset.localIdentifier] = asset
                                 if let cacheSize = cacheSize {
-                                    imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+//                                    imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
                                 }
                                 photoArray.append(asset)
                             }
@@ -129,6 +132,7 @@ extension AssetsManager {
             isFetchedPhotos = true
         }
         completion?(photoArray)
+        logi("After")
     }
     
     open func numberOfAlbums(inSection: Int) -> Int {
