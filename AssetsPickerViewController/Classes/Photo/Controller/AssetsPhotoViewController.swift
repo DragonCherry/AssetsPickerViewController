@@ -48,6 +48,7 @@ open class AssetsPhotoViewController: UIViewController {
         view.backgroundColor = UIColor.clear
         view.dataSource = self
         view.delegate = self
+        view.remembersLastFocusedIndexPath = true
         if #available(iOS 10.0, *) {
             view.prefetchDataSource = self
         }
@@ -87,19 +88,20 @@ open class AssetsPhotoViewController: UIViewController {
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        
         let isPortrait = size.height > size.width
-        if isPortrait {
-            
-        } else {
-            
-        }
+        
         if let photoLayout = collectionView.collectionViewLayout as? AssetsPhotoLayout {
-            photoLayout.changingSize = size
-            photoLayout.currentOffset = collectionView.contentOffset
+            if let offset = photoLayout.translateOffset(forChangingSize: size, currentOffset: collectionView.contentOffset) {
+                photoLayout.translatedOffset = offset
+            }
+            coordinator.animate(alongsideTransition: { (_) in
+                
+            }) { (_) in
+                photoLayout.translatedOffset = nil
+            }
         }
-//        let changedContext = collectionView.collectionViewLayout.invalidationContext(forBoundsChange: CGRect(origin: .zero, size: size))
         updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
-//        collectionView.collectionViewLayout.invalidateLayout(with: changedContext)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -184,6 +186,9 @@ extension AssetsPhotoViewController: UIScrollViewDelegate {
         guard scrollView.bounds != .zero else { return }
         let ratio = (collectionView.contentOffset.y) / (collectionView.contentSize.height - collectionView.bounds.height)
         log("\(scrollView.contentOffset)/\(scrollView.contentSize) : \(ratio)")
+        if ratio >= 1 {
+            logw("")
+        }
     }
 }
 

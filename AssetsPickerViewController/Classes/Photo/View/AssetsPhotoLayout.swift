@@ -10,36 +10,40 @@ import UIKit
 import TinyLog
 
 open class AssetsPhotoLayout: UICollectionViewFlowLayout {
+
+    open var translatedOffset: CGPoint?
     
-    open var changingSize: CGSize?
-    open var currentOffset: CGPoint?
+    open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
+        logi("proposedContentOffset(\(velocity.y)): \(proposedContentOffset)")
+        return targetContentOffset(forProposedContentOffset: proposedContentOffset)
+    }
     
     open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
-        defer {
-            changingSize = nil
-            currentOffset = nil
-        }
-        guard let collectionView = self.collectionView, let changingSize = self.changingSize, let currentOffset = self.currentOffset else {
+        if let translatedOffset = self.translatedOffset {
+            logi("returning translatedOffset: \(translatedOffset)")
+            return translatedOffset
+        } else {
+            logi("returning proposedContentOffset: \(proposedContentOffset)")
             return proposedContentOffset
         }
-        logi("proposedContentOffset: \(proposedContentOffset)")
-        let isPortrait = changingSize.height > changingSize.width
+    }
+}
+
+extension AssetsPhotoLayout {
+    
+    open func translateOffset(forChangingSize size: CGSize, currentOffset: CGPoint) -> CGPoint? {
+        guard let collectionView = self.collectionView else {
+            return nil
+        }
+        let isPortrait = size.height > size.width
         let contentHeight = expectedContentHeight(isPortrait: isPortrait)
         let currentRatio = offsetRatio(collectionView: collectionView, offset: currentOffset, contentSize: collectionView.contentSize, isPortrait: isPortrait)
         
-        let futureOffsetY = (contentHeight - changingSize.height) * currentRatio
-        
-        logi("modified offset: \(futureOffsetY)")
-        
+        let futureOffsetY = (contentHeight - size.height) * currentRatio
         return CGPoint(x: 0, y: futureOffsetY)
     }
     
-    open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
-        logi("proposedContentOffset: \(proposedContentOffset)")
-        return proposedContentOffset
-    }
-    
-    private func expectedContentHeight(isPortrait: Bool) -> CGFloat {
+    open func expectedContentHeight(isPortrait: Bool) -> CGFloat {
         var rows = AssetsManager.shared.photoArray.count / (isPortrait ? PhotoAttributes.portraitColumnCount : PhotoAttributes.landscapeColumnCount)
         let remainder = AssetsManager.shared.photoArray.count % (isPortrait ? PhotoAttributes.portraitColumnCount : PhotoAttributes.landscapeColumnCount)
         rows += remainder > 0 ? 1 : 0
@@ -52,7 +56,6 @@ open class AssetsPhotoLayout: UICollectionViewFlowLayout {
     }
     
     private func offsetRatio(collectionView: UICollectionView, offset: CGPoint, contentSize: CGSize, isPortrait: Bool) -> CGFloat {
-//        let inset = CGFloat(isPortrait ? 65 : 33)
         let inset: CGFloat = 0
         let ratio = (offset.y + inset) / (contentSize.height - collectionView.bounds.height + inset)
         return ratio
