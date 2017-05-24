@@ -222,6 +222,13 @@ extension AssetsPhotoViewController {
             }
         }
     }
+    
+    func updateFooter() {
+        guard let footerView = collectionView.visibleSupplementaryViews(ofKind: UICollectionElementKindSectionFooter).last as? AssetsPhotoFooterView else {
+            return
+        }
+        footerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
+    }
 }
 
 // MARK: - UI Event Handlers
@@ -388,13 +395,31 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
 // MARK: - AssetsManagerDelegate
 extension AssetsPhotoViewController: AssetsManagerDelegate {
     
-    public func assetsManager(manager: AssetsManager, removedSection section: Int) {
+    public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
+        logi("reloaded album: \(indexPath)")
+    }
+    public func assetsManager(manager: AssetsManager, insertedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
+        logi("inserted albums at: \(indexPath)")
+    }
+    public func assetsManager(manager: AssetsManager, removedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
         
     }
-    public func assetsManager(manager: AssetsManager, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+    public func assetsManager(manager: AssetsManager, updatedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
         
     }
-    public func assetsManager(manager: AssetsManager, addedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
-        
+    public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
+        logi("insertedAssets at: \(indexPaths)")
+        collectionView.insertItems(at: indexPaths)
+        updateFooter()
+    }
+    public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
+        logi("removedAssets at: \(indexPaths)")
+        collectionView.deleteItems(at: indexPaths)
+        updateFooter()
+    }
+    public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
+        logi("updatedAssets at: \(indexPaths)")
+        collectionView.reloadItems(at: indexPaths)
+        updateFooter()
     }
 }

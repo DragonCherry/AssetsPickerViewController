@@ -47,6 +47,7 @@ open class AssetsPickerViewController: UISplitViewController {
     
     func commonInit() {
         PhotoAttributes.prepare()
+        AssetsManager.shared.registerObserver()
         viewControllers = [pickerNavigation, photoViewController]
     }
     

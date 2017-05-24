@@ -53,23 +53,23 @@ extension SimpleExampleController {
 extension SimpleExampleController: AssetsPickerViewControllerDelegate {
     
     func assetsPickerDidCancel(controller: AssetsPickerViewController) {
-        logi("Cancelled.")
+        log("Cancelled.")
     }
     func assetsPicker(controller: AssetsPickerViewController, selected assets: [PHAsset]) {
         logi("Selected Assets: \(assets.count)")
     }
     func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PHAsset, at indexPath: IndexPath) -> Bool {
-        logi(indexPath)
+        log("shouldSelect: \(indexPath.row)")
         return true
     }
     func assetsPicker(controller: AssetsPickerViewController, didSelect asset: PHAsset, at indexPath: IndexPath) {
-        logi(indexPath)
+        log("didSelect: \(indexPath.row)")
     }
     func assetsPicker(controller: AssetsPickerViewController, shouldDeselect asset: PHAsset, at indexPath: IndexPath) -> Bool {
-        logi(indexPath)
+        log("shouldDeselect: \(indexPath.row)")
         return true
     }
     func assetsPicker(controller: AssetsPickerViewController, didDeselect asset: PHAsset, at indexPath: IndexPath) {
-        logi(indexPath)
+        log("didDeselect: \(indexPath.row)")
     }
 }

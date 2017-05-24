@@ -262,16 +262,12 @@ extension AssetsAlbumViewController {
 // MARK: - AssetsManagerDelegate
 extension AssetsAlbumViewController: AssetsManagerDelegate {
     
-    public func assetsManager(manager: AssetsManager, removedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
-        
-    }
-    
-    public func assetsManager(manager: AssetsManager, removedSection section: Int) {
-        
-    }
-    
-    public func assetsManager(manager: AssetsManager, addedAlbums: [PHAssetCollection], at indexPaths: [IndexPath]) {
-        
-    }
-}
+    public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
+    public func assetsManager(manager: AssetsManager, insertedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
+    public func assetsManager(manager: AssetsManager, removedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
+    public func assetsManager(manager: AssetsManager, updatedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
+    public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
+    public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
+    public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
 
+}
