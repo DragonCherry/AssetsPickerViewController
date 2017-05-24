@@ -27,6 +27,12 @@ open class AssetsPhotoViewController: UIViewController {
         return buttonItem
     }()
     
+    fileprivate var delegate: AssetsPickerViewControllerDelegate? {
+        return (splitViewController as? AssetsPickerViewController)?.pickerDelegate
+    }
+    fileprivate var picker: AssetsPickerViewController! {
+        return splitViewController as! AssetsPickerViewController
+    }
     fileprivate var tapGesture: UITapGestureRecognizer?
     fileprivate var syncOffsetRatio: CGFloat = -1
     
@@ -129,6 +135,7 @@ extension AssetsPhotoViewController {
     open func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
         navigationItem.rightBarButtonItem = doneButtonItem
+        doneButtonItem.isEnabled = false
     }
     
     open func setupGestureRecognizer() {
@@ -169,6 +176,15 @@ extension AssetsPhotoViewController {
     
     func pressedDone(button: UIBarButtonItem) {
         splitViewController?.dismiss(animated: true, completion: nil)
+        if let selectedIndexPaths = collectionView.indexPathsForSelectedItems {
+            var assets = [PHAsset]()
+            for indexPath in selectedIndexPaths {
+                assets.append(AssetsManager.shared.photoArray[indexPath.row])
+            }
+            delegate?.assetsPicker(controller: picker, selected: assets, at: selectedIndexPaths)
+        } else {
+            logw("")
+        }
     }
     
     func pressedTitle(gesture: UITapGestureRecognizer) {
@@ -189,19 +205,29 @@ extension AssetsPhotoViewController: UIScrollViewDelegate {
 extension AssetsPhotoViewController: UICollectionViewDelegate {
 
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
+        if let delegate = self.delegate {
+            return delegate.assetsPicker(controller: picker, shouldSelect: AssetsManager.shared.photoArray[indexPath.row], at: indexPath)
+        } else {
+            return true
+        }
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        log("[\(indexPath.section)][\(indexPath.row)]")
+        doneButtonItem.isEnabled = Int(collectionView.indexPathsForSelectedItems?.count) > 0
+        delegate?.assetsPicker(controller: picker, didSelect: AssetsManager.shared.photoArray[indexPath.row], at: indexPath)
     }
     
     public func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
-        return true
+        if let delegate = self.delegate {
+            return delegate.assetsPicker(controller: picker, shouldDeselect: AssetsManager.shared.photoArray[indexPath.row], at: indexPath)
+        } else {
+            return true
+        }
     }
     
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        
+        doneButtonItem.isEnabled = Int(collectionView.indexPathsForSelectedItems?.count) > 0
+        delegate?.assetsPicker(controller: picker, didDeselect: AssetsManager.shared.photoArray[indexPath.row], at: indexPath)
     }
 }
 

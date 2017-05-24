@@ -9,6 +9,7 @@
 import UIKit
 import Photos
 import AssetsPickerViewController
+import TinyLog
 
 class SimpleExampleController: UITableViewController {
     
@@ -44,6 +45,31 @@ extension SimpleExampleController {
     
     @IBAction func pressedPick(_ sender: Any) {
         let picker = AssetsPickerViewController()
+        picker.pickerDelegate = self
         present(picker, animated: true, completion: nil)
+    }
+}
+
+extension SimpleExampleController: AssetsPickerViewControllerDelegate {
+    
+    func assetsPickerDidCancel(controller: AssetsPickerViewController) {
+        logi("")
+    }
+    func assetsPicker(controller: AssetsPickerViewController, selected assets: [PHAsset], at indexPaths: [IndexPath]) {
+        logi(indexPaths)
+    }
+    func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PHAsset, at indexPath: IndexPath) -> Bool {
+        logi(indexPath)
+        return true
+    }
+    func assetsPicker(controller: AssetsPickerViewController, didSelect asset: PHAsset, at indexPath: IndexPath) {
+        logi(indexPath)
+    }
+    func assetsPicker(controller: AssetsPickerViewController, shouldDeselect asset: PHAsset, at indexPath: IndexPath) -> Bool {
+        logi(indexPath)
+        return true
+    }
+    func assetsPicker(controller: AssetsPickerViewController, didDeselect asset: PHAsset, at indexPath: IndexPath) {
+        logi(indexPath)
     }
 }
