@@ -176,7 +176,7 @@ extension AssetsManager {
     
     open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, completion: @escaping ((UIImage?) -> Void)) {
         let fetchResult = fetchesArray[indexPath.section][indexPath.row]
-        if let asset = fetchResult.firstObject {
+        if let asset = fetchResult.lastObject {
             imageManager.requestImage(
                 for: asset,
                 targetSize: size,
