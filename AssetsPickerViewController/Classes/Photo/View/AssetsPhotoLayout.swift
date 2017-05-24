@@ -14,16 +14,15 @@ open class AssetsPhotoLayout: UICollectionViewFlowLayout {
     open var translatedOffset: CGPoint?
     
     open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
-        logi("proposedContentOffset(\(velocity.y)): \(proposedContentOffset)")
         return targetContentOffset(forProposedContentOffset: proposedContentOffset)
     }
     
     open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         if let translatedOffset = self.translatedOffset {
-            logi("returning translatedOffset: \(translatedOffset)")
+//            logi("returning translatedOffset: \(translatedOffset)")
             return translatedOffset
         } else {
-            logi("returning proposedContentOffset: \(proposedContentOffset)")
+//            logi("returning proposedContentOffset: \(proposedContentOffset)")
             return proposedContentOffset
         }
     }

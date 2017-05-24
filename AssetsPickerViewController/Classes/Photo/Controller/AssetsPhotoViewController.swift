@@ -28,7 +28,6 @@ open class AssetsPhotoViewController: UIViewController {
     }()
     
     fileprivate var tapGesture: UITapGestureRecognizer?
-    fileprivate var selectedAlbum: PHAssetCollection?
     fileprivate var syncOffsetRatio: CGFloat = -1
     
     var didSetupConstraints = false
@@ -42,6 +41,7 @@ open class AssetsPhotoViewController: UIViewController {
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.configureForAutoLayout()
         view.allowsMultipleSelection = true
+        view.alwaysBounceVertical = true
         view.register(self.cellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsPhotoFooterView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: self.footerReuseIdentifier)
         view.contentInset = UIEdgeInsets(top: 1, left: 0, bottom: 0, right: 0)
@@ -67,7 +67,7 @@ open class AssetsPhotoViewController: UIViewController {
         
         AssetsManager.shared.subscribe(subscriber: self)
         AssetsManager.shared.fetchAlbums()
-        AssetsManager.shared.fetchPhotos(album: nil, cacheSize: PhotoAttributes.thumbnailCacheSize) { _ in
+        AssetsManager.shared.fetchPhotos(album: nil) { _ in
             self.collectionView.reloadData()
         }
     }
@@ -182,20 +182,26 @@ extension AssetsPhotoViewController {
 
 // MARK: - UIScrollViewDelegate
 extension AssetsPhotoViewController: UIScrollViewDelegate {
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView.bounds != .zero else { return }
-        let ratio = (collectionView.contentOffset.y) / (collectionView.contentSize.height - collectionView.bounds.height)
-        log("\(scrollView.contentOffset)/\(scrollView.contentSize) : \(ratio)")
-        if ratio >= 1 {
-            logw("")
-        }
-    }
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {}
 }
 
 // MARK: - UICollectionViewDelegate
 extension AssetsPhotoViewController: UICollectionViewDelegate {
+
+    public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         log("[\(indexPath.section)][\(indexPath.row)]")
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        
     }
 }
 
@@ -254,11 +260,11 @@ extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDataSourcePrefetching
 extension AssetsPhotoViewController: UICollectionViewDataSourcePrefetching {
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        
+        var assets = [PHAsset]()
+        for indexPath in indexPaths {
+            assets.append(AssetsManager.shared.photoArray[indexPath.row])
+        }
+        AssetsManager.shared.cache(assets: assets, size: PhotoAttributes.thumbnailCacheSize)
     }
 }
 
@@ -270,7 +276,9 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
     }
     
     public func assetsAlbumViewController(controller: AssetsAlbumViewController, selected album: PHAssetCollection) {
-        selectedAlbum = album
+        AssetsManager.shared.selectedAlbum = album
+        title = album.localizedTitle
+        collectionView.reloadData()
     }
 }
 

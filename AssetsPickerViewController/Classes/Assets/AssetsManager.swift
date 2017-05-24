@@ -25,12 +25,12 @@ open class AssetsManager: NSObject {
     
     fileprivate let imageManager = PHCachingImageManager()
     fileprivate var subscribers = [AssetsManagerDelegate]()
+    
     fileprivate var albumMap = [String: PHAssetCollection]()
-    fileprivate var fetcheMap = [String: PHFetchResult<PHAsset>]()
+    fileprivate var fetchMap = [String: PHFetchResult<PHAsset>]()
     fileprivate var photoMap = [String: PHAsset]()
     
     fileprivate var isFetchedAlbums: Bool = false
-    fileprivate var isFetchedPhotos: Bool = false
     
     private override init() {
         super.init()
@@ -42,6 +42,40 @@ open class AssetsManager: NSObject {
     fileprivate var fetchesArray = [[PHFetchResult<PHAsset>]]()
     fileprivate var albumsArray = [[PHAssetCollection]]()
     fileprivate(set) open var photoArray = [PHAsset]()
+    
+    open var selectedAlbum: PHAssetCollection? {
+        didSet {
+            
+            if let oldAlbum = oldValue, let newAlbum = selectedAlbum, oldAlbum.localIdentifier == newAlbum.localIdentifier {
+                log("Selected same album.")
+                return
+            }
+            
+            var photos = [PHAsset]()
+            
+            if let album = selectedAlbum, let fetchResult = fetchMap[album.localIdentifier] {
+                for i in 0..<fetchResult.count {
+                    let asset = fetchResult.object(at: i)
+                    photos.append(asset)
+                }
+            } else {
+                for fetchResults in fetchesArray {
+                    for fetchResult in fetchResults {
+                        for i in 0..<fetchResult.count {
+                            let asset = fetchResult.object(at: i)
+                            if let _ = photoMap[asset.localIdentifier] {
+                                // duplicated
+                            } else {
+                                photoMap[asset.localIdentifier] = asset
+                                photos.append(asset)
+                            }
+                        }
+                    }
+                }
+            }
+            photoArray = AssetsUtility.sortedAssets(photos, recentFirst: false)
+        }
+    }
 }
 
 // MARK: - APIs
@@ -64,7 +98,7 @@ extension AssetsManager {
         imageManager.stopCachingImagesForAllAssets()
         subscribers.removeAll()
         
-        fetcheMap.removeAll()
+        fetchMap.removeAll()
         fetchesArray.removeAll()
         albumMap.removeAll()
         albumsArray.removeAll()
@@ -72,7 +106,6 @@ extension AssetsManager {
         photoArray.removeAll()
         
         isFetchedAlbums = false
-        isFetchedPhotos = false
     }
     
     open var numberOfSections: Int {
@@ -103,41 +136,28 @@ extension AssetsManager {
         }
     }
     
-    open func fetchPhotos(album: PHAssetCollection? = nil, cacheSize: CGSize? = nil, completion: (([PHAsset]) -> Void)? = nil) {
+    open func cache(asset: PHAsset, size: CGSize) {
+        cache(assets: [asset], size: size)
+    }
+    
+    open func cache(assets: [PHAsset], size: CGSize) {
+        imageManager.startCachingImages(for: assets, targetSize: size, contentMode: .aspectFill, options: nil)
+    }
+    
+    open func stopCache(asset: PHAsset, size: CGSize) {
+        stopCache(assets: [asset], size: size)
+    }
+    
+    open func stopCache(assets: [PHAsset], size: CGSize) {
+        imageManager.stopCachingImages(for: assets, targetSize: size, contentMode: .aspectFill, options: nil)
+    }
+    
+    open func fetchPhotos(album: PHAssetCollection? = nil, completion: (([PHAsset]) -> Void)? = nil) {
         logi("Before")
+        
         fetchAlbums()
-        if !isFetchedPhotos {
-            if let _ = album {
-                // TODO: fetch photos of selected album
-            } else {
-                for fetchResults in fetchesArray {
-                    for fetchResult in fetchResults {
-                        for i in 0..<fetchResult.count {
-                            let asset = fetchResult.object(at: i)
-                            if let _ = photoMap[asset.localIdentifier] {
-                                // duplicated
-                            } else {
-                                photoMap[asset.localIdentifier] = asset
-                                if let cacheSize = cacheSize {
-//                                    imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
-                                }
-                                photoArray.append(asset)
-                                
-                                if photoArray.count > 100 {
-                                    photoArray = AssetsUtility.sortedAssets(photoArray, recentFirst: false)
-                                    isFetchedPhotos = true
-                                    completion?(photoArray)
-                                    return
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            photoArray = AssetsUtility.sortedAssets(photoArray, recentFirst: false)
-            isFetchedPhotos = true
-        }
+        selectedAlbum = album
+        
         completion?(photoArray)
         logi("After")
     }
@@ -214,15 +234,15 @@ extension AssetsManager {
             let fetchResult = PHAsset.fetchAssets(in: album, options: fetchOptions)
             
             // cache fetch result
-            self.fetcheMap[album.localIdentifier] = fetchResult
+            self.fetchMap[album.localIdentifier] = fetchResult
             
             // cache album
             self.albumMap[album.localIdentifier] = album
             albums.append(album)
         })
-        albums.sort(by: { Int(self.fetcheMap[$0.localIdentifier]?.count) > Int(self.fetcheMap[$1.localIdentifier]?.count) })
+        albums.sort(by: { Int(self.fetchMap[$0.localIdentifier]?.count) > Int(self.fetchMap[$1.localIdentifier]?.count) })
         for album in albums {
-            if let fetchResult = fetcheMap[album.localIdentifier] {
+            if let fetchResult = fetchMap[album.localIdentifier] {
                 albumFetches.append(fetchResult)
             } else {
                 logw("Failed to get fetch result from fetchesMap.")
