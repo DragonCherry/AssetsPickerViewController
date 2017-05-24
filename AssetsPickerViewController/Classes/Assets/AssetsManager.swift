@@ -342,7 +342,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                             // stop caching for removed assets
                             stopCache(assets: removedAssets, size: PhotoAttributes.thumbnailCacheSize)
                             DispatchQueue.main.async {
-                                
                                 for subscriber in self.subscribers {
                                     subscriber.assetsManager(manager: self, removedAssets: removedAssets, at: removedIndexes)
                                 }
@@ -391,8 +390,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 }
             }
         }
-        
-        //        changeInstance.changeDetails(for: <#T##PHFetchResult<T>#>)
     }
 }
 
