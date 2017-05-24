@@ -24,9 +24,9 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     open override var isSelected: Bool {
         didSet {
             if isSelected {
-                imageView.dim()
+                imageView.dim(animated: false)
             } else {
-                imageView.undim()
+                imageView.undim(animated: false)
             }
         }
     }

@@ -11,6 +11,7 @@ import UIKit
 open class PhotoAttributes {
     
     open static var thumbnailCacheSize: CGSize = .zero
+    open static var isShowSelectedSequence: Bool = true
     
     open static var portraitColumnCount: Int = 4
     open static var portraitInteritemSpace: CGFloat = 1

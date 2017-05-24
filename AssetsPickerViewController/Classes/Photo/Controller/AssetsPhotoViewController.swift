@@ -36,6 +36,9 @@ open class AssetsPhotoViewController: UIViewController {
     fileprivate var tapGesture: UITapGestureRecognizer?
     fileprivate var syncOffsetRatio: CGFloat = -1
     
+    fileprivate var selectedArray = [PHAsset]()
+    fileprivate var selectedMap = [String: PHAsset]()
+    
     var didSetupConstraints = false
     
     lazy var collectionView: UICollectionView = {
@@ -165,6 +168,44 @@ extension AssetsPhotoViewController {
             flowLayout.minimumInteritemSpacing = isPortrait ? PhotoAttributes.portraitInteritemSpace : PhotoAttributes.landscapeInteritemSpace
         }
     }
+    
+    func select(asset: PHAsset, at indexPath: IndexPath) {
+        if let _ = selectedMap[asset.localIdentifier] {
+            logw("Invalid status.")
+            return
+        }
+        selectedArray.append(asset)
+        selectedMap[asset.localIdentifier] = asset
+        
+        // update selected UI
+        guard let photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCell else {
+            logw("Invalid status.")
+            return
+        }
+        photoCell.countLabel.text = "\(selectedArray.count)"
+    }
+    
+    func deselect(asset: PHAsset, at indexPath: IndexPath) {
+        guard let targetAsset = selectedMap[asset.localIdentifier] else {
+            logw("Invalid status.")
+            return
+        }
+        guard let targetIndex = selectedArray.index(where: { targetAsset.localIdentifier == $0.localIdentifier }) else {
+            logw("Invalid status.")
+            return
+        }
+        selectedArray.remove(at: targetIndex)
+        selectedMap.removeValue(forKey: targetAsset.localIdentifier)
+        
+        let visibleIndexPaths = collectionView.indexPathsForVisibleItems
+        for visibleIndexPath in visibleIndexPaths {
+            if let selectedAsset = selectedMap[AssetsManager.shared.photoArray[visibleIndexPath.row].localIdentifier], let photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCell {
+                if let selectedIndex = selectedArray.index(where: { selectedAsset.localIdentifier == $0.localIdentifier }) {
+                    photoCell.countLabel.text = "\(selectedIndex + 1)"
+                }
+            }
+        }
+    }
 }
 
 // MARK: - UI Event Handlers
@@ -172,19 +213,12 @@ extension AssetsPhotoViewController {
     
     func pressedCancel(button: UIBarButtonItem) {
         splitViewController?.dismiss(animated: true, completion: nil)
+        delegate?.assetsPickerDidCancel(controller: picker)
     }
     
     func pressedDone(button: UIBarButtonItem) {
         splitViewController?.dismiss(animated: true, completion: nil)
-        if let selectedIndexPaths = collectionView.indexPathsForSelectedItems {
-            var assets = [PHAsset]()
-            for indexPath in selectedIndexPaths {
-                assets.append(AssetsManager.shared.photoArray[indexPath.row])
-            }
-            delegate?.assetsPicker(controller: picker, selected: assets, at: selectedIndexPaths)
-        } else {
-            logw("")
-        }
+        delegate?.assetsPicker(controller: picker, selected: selectedArray)
     }
     
     func pressedTitle(gesture: UITapGestureRecognizer) {
@@ -214,7 +248,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         doneButtonItem.isEnabled = Int(collectionView.indexPathsForSelectedItems?.count) > 0
-        delegate?.assetsPicker(controller: picker, didSelect: AssetsManager.shared.photoArray[indexPath.row], at: indexPath)
+        let asset = AssetsManager.shared.photoArray[indexPath.row]
+        select(asset: asset, at: indexPath)
+        delegate?.assetsPicker(controller: picker, didSelect: asset, at: indexPath)
     }
     
     public func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
@@ -227,7 +263,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         doneButtonItem.isEnabled = Int(collectionView.indexPathsForSelectedItems?.count) > 0
-        delegate?.assetsPicker(controller: picker, didDeselect: AssetsManager.shared.photoArray[indexPath.row], at: indexPath)
+        let asset = AssetsManager.shared.photoArray[indexPath.row]
+        deselect(asset: asset, at: indexPath)
+        delegate?.assetsPicker(controller: picker, didDeselect: asset, at: indexPath)
     }
 }
 
@@ -260,10 +298,17 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        //log("[\(indexPath.section)][\(indexPath.row)]")
         guard let photoCell = cell as? AssetsPhotoCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return
+        }
+        if let asset = selectedMap[AssetsManager.shared.photoArray[indexPath.row].localIdentifier] {
+            // update cell UI as selected
+            if let targetIndex = selectedArray.index(where: { asset.localIdentifier == $0.localIdentifier }) {
+                photoCell.countLabel.text = "\(targetIndex + 1)"
+            }
+        } else {
+            // update cell UI as normal
         }
         AssetsManager.shared.image(at: indexPath.row, size: PhotoAttributes.thumbnailCacheSize, completion: { (image) in
             photoCell.imageView.image = image

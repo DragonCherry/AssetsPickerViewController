@@ -14,7 +14,7 @@ public protocol AssetsPhotoCellProtocol {
     var isSelected: Bool { get set }
     var imageView: UIImageView { get }
 //    var timeLabel: UILabel { get }
-//    var countLabel: UILabel { get }
+    var countLabel: UILabel { get }
 }
 
 open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
@@ -23,10 +23,11 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     
     open override var isSelected: Bool {
         didSet {
+            countLabel.isHidden = !isSelected
             if isSelected {
-                imageView.dim()
+                imageView.dim(animated: false, color: .white, alpha: 0.3)
             } else {
-                imageView.undim()
+                imageView.undim(animated: false)
             }
         }
     }
@@ -45,13 +46,13 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
 //        label.font = UIFont.systemFont(forStyle: .subheadline)
 //        return label
 //    }()
-//    
-//    open let countLabel: UILabel = {
-//        let label = UILabel.newAutoLayout()
-//        label.textColor = UIColor(rgbHex: 0x8C8C91)
-//        label.font = UIFont.systemFont(forStyle: .subheadline)
-//        return label
-//    }()
+    
+    open let countLabel: UILabel = {
+        let label = UILabel.newAutoLayout()
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(forStyle: .subheadline)
+        return label
+    }()
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -67,13 +68,17 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
         contentView.configureForAutoLayout()
         contentView.addSubview(imageView)
 //        contentView.addSubview(titleLabel)
-//        contentView.addSubview(countLabel)
+        contentView.addSubview(countLabel)
     }
     
     open override func updateConstraints() {
         if !didSetupConstraints {
             contentView.autoPinEdgesToSuperviewEdges()
             imageView.autoPinEdgesToSuperviewEdges()
+            countLabel.autoMatch(.width, to: .width, of: contentView, withMultiplier: 0.2)
+            countLabel.autoMatch(.height, to: .height, of: contentView, withMultiplier: 0.2)
+            countLabel.autoPinEdge(.trailing, to: .trailing, of: contentView, withOffset: -5)
+            countLabel.autoPinEdge(.bottom, to: .bottom, of: contentView, withOffset: -5)
             didSetupConstraints = true
         }
         super.updateConstraints()
