@@ -247,9 +247,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        doneButtonItem.isEnabled = Int(collectionView.indexPathsForSelectedItems?.count) > 0
         let asset = AssetsManager.shared.photoArray[indexPath.row]
         select(asset: asset, at: indexPath)
+        doneButtonItem.isEnabled = selectedArray.count > 0
         delegate?.assetsPicker(controller: picker, didSelect: asset, at: indexPath)
     }
     
@@ -262,9 +262,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        doneButtonItem.isEnabled = Int(collectionView.indexPathsForSelectedItems?.count) > 0
         let asset = AssetsManager.shared.photoArray[indexPath.row]
         deselect(asset: asset, at: indexPath)
+        doneButtonItem.isEnabled = selectedArray.count > 0
         delegate?.assetsPicker(controller: picker, didDeselect: asset, at: indexPath)
     }
 }
@@ -349,7 +349,14 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
     public func assetsAlbumViewController(controller: AssetsAlbumViewController, selected album: PHAssetCollection) {
         AssetsManager.shared.selectedAlbum = album
         title = album.localizedTitle
+        
         collectionView.reloadData()
+        
+        for asset in selectedArray {
+            if let index = AssetsManager.shared.photoArray.index(where: { $0.localIdentifier == asset.localIdentifier }) {
+                collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
+            }
+        }
     }
 }
 
