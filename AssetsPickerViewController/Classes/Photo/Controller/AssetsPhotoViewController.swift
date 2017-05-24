@@ -40,6 +40,7 @@ open class AssetsPhotoViewController: UIViewController {
     fileprivate var selectedMap = [String: PHAsset]()
     
     var didSetupConstraints = false
+    var didSetInitialPosition: Bool = false
     
     lazy var collectionView: UICollectionView = {
         
@@ -76,15 +77,30 @@ open class AssetsPhotoViewController: UIViewController {
         
         AssetsManager.shared.subscribe(subscriber: self)
         AssetsManager.shared.fetchAlbums()
-        AssetsManager.shared.fetchPhotos(album: nil) { _ in
-            self.collectionView.reloadData()
-        }
     }
     
     open override func viewDidLoad() {
         super.viewDidLoad()
         setupCommon()
         setupBarButtonItems()
+        
+        AssetsManager.shared.fetchPhotos() { _ in
+            self.collectionView.reloadData()
+        }
+    }
+    
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !didSetInitialPosition {
+            let count = AssetsManager.shared.photoArray.count
+            if count > 0 {
+                if self.collectionView.collectionViewLayout.collectionViewContentSize.height > 0 {
+                    let lastRow = self.collectionView.numberOfItems(inSection: 0) - 1
+                    self.collectionView.scrollToItem(at: IndexPath(row: lastRow, section: 0), at: .bottom, animated: false)
+                }
+            }
+            didSetInitialPosition = true
+        }
     }
     
     open override func updateViewConstraints() {
@@ -251,6 +267,10 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
         select(asset: asset, at: indexPath)
         doneButtonItem.isEnabled = selectedArray.count > 0
         delegate?.assetsPicker(controller: picker, didSelect: asset, at: indexPath)
+        
+        if Int(collectionView.indexPathsForSelectedItems?.count) != selectedArray.count {
+            logw("Invalid status.")
+        }
     }
     
     public func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
@@ -266,6 +286,10 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
         deselect(asset: asset, at: indexPath)
         doneButtonItem.isEnabled = selectedArray.count > 0
         delegate?.assetsPicker(controller: picker, didDeselect: asset, at: indexPath)
+        
+        if Int(collectionView.indexPathsForSelectedItems?.count) != selectedArray.count {
+            logw("Invalid status.")
+        }
     }
 }
 
@@ -357,6 +381,7 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
                 collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
             }
         }
+        self.collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.photoArray.count - 1, section: 0), at: .bottom, animated: false)
     }
 }
 

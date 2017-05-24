@@ -81,7 +81,6 @@ open class AssetsManager: NSObject {
 // MARK: - APIs
 extension AssetsManager {
     
-    // MARK: APIs
     open func subscribe(subscriber: AssetsManagerDelegate) {
         subscribers.append(subscriber)
     }
