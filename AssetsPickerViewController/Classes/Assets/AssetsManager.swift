@@ -209,6 +209,22 @@ extension AssetsManager {
         return albumsArray[indexPath.section][indexPath.row]
     }
     
+    open func count(ofType type: PHAssetMediaType) -> Int {
+        if let album = self.selectedAlbum, let fetchResult = fetchMap[album.localIdentifier] {
+            return fetchResult.countOfAssets(with: type)
+        } else {
+            var count = 0
+            for albums in albumsArray {
+                for album in albums {
+                    if let fetchResult = fetchMap[album.localIdentifier], album.assetCollectionSubtype != .smartAlbumRecentlyAdded {
+                        count += fetchResult.countOfAssets(with: type)
+                    }
+                }
+            }
+            return count
+        }
+    }
+    
     // MARK: Observers
     open func registerObserver() { PHPhotoLibrary.shared().register(self) }
     open func unregisterObserver() { PHPhotoLibrary.shared().unregisterChangeObserver(self) }

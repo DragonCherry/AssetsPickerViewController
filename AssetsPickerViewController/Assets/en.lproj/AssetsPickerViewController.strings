@@ -9,4 +9,7 @@
 
 /* Assets */
 "Title_Assets" = "All Photos";
+"Footer_Photos" = "%d Photos";
+"Footer_Videos" = "%d Videos";
+"Footer_Assets" = "%d Photos, %d Videos";
 

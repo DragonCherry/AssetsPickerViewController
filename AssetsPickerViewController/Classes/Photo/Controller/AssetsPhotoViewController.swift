@@ -318,6 +318,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         }
         footerView.setNeedsUpdateConstraints()
         footerView.updateConstraintsIfNeeded()
+        footerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
         return footerView
     }
     
@@ -343,9 +344,13 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
     
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if AssetsManager.shared.numberOfSections - 1 == section {
-            return CGSize(width: collectionView.frame.size.width, height: 60)
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if collectionView.numberOfSections - 1 == section {
+            if collectionView.bounds.width > collectionView.bounds.height {
+                return CGSize(width: collectionView.bounds.width, height: PhotoAttributes.landscapeCellSize.width * 2/3)
+            } else {
+                return CGSize(width: collectionView.bounds.width, height: PhotoAttributes.portraitCellSize.width * 2/3)
+            }
         } else {
             return .zero
         }
@@ -381,7 +386,9 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
                 collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
             }
         }
-        self.collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.photoArray.count - 1, section: 0), at: .bottom, animated: false)
+        if AssetsManager.shared.photoArray.count > 0 {
+            collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.photoArray.count - 1, section: 0), at: .bottom, animated: false)
+        }
     }
 }
 

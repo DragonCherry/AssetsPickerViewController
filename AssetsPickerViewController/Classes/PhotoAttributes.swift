@@ -36,7 +36,8 @@ open class PhotoAttributes {
         // prepare common attributes
         let count = CGFloat(portraitColumnCount)
         let edge = (UIScreen.main.portraitSize.width - (count - 1) * portraitInteritemSpace) / count
-        thumbnailCacheSize = CGSize(width: edge * 2, height: edge * 2)
+        let scale = UIScreen.main.scale
+        thumbnailCacheSize = CGSize(width: edge * scale, height: edge * scale)
         
         
         // prepare portrait attributes
