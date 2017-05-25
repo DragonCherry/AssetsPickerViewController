@@ -408,20 +408,13 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
         logi("reloaded album: \(indexPath)")
     }
-    public func assetsManager(manager: AssetsManager, insertedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
-        logi("inserted albums at: \(indexPath)")
-    }
-    public func assetsManager(manager: AssetsManager, removedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
-        
-    }
-    public func assetsManager(manager: AssetsManager, updatedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
-        
-    }
+    
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("insertedAssets at: \(indexPaths)")
         collectionView.insertItems(at: indexPaths)
         updateFooter()
     }
+    
     public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("removedAssets at: \(indexPaths)")
         for removedAsset in assets {
@@ -434,6 +427,7 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         updateSelectionCount()
         updateFooter()
     }
+    
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("updatedAssets at: \(indexPaths)")
         collectionView.reloadItems(at: indexPaths)

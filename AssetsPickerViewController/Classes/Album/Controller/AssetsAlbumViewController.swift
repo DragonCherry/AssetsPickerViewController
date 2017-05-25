@@ -66,9 +66,6 @@ open class AssetsAlbumViewController: UIViewController {
         view.backgroundColor = UIColor.clear
         view.dataSource = self
         view.delegate = self
-        if #available(iOS 10.0, *) {
-            view.prefetchDataSource = self
-        }
         view.showsHorizontalScrollIndicator = false
         view.showsVerticalScrollIndicator = true
         
@@ -207,7 +204,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
         }
         albumCell.titleLabel.text = AssetsManager.shared.title(at: indexPath)
         albumCell.countLabel.text = NumberFormatter.decimalString(value: AssetsManager.shared.numberOfAssets(at: indexPath))
-        
+        albumCell.imageView.image = nil
         AssetsManager.shared.imageOfAlbum(at: indexPath, size: imageSize, isNeedDegraded: false) { (image) in
             albumCell.imageView.image = image
         }
@@ -241,13 +238,6 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - UICollectionViewDataSourcePrefetching
-extension AssetsAlbumViewController: UICollectionViewDataSourcePrefetching {
-    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        
-    }
-}
-
 // MARK: - UI Event Handlers
 extension AssetsAlbumViewController {
     
@@ -267,9 +257,12 @@ extension AssetsAlbumViewController {
 extension AssetsAlbumViewController: AssetsManagerDelegate {
     
     public func assetsManagerReloaded(manager: AssetsManager) {
+        AssetsManager.shared.cacheAlbums(cacheSize: imageSize)
         collectionView.reloadData()
     }
-    public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
+    public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
+        collectionView.reloadItems(at: [indexPath])
+    }
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}

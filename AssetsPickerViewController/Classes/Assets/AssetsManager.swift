@@ -30,6 +30,7 @@ open class AssetsManager: NSObject {
     
     fileprivate var albumsFetchArray = [PHFetchResult<PHAssetCollection>]()
     fileprivate var albumMap = [String: PHAssetCollection]()
+    fileprivate var albumThumbnails = [[PHAsset]]()
     fileprivate var fetchMap = [String: PHFetchResult<PHAsset>]()
     
     fileprivate var isFetchedAlbums: Bool = false
@@ -77,15 +78,23 @@ extension AssetsManager {
 extension AssetsManager {
     open func cacheAlbums(cacheSize: CGSize) {
         if isFetchedAlbums {
+            if albumThumbnails.count > 0 {
+                imageManager.stopCachingImages(for: albumThumbnails.reduce([], +), targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+            }
+            var newThumbnails = [[PHAsset]]()
             for albums in albumsArray {
+                var thumbnails = [PHAsset]()
                 for album in albums {
                     if let fetchResult = fetchMap[album.localIdentifier] {
-                        if let asset = fetchResult.firstObject {
-                            imageManager.startCachingImages(for: [asset], targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+                        if let asset = fetchResult.lastObject {
+                            thumbnails.append(asset)
                         }
                     }
                 }
+                newThumbnails.append(thumbnails)
             }
+            imageManager.startCachingImages(for: newThumbnails.reduce([], +), targetSize: cacheSize, contentMode: .aspectFill, options: nil)
+            self.albumThumbnails = newThumbnails
         }
     }
     
@@ -335,7 +344,7 @@ extension AssetsManager {
         albumsArray[indexPath.section].insert(album, at: indexPath.row)
     }
     
-    fileprivate func indexPath(forAlbum target: PHAssetCollection) -> IndexPath? {
+    open func indexPath(forAlbum target: PHAssetCollection) -> IndexPath? {
         var typeIndex: Int = -1
         var subtypeIndex: Int = -1
         for (i, albums) in albumsArray.enumerated() {
@@ -373,6 +382,8 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     if let _ = changeDetails.changedObjects.index(of: lastAfterChange) {
                         isChanged = true
                     }
+                } else {
+                    isChanged = true
                 }
             } else {
                 isChanged = true
@@ -404,14 +415,22 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             if let _ = albumsChangeDetail.changedIndexes { isNeedReloadAlbums = true }
         }
         
+        // reload albums if needed
+        if isNeedReloadAlbums {
+            fetchAlbums(isRefetch: true, completion: { (_) in
+                DispatchQueue.main.async {
+                    for subscriber in self.subscribers {
+                        subscriber.assetsManagerReloaded(manager: self)
+                    }
+                }
+            })
+        }
+        
         // notify changes of assets
         for albums in albumsArray {
             for album in albums {
                 guard let fetchResult = fetchMap[album.localIdentifier], let assetsChangeDetails = changeInstance.changeDetails(for: fetchResult) else {
                     continue
-                }
-                if isThumbnailChanged(changeDetails: assetsChangeDetails) {
-                    isNeedReloadAlbums = true
                 }
                 guard assetsChangeDetails.hasIncrementalChanges else {
                     for subscriber in subscribers {
@@ -423,9 +442,15 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     }
                     continue
                 }
-                guard let selectedAlbum = self.selectedAlbum, album.localIdentifier == selectedAlbum.localIdentifier else {
-                    continue
+                
+                if let albumIndexPath = self.indexPath(forAlbum: album), isThumbnailChanged(changeDetails: assetsChangeDetails) {
+                    DispatchQueue.main.async {
+                        for subscriber in self.subscribers {
+                            subscriber.assetsManager(manager: self, reloadedAlbum: album, at: albumIndexPath)
+                        }
+                    }
                 }
+                
                 // sync removed assets
                 if let removedIndexesSet = assetsChangeDetails.removedIndexes {
                     let fetchResultAfterRemove = assetsChangeDetails.fetchResultAfterChanges
@@ -434,7 +459,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     for removedIndex in removedIndexes {
                         removedAssets.append(photoArray.remove(at: removedIndex.row))
                     }
-                    fetchMap[selectedAlbum.localIdentifier] = fetchResultAfterRemove
+                    fetchMap[album.localIdentifier] = fetchResultAfterRemove
                     // stop caching for removed assets
                     stopCache(assets: removedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
                     DispatchQueue.main.async {
@@ -453,7 +478,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         insertedAssets.append(insertedAsset)
                         photoArray.insert(insertedAsset, at: insertedIndex.row)
                     }
-                    fetchMap[selectedAlbum.localIdentifier] = fetchResultAfterInsert
+                    fetchMap[album.localIdentifier] = fetchResultAfterInsert
                     // start caching for inserted assets
                     cache(assets: insertedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
                     DispatchQueue.main.async {
@@ -471,7 +496,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         let updatedAsset = fetchResultAfterUpdate.object(at: updatedIndex.row)
                         updatedAssets.append(updatedAsset)
                     }
-                    fetchMap[selectedAlbum.localIdentifier] = fetchResultAfterUpdate
+                    fetchMap[album.localIdentifier] = fetchResultAfterUpdate
                     // stop caching for updated assets
                     stopCache(assets: updatedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
                     cache(assets: updatedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
@@ -484,16 +509,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             }
         }
         
-        // reload albums if needed
-        if isNeedReloadAlbums {
-            fetchAlbums(isRefetch: true, completion: { (_) in
-                DispatchQueue.main.async {
-                    for subscriber in self.subscribers {
-                        subscriber.assetsManagerReloaded(manager: self)
-                    }
-                }
-            })
-        }
+        
     }
 }
 
