@@ -25,7 +25,7 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
         didSet {
             countLabel.isHidden = !isSelected
             if isSelected {
-                imageView.dim(animated: false, color: .white, alpha: 0.3)
+                imageView.dim(animated: false, color: .white, alpha: 0.25)
             } else {
                 imageView.undim(animated: false)
             }

@@ -74,9 +74,6 @@ open class AssetsPhotoViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(collectionView)
         view.setNeedsUpdateConstraints()
-        
-        AssetsManager.shared.subscribe(subscriber: self)
-        AssetsManager.shared.fetchAlbums()
     }
     
     open override func viewDidLoad() {
@@ -84,7 +81,15 @@ open class AssetsPhotoViewController: UIViewController {
         setupCommon()
         setupBarButtonItems()
         
-        AssetsManager.shared.fetchPhotos() { _ in
+        let manager = AssetsManager.shared
+        manager.subscribe(subscriber: self)
+        manager.fetchAlbums()
+        manager.fetchPhotos() { _ in
+            if let selectedTitle = manager.selectedAlbum?.localizedTitle {
+                self.title = selectedTitle
+            } else {
+                self.title = ""
+            }
             self.collectionView.reloadData()
         }
     }
@@ -113,20 +118,16 @@ open class AssetsPhotoViewController: UIViewController {
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
-        let isPortrait = size.height > size.width
-        
         if let photoLayout = collectionView.collectionViewLayout as? AssetsPhotoLayout {
             if let offset = photoLayout.translateOffset(forChangingSize: size, currentOffset: collectionView.contentOffset) {
                 photoLayout.translatedOffset = offset
             }
             coordinator.animate(alongsideTransition: { (_) in
-                
             }) { (_) in
                 photoLayout.translatedOffset = nil
             }
         }
-        updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
+        updateLayout(layout: collectionView.collectionViewLayout, isPortrait: size.height > size.width)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -147,7 +148,6 @@ open class AssetsPhotoViewController: UIViewController {
 // MARK: - Initial Setups
 extension AssetsPhotoViewController {
     open func setupCommon() {
-        title = String(key: "Title_Assets")
         view.backgroundColor = .white
     }
     
@@ -159,7 +159,7 @@ extension AssetsPhotoViewController {
     
     open func setupGestureRecognizer() {
         if let _ = self.tapGesture {
-            
+            // ignore
         } else {
             let gesture = UITapGestureRecognizer(target: self, action: #selector(pressedTitle))
             navigationController?.navigationBar.addGestureRecognizer(gesture)
@@ -375,19 +375,21 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
     }
     
     public func assetsAlbumViewController(controller: AssetsAlbumViewController, selected album: PHAssetCollection) {
-        AssetsManager.shared.selectedAlbum = album
-        title = album.localizedTitle
         
-        collectionView.reloadData()
-        
-        for asset in selectedArray {
-            if let index = AssetsManager.shared.photoArray.index(where: { $0.localIdentifier == asset.localIdentifier }) {
-                logi("reselecting: \(index)")
-                collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
+        if AssetsManager.shared.select(album: album) {
+            
+            title = album.localizedTitle
+            collectionView.reloadData()
+            
+            for asset in selectedArray {
+                if let index = AssetsManager.shared.photoArray.index(where: { $0.localIdentifier == asset.localIdentifier }) {
+                    logi("reselecting: \(index)")
+                    collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
+                }
             }
-        }
-        if AssetsManager.shared.photoArray.count > 0 {
-            collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.photoArray.count - 1, section: 0), at: .bottom, animated: false)
+            if AssetsManager.shared.photoArray.count > 0 {
+                collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.photoArray.count - 1, section: 0), at: .bottom, animated: false)
+            }
         }
     }
 }

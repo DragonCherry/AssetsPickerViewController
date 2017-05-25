@@ -8,7 +8,6 @@
 "Title_Section_MyAlbums" = "나의 앨범";
 
 /* Assets */
-"Title_Assets" = "사진";
 "Footer_Photos" = "사진 %d개";
 "Footer_Videos" = "동영상 %d개";
 "Footer_Assets" = "사진 %d개, 동영상 %d개";
