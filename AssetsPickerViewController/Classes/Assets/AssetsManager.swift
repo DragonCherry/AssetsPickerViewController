@@ -115,8 +115,9 @@ extension AssetsManager {
     open func clear() {
         
         unregisterObserver()
-        imageManager.stopCachingImagesForAllAssets()
         subscribers.removeAll()
+        
+        imageManager.stopCachingImagesForAllAssets()
         
         albumFetchArray.removeAll()
         fetchMap.removeAll()
@@ -124,6 +125,8 @@ extension AssetsManager {
         albumsArray.removeAll()
         photoMap.removeAll()
         photoArray.removeAll()
+        
+        selectedAlbum = nil
         
         isFetchedAlbums = false
     }

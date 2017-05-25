@@ -206,17 +206,21 @@ extension AssetsPhotoViewController {
             logw("Invalid status.")
             return
         }
-        guard let targetIndex = selectedArray.index(where: { targetAsset.localIdentifier == $0.localIdentifier }) else {
+        guard let targetIndex = selectedArray.index(of: targetAsset) else {
             logw("Invalid status.")
             return
         }
         selectedArray.remove(at: targetIndex)
         selectedMap.removeValue(forKey: targetAsset.localIdentifier)
         
+        updateSelectionCount()
+    }
+    
+    func updateSelectionCount() {
         let visibleIndexPaths = collectionView.indexPathsForVisibleItems
         for visibleIndexPath in visibleIndexPaths {
             if let selectedAsset = selectedMap[AssetsManager.shared.photoArray[visibleIndexPath.row].localIdentifier], let photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCell {
-                if let selectedIndex = selectedArray.index(where: { selectedAsset.localIdentifier == $0.localIdentifier }) {
+                if let selectedIndex = selectedArray.index(of: selectedAsset) {
                     photoCell.countLabel.text = "\(selectedIndex + 1)"
                 }
             }
@@ -328,7 +332,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         }
         if let asset = selectedMap[AssetsManager.shared.photoArray[indexPath.row].localIdentifier] {
             // update cell UI as selected
-            if let targetIndex = selectedArray.index(where: { asset.localIdentifier == $0.localIdentifier }) {
+            if let targetIndex = selectedArray.index(of: asset) {
                 photoCell.countLabel.text = "\(targetIndex + 1)"
             }
         } else {
@@ -382,7 +386,7 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
             collectionView.reloadData()
             
             for asset in selectedArray {
-                if let index = AssetsManager.shared.photoArray.index(where: { $0.localIdentifier == asset.localIdentifier }) {
+                if let index = AssetsManager.shared.photoArray.index(of: asset) {
                     logi("reselecting: \(index)")
                     collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
                 }
@@ -416,7 +420,14 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     }
     public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("removedAssets at: \(indexPaths)")
+        for removedAsset in assets {
+            if let index = selectedArray.index(of: removedAsset) {
+                selectedArray.remove(at: index)
+                selectedMap.removeValue(forKey: removedAsset.localIdentifier)
+            }
+        }
         collectionView.deleteItems(at: indexPaths)
+        updateSelectionCount()
         updateFooter()
     }
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
