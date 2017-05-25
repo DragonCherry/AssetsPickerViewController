@@ -15,14 +15,14 @@ open class AssetsPhotoViewController: UIViewController {
     
     open var cellType: AnyClass = AssetsPhotoCell.classForCoder()
     
-    let cellReuseIdentifier: String = UUID().uuidString
-    let footerReuseIdentifier: String = UUID().uuidString
+    fileprivate let cellReuseIdentifier: String = UUID().uuidString
+    fileprivate let footerReuseIdentifier: String = UUID().uuidString
     
-    lazy var cancelButtonItem: UIBarButtonItem = {
+    fileprivate lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
         return buttonItem
     }()
-    lazy var doneButtonItem: UIBarButtonItem = {
+    fileprivate lazy var doneButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Done"), style: .plain, target: self, action: #selector(pressedDone(button:)))
         return buttonItem
     }()
@@ -39,10 +39,10 @@ open class AssetsPhotoViewController: UIViewController {
     fileprivate var selectedArray = [PHAsset]()
     fileprivate var selectedMap = [String: PHAsset]()
     
-    var didSetupConstraints = false
-    var didSetInitialPosition: Bool = false
+    fileprivate var didSetupConstraints = false
+    fileprivate var didSetInitialPosition: Bool = false
     
-    lazy var collectionView: UICollectionView = {
+    fileprivate lazy var collectionView: UICollectionView = {
         
         let layout = AssetsPhotoLayout()
         self.updateLayout(layout: layout, isPortrait: UIApplication.shared.statusBarOrientation.isPortrait)
@@ -179,9 +179,9 @@ extension AssetsPhotoViewController {
 extension AssetsPhotoViewController {
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
         if let flowLayout = layout as? UICollectionViewFlowLayout {
-            flowLayout.itemSize = isPortrait ? PhotoAttributes.portraitCellSize : PhotoAttributes.landscapeCellSize
-            flowLayout.minimumLineSpacing = isPortrait ? PhotoAttributes.portraitLineSpace : PhotoAttributes.landscapeLineSpace
-            flowLayout.minimumInteritemSpacing = isPortrait ? PhotoAttributes.portraitInteritemSpace : PhotoAttributes.landscapeInteritemSpace
+            flowLayout.itemSize = isPortrait ? AssetsPhotoAttributes.portraitCellSize : AssetsPhotoAttributes.landscapeCellSize
+            flowLayout.minimumLineSpacing = isPortrait ? AssetsPhotoAttributes.portraitLineSpace : AssetsPhotoAttributes.landscapeLineSpace
+            flowLayout.minimumInteritemSpacing = isPortrait ? AssetsPhotoAttributes.portraitInteritemSpace : AssetsPhotoAttributes.landscapeInteritemSpace
         }
     }
     
@@ -338,7 +338,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         } else {
             // update cell UI as normal
         }
-        AssetsManager.shared.image(at: indexPath.row, size: PhotoAttributes.thumbnailCacheSize, completion: { (image) in
+        AssetsManager.shared.image(at: indexPath.row, size: AssetsPhotoAttributes.thumbnailCacheSize, completion: { (image) in
             photoCell.imageView.image = image
         })
     }
@@ -350,9 +350,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         if collectionView.numberOfSections - 1 == section {
             if collectionView.bounds.width > collectionView.bounds.height {
-                return CGSize(width: collectionView.bounds.width, height: PhotoAttributes.landscapeCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.landscapeCellSize.width * 2/3)
             } else {
-                return CGSize(width: collectionView.bounds.width, height: PhotoAttributes.portraitCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.portraitCellSize.width * 2/3)
             }
         } else {
             return .zero
@@ -367,7 +367,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSourcePrefetching {
         for indexPath in indexPaths {
             assets.append(AssetsManager.shared.photoArray[indexPath.row])
         }
-        AssetsManager.shared.cache(assets: assets, size: PhotoAttributes.thumbnailCacheSize)
+        AssetsManager.shared.cache(assets: assets, size: AssetsPhotoAttributes.thumbnailCacheSize)
     }
 }
 
@@ -400,6 +400,10 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
 
 // MARK: - AssetsManagerDelegate
 extension AssetsPhotoViewController: AssetsManagerDelegate {
+    
+    public func assetsManagerReloaded(manager: AssetsManager) {
+        
+    }
     
     public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
         logi("reloaded album: \(indexPath)")

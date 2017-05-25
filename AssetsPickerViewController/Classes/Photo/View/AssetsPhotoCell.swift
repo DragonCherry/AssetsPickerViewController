@@ -49,6 +49,7 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     
     open let countLabel: UILabel = {
         let label = UILabel.newAutoLayout()
+        label.textAlignment = .center
         label.textColor = UIColor.white
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label

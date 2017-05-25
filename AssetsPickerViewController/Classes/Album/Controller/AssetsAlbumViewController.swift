@@ -208,7 +208,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
         albumCell.titleLabel.text = AssetsManager.shared.title(at: indexPath)
         albumCell.countLabel.text = NumberFormatter.decimalString(value: AssetsManager.shared.numberOfAssets(at: indexPath))
         
-        AssetsManager.shared.imageOfAlbum(at: indexPath, size: imageSize) { (image) in
+        AssetsManager.shared.imageOfAlbum(at: indexPath, size: imageSize, isNeedDegraded: false) { (image) in
             albumCell.imageView.image = image
         }
     }
@@ -229,8 +229,12 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if AssetsManager.shared.numberOfSections - 1 == section {
-            return CGSize(width: collectionView.frame.size.width, height: 60)
+        if collectionView.numberOfSections > 1 && section == 1 {
+            if collectionView.bounds.width > collectionView.bounds.height {
+                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.landscapeCellSize.width * 2/3)
+            } else {
+                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.portraitCellSize.width * 2/3)
+            }
         } else {
             return .zero
         }
@@ -262,12 +266,11 @@ extension AssetsAlbumViewController {
 // MARK: - AssetsManagerDelegate
 extension AssetsAlbumViewController: AssetsManagerDelegate {
     
+    public func assetsManagerReloaded(manager: AssetsManager) {
+        collectionView.reloadData()
+    }
     public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
-    public func assetsManager(manager: AssetsManager, insertedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
-    public func assetsManager(manager: AssetsManager, removedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
-    public func assetsManager(manager: AssetsManager, updatedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
-
 }

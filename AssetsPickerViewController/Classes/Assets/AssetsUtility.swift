@@ -11,67 +11,6 @@ import Photos
 
 open class AssetsUtility {
     
-//    open static func assetWithLocalIdentifier(_ localIdentifier: String) -> PHAsset? {
-//        let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
-//        return fetchResult.firstObject as PHAsset?
-//    }
-//    
-//    open static func allAssets(_ recentFirst: Bool = true, includeImage: Bool = true, includeVideo: Bool = true) -> [PHAsset] {
-//        
-//        var assets = [PHAsset]()
-//        var results = [PHFetchResult<PHAsset>]()
-//        var existanceTable = [String: Bool]()
-//        
-//        let options = AssetsUtility.optionForMediaTypes(includeImage, includeVideo: includeVideo)
-//        
-//        let smartAlbumResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
-//        let smartAlbumCollectionCount = smartAlbumResult.count
-//        for i in 0..<smartAlbumCollectionCount {
-//            let smartAlbumCollection = smartAlbumResult.object(at: i)
-//            results.append(PHAsset.fetchAssets(in: smartAlbumCollection, options: options))
-//        }
-//        
-//        let albumResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-//        let albumCollectionCount = albumResult.count
-//        for i in 0..<albumCollectionCount {
-//            let albumCollection = albumResult.object(at: i)
-//            results.append(PHAsset.fetchAssets(in: albumCollection, options: options))
-//        }
-//        
-//        for result in results {
-//            let count = result.count
-//            for i in 0..<count {
-//                let asset = result.object(at: i)
-//                if let exists = existanceTable[asset.localIdentifier], exists {
-//                    // pass
-//                } else {
-//                    existanceTable[asset.localIdentifier] = true
-//                    assets.append(asset)
-//                }
-//            }
-//        }
-//        
-//        return AssetsUtility.sortedAssets(assets, recentFirst: recentFirst)
-//    }
-//    
-//    open static func assetsWithCollection(_ collection: PHAssetCollection?, recentFirst: Bool = true, includeImage: Bool = true, includeVideo: Bool = true) -> [PHAsset] {
-//        
-//        guard let collection = collection else {
-//            return AssetsUtility.allAssets(recentFirst, includeImage: includeImage, includeVideo: includeVideo)
-//        }
-//        
-//        let options = AssetsUtility.optionForMediaTypes(includeImage, includeVideo: includeVideo)
-//        
-//        var assets = [PHAsset]()
-//        let result = PHAsset.fetchAssets(in: collection, options: options)
-//        
-//        for i in 0..<result.count {
-//            let asset = result.object(at: i)
-//            assets.append(asset)
-//        }
-//        return AssetsUtility.sortedAssets(assets)
-//    }
-    
     open static func fetchOption(isIncludeImage: Bool = true, isIncludeVideo: Bool = true) -> PHFetchOptions {
         let options = PHFetchOptions()
         if isIncludeImage && isIncludeVideo {
