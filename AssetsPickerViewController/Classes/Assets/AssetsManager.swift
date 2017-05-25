@@ -205,10 +205,11 @@ extension AssetsManager {
     
     @discardableResult
     open func select(album newAlbum: PHAssetCollection) -> Bool {
-        if let oldAlbum = self.selectedAlbum, oldAlbum.localIdentifier == newAlbum.localIdentifier {
+        if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
             log("Selected same album.")
             return false
         }
+        self.selectedAlbum = newAlbum
         var photos = [PHAsset]()
         if let fetchResult = fetchMap[newAlbum.localIdentifier] {
             for i in 0..<fetchResult.count {
