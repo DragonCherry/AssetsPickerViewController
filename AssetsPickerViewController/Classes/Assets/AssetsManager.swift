@@ -451,6 +451,10 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     }
                 }
                 
+                guard let selectedAlbum = self.selectedAlbum, selectedAlbum.localIdentifier == album.localIdentifier else {
+                    continue
+                }
+                
                 // sync removed assets
                 if let removedIndexesSet = assetsChangeDetails.removedIndexes {
                     let fetchResultAfterRemove = assetsChangeDetails.fetchResultAfterChanges
