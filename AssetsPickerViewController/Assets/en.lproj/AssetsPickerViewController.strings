@@ -10,5 +10,11 @@
 /* Assets */
 "Footer_Photos" = "%d Photos";
 "Footer_Videos" = "%d Videos";
-"Footer_Assets" = "%d Photos, %d Videos";
+"Footer_Items" = "%d Photos, %d Videos";
 
+/* Selected Status on Title */
+"Title_Selected_Photo" = "%d Photo Selected";
+"Title_Selected_Photos" = "%d Photos Selected";
+"Title_Selected_Video" = "%d Video Selected";
+"Title_Selected_Videos" = "%d Videos Selected";
+"Title_Selected_Items" = "%d Items Selected";

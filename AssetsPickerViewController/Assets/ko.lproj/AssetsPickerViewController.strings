@@ -10,5 +10,11 @@
 /* Assets */
 "Footer_Photos" = "사진 %d개";
 "Footer_Videos" = "동영상 %d개";
-"Footer_Assets" = "사진 %d개, 동영상 %d개";
+"Footer_Items" = "사진 %d개, 동영상 %d개";
 
+/* Selected Status on Title */
+"Title_Selected_Photo" = "사진 %d개 선택됨";
+"Title_Selected_Photos" = "사진 %d개 선택됨";
+"Title_Selected_Video" = "동영상 %d개 선택됨";
+"Title_Selected_Videos" = "동영상 %d개 선택됨";
+"Title_Selected_Items" = "%d개의 항목 선택됨";

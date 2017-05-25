@@ -47,13 +47,13 @@ open class AssetsPhotoFooterView: UICollectionReusableView {
     open func set(imageCount: Int, videoCount: Int) {
         var countText: String?
         if imageCount > 0 && videoCount > 0 {
-            countText = String(format: String(key: "Footer_Assets"), imageCount, videoCount)
+            countText = String(format: String(key: "Footer_Items"), imageCount, videoCount)
         } else if imageCount > 0 {
             countText = String(format: String(key: "Footer_Photos"), imageCount)
         } else if videoCount > 0 {
             countText = String(format: String(key: "Footer_Videos"), videoCount)
         } else {
-            countText = String(format: String(key: "Footer_Assets"), 0, 0)
+            countText = String(format: String(key: "Footer_Items"), 0, 0)
         }
         countLabel.text = countText
     }

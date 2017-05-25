@@ -227,6 +227,34 @@ extension AssetsPhotoViewController {
         }
     }
     
+    func updateNavigationStatus() {
+        doneButtonItem.isEnabled = selectedArray.count > 0
+        let asset: PHAsset
+        selectedArray.reduce(0, { $0. })
+        
+        let imageCount = AssetsManager.shared.count(ofType: .image)
+        let videoCount = AssetsManager.shared.count(ofType: .video)
+        var titleString = ""
+        if imageCount > 0 && videoCount > 0 {
+            titleString = String(format: String(key: "Title_Selected_Items"), imageCount + videoCount)
+        } else {
+            if imageCount > 0 {
+                if imageCount > 1 {
+                    titleString = String(format: String(key: "Title_Selected_Photos"), imageCount)
+                } else {
+                    titleString = String(format: String(key: "Title_Selected_Photo"), imageCount)
+                }
+            } else if videoCount > 0 {
+                if videoCount > 1 {
+                    titleString = String(format: String(key: "Title_Selected_Videos"), videoCount)
+                } else {
+                    titleString = String(format: String(key: "Title_Selected_Video"), videoCount)
+                }
+            }
+        }
+        title = titleString
+    }
+    
     func updateFooter() {
         guard let footerView = collectionView.visibleSupplementaryViews(ofKind: UICollectionElementKindSectionFooter).last as? AssetsPhotoFooterView else {
             return
@@ -276,7 +304,7 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let asset = AssetsManager.shared.photoArray[indexPath.row]
         select(asset: asset, at: indexPath)
-        doneButtonItem.isEnabled = selectedArray.count > 0
+        updateNavigationStatus()
         delegate?.assetsPicker(controller: picker, didSelect: asset, at: indexPath)
     }
     
@@ -291,7 +319,7 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let asset = AssetsManager.shared.photoArray[indexPath.row]
         deselect(asset: asset, at: indexPath)
-        doneButtonItem.isEnabled = selectedArray.count > 0
+        updateNavigationStatus()
         delegate?.assetsPicker(controller: picker, didDeselect: asset, at: indexPath)
     }
 }
@@ -425,12 +453,14 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         }
         collectionView.deleteItems(at: indexPaths)
         updateSelectionCount()
+        updateNavigationStatus()
         updateFooter()
     }
     
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("updatedAssets at: \(indexPaths)")
         collectionView.reloadItems(at: indexPaths)
+        updateNavigationStatus()
         updateFooter()
     }
 }
