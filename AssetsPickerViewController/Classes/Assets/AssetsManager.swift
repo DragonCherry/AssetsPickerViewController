@@ -457,17 +457,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             if let _ = albumsChangeDetail.changedIndexes { isNeedReloadAlbums = true }
         }
         
-        // reload albums if needed
-        if isNeedReloadAlbums {
-            fetchAlbums(isRefetch: true, completion: { (_) in
-                DispatchQueue.main.async {
-                    for subscriber in self.subscribers {
-                        subscriber.assetsManagerReloaded(manager: self)
-                    }
-                }
-            })
-        }
-        
         // notify changes of assets
         for albums in albumsArray {
             for album in albums {
@@ -552,7 +541,14 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             }
         }
         
-        
+        // reload albums if needed
+        if isNeedReloadAlbums {
+            DispatchQueue.main.async {
+                for subscriber in self.subscribers {
+                    subscriber.assetsManagerReloaded(manager: self)
+                }
+            }
+        }
     }
 }
 
