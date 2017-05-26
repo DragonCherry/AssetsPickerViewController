@@ -23,6 +23,7 @@ open class AssetsPhotoCellOverlay: UIView {
         label.textColor = UIColor.white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.systemFont(forStyle: .subheadline)
+        label.isHidden = true
         return label
     }()
     
@@ -44,8 +45,6 @@ open class AssetsPhotoCellOverlay: UIView {
     
     private func commonInit() {
         dim(animated: false, color: .white, alpha: 0.25)
-        // TODO: place anywhere you want
-        countLabel.isHidden = false
         addSubview(countLabel)
         addSubview(checkmark)
     }
