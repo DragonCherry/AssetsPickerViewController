@@ -52,8 +52,16 @@ extension SimpleExampleController {
 
 extension SimpleExampleController: AssetsPickerViewControllerDelegate {
     
+    func assetsPickerCannotAccessPhotoLibrary(controller: AssetsPickerViewController) {
+        logw("Need permission to access photo library.")
+    }
+    
     func assetsPickerDidCancel(controller: AssetsPickerViewController) {
         log("Cancelled.")
+    }
+    
+    func assetsPickerNotGranted(controller: AssetsPickerViewController) {
+       
     }
     func assetsPicker(controller: AssetsPickerViewController, selected assets: [PHAsset]) {
         logi("Selected Assets: \(assets.count)")

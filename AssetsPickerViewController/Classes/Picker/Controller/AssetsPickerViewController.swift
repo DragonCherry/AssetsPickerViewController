@@ -13,6 +13,7 @@ import Photos
 // MARK: - AssetsPickerViewControllerDelegate
 public protocol AssetsPickerViewControllerDelegate {
     func assetsPickerDidCancel(controller: AssetsPickerViewController)
+    func assetsPickerCannotAccessPhotoLibrary(controller: AssetsPickerViewController)
     func assetsPicker(controller: AssetsPickerViewController, selected assets: [PHAsset])
     func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PHAsset, at indexPath: IndexPath) -> Bool
     func assetsPicker(controller: AssetsPickerViewController, didSelect asset: PHAsset, at indexPath: IndexPath)

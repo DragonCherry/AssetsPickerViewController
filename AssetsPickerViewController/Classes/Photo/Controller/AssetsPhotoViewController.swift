@@ -80,17 +80,13 @@ open class AssetsPhotoViewController: UIViewController {
         super.viewDidLoad()
         setupCommon()
         setupBarButtonItems()
-        
-        let manager = AssetsManager.shared
-        manager.subscribe(subscriber: self)
-        manager.fetchAlbums()
-        manager.fetchPhotos() { _ in
-            if let selectedTitle = manager.selectedAlbum?.localizedTitle {
-                self.title = selectedTitle
+        authorize { (isAuthorized) in
+            if isAuthorized {
+                self.setupAssets()
             } else {
-                self.title = ""
+                // TODO: show message
+                self.delegate?.assetsPickerCannotAccessPhotoLibrary(controller: self.picker)
             }
-            self.collectionView.reloadData()
         }
     }
     
@@ -147,6 +143,7 @@ open class AssetsPhotoViewController: UIViewController {
 
 // MARK: - Initial Setups
 extension AssetsPhotoViewController {
+    
     open func setupCommon() {
         view.backgroundColor = .white
     }
@@ -155,6 +152,35 @@ extension AssetsPhotoViewController {
         navigationItem.leftBarButtonItem = cancelButtonItem
         navigationItem.rightBarButtonItem = doneButtonItem
         doneButtonItem.isEnabled = false
+    }
+    
+    open func setupAssets() {
+        let manager = AssetsManager.shared
+        manager.subscribe(subscriber: self)
+        manager.fetchAlbums()
+        manager.fetchPhotos() { _ in
+            if let selectedTitle = manager.selectedAlbum?.localizedTitle {
+                self.title = selectedTitle
+            } else {
+                self.title = ""
+            }
+            self.collectionView.reloadData()
+        }
+    }
+    
+    open func authorize(completion: @escaping ((Bool) -> Void)) {
+        if PHPhotoLibrary.authorizationStatus() == .authorized {
+            completion(true)
+        } else {
+            PHPhotoLibrary.requestAuthorization({ (status) in
+                switch status {
+                case .authorized:
+                    completion(true)
+                default:
+                    completion(false)
+                }
+            })
+        }
     }
     
     open func setupGestureRecognizer() {
@@ -229,12 +255,17 @@ extension AssetsPhotoViewController {
     
     func updateNavigationStatus() {
         doneButtonItem.isEnabled = selectedArray.count > 0
-        let asset: PHAsset
-        selectedArray.reduce(0, { $0. })
         
-        let imageCount = AssetsManager.shared.count(ofType: .image)
-        let videoCount = AssetsManager.shared.count(ofType: .video)
-        var titleString = ""
+        let counts: (imageCount: Int, videoCount: Int) = selectedArray.reduce((0, 0)) { (result, asset) -> (Int, Int) in
+            let imageCount = asset.mediaType == .image ? 1 : 0
+            let videoCount = asset.mediaType == .video ? 1 : 0
+            return (result.0 + imageCount, result.1 + videoCount)
+        }
+        
+        let imageCount = counts.imageCount
+        let videoCount = counts.videoCount
+        
+        var titleString = AssetsManager.shared.selectedAlbum?.localizedTitle ?? ""
         if imageCount > 0 && videoCount > 0 {
             titleString = String(format: String(key: "Title_Selected_Items"), imageCount + videoCount)
         } else {
