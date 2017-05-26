@@ -74,6 +74,24 @@ extension AssetsManager {
     }
 }
 
+// MARK: - Permission
+extension AssetsManager {
+    open func authorize(completion: @escaping ((Bool) -> Void)) {
+        if PHPhotoLibrary.authorizationStatus() == .authorized {
+            completion(true)
+        } else {
+            PHPhotoLibrary.requestAuthorization({ (status) in
+                switch status {
+                case .authorized:
+                    completion(true)
+                default:
+                    completion(false)
+                }
+            })
+        }
+    }
+}
+
 // MARK: - Cache
 extension AssetsManager {
     open func cacheAlbums(cacheSize: CGSize) {
@@ -123,7 +141,9 @@ extension AssetsManager {
         unregisterObserver()
         subscribers.removeAll()
         
-        imageManager.stopCachingImagesForAllAssets()
+        if PHPhotoLibrary.authorizationStatus() == .authorized {
+            imageManager.stopCachingImagesForAllAssets()
+        }
         
         albumsFetchArray.removeAll()
         fetchMap.removeAll()

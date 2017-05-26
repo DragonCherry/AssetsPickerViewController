@@ -18,3 +18,12 @@
 "Title_Selected_Video" = "동영상 %d개 선택됨";
 "Title_Selected_Videos" = "동영상 %d개 선택됨";
 "Title_Selected_Items" = "%d개의 항목 선택됨";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "사진이나 동영상 없음";
+"Message_No_Items" = "카메라를 사용해서 사진 및 동영상을 가져오거나 iTunes를 사용하여 %@에서 사진 및 동영상을 동기화할 수 있습니다.";
+"Message_No_Items_Camera" = "iTunes를 사용하여 %@에서 사진 및 동영상을 동기화할 수 있습니다.";
+
+/* No Permission */
+"Title_No_Permission" = "이 앱은 귀하의 사진이나 동영상에 접근 권한이 없습니다.";
+"Message_No_Permission" = "개인정보 설정에서 접근을 활성화할 수 있습니다.";

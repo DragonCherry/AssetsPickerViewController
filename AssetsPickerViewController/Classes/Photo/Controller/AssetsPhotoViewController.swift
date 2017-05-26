@@ -26,6 +26,12 @@ open class AssetsPhotoViewController: UIViewController {
         let buttonItem = UIBarButtonItem(title: String(key: "Done"), style: .plain, target: self, action: #selector(pressedDone(button:)))
         return buttonItem
     }()
+    fileprivate let emptyView: AssetsEmptyView = {
+        return AssetsEmptyView.newAutoLayout()
+    }()
+    fileprivate let noPermissionView: AssetsNoPermissionView = {
+        return AssetsNoPermissionView.newAutoLayout()
+    }()
     
     fileprivate var delegate: AssetsPickerViewControllerDelegate? {
         return (splitViewController as? AssetsPickerViewController)?.pickerDelegate
@@ -73,6 +79,8 @@ open class AssetsPhotoViewController: UIViewController {
         view = UIView()
         view.backgroundColor = .white
         view.addSubview(collectionView)
+        view.addSubview(emptyView)
+        view.addSubview(noPermissionView)
         view.setNeedsUpdateConstraints()
     }
     
@@ -80,11 +88,12 @@ open class AssetsPhotoViewController: UIViewController {
         super.viewDidLoad()
         setupCommon()
         setupBarButtonItems()
-        authorize { (isAuthorized) in
-            if isAuthorized {
+        updateEmptyView(count: 0)
+        AssetsManager.shared.authorize { (isGranted) in
+            if isGranted {
                 self.setupAssets()
             } else {
-                // TODO: show message
+                self.updateNoPermissionView()
                 self.delegate?.assetsPickerCannotAccessPhotoLibrary(controller: self.picker)
             }
         }
@@ -107,6 +116,8 @@ open class AssetsPhotoViewController: UIViewController {
     open override func updateViewConstraints() {
         if !didSetupConstraints {
             collectionView.autoPinEdgesToSuperviewEdges()
+            emptyView.autoPinEdgesToSuperviewEdges()
+            noPermissionView.autoPinEdgesToSuperviewEdges()
             didSetupConstraints = true
         }
         super.updateViewConstraints()
@@ -158,28 +169,14 @@ extension AssetsPhotoViewController {
         let manager = AssetsManager.shared
         manager.subscribe(subscriber: self)
         manager.fetchAlbums()
-        manager.fetchPhotos() { _ in
+        manager.fetchPhotos() { photos in
+            self.updateEmptyView(count: photos.count)
             if let selectedTitle = manager.selectedAlbum?.localizedTitle {
                 self.title = selectedTitle
             } else {
                 self.title = ""
             }
             self.collectionView.reloadData()
-        }
-    }
-    
-    open func authorize(completion: @escaping ((Bool) -> Void)) {
-        if PHPhotoLibrary.authorizationStatus() == .authorized {
-            completion(true)
-        } else {
-            PHPhotoLibrary.requestAuthorization({ (status) in
-                switch status {
-                case .authorized:
-                    completion(true)
-                default:
-                    completion(false)
-                }
-            })
         }
     }
     
@@ -201,8 +198,25 @@ extension AssetsPhotoViewController {
     }
 }
 
-// MARK: - Internal Utility
+// MARK: - Internal APIs for UI
 extension AssetsPhotoViewController {
+    
+    func updateEmptyView(count: Int) {
+        if emptyView.isHidden {
+            if count == 0 {
+                emptyView.isHidden = false
+            }
+        } else {
+            if count > 0 {
+                emptyView.isHidden = true
+            }
+        }
+    }
+    
+    func updateNoPermissionView() {
+        noPermissionView.isHidden = PHPhotoLibrary.authorizationStatus() == .authorized
+    }
+    
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
         if let flowLayout = layout as? UICollectionViewFlowLayout {
             flowLayout.itemSize = isPortrait ? AssetsPhotoAttributes.portraitCellSize : AssetsPhotoAttributes.landscapeCellSize
@@ -308,6 +322,7 @@ extension AssetsPhotoViewController {
     }
     
     func pressedTitle(gesture: UITapGestureRecognizer) {
+        guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
         let navigationController = UINavigationController()
         let controller = AssetsAlbumViewController()
         controller.delegate = self
@@ -359,7 +374,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
 extension AssetsPhotoViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return AssetsManager.shared.photoArray.count
+        let count = AssetsManager.shared.photoArray.count
+        updateEmptyView(count: count)
+        return count
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
