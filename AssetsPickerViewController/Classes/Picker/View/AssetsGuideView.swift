@@ -61,6 +61,9 @@ open class AssetsGuideView: UIView {
         
         let bodyParagraphStyle = NSMutableParagraphStyle()
         bodyParagraphStyle.alignment = .center
+        bodyParagraphStyle.firstLineHeadIndent = 20
+        bodyParagraphStyle.headIndent = 20
+        bodyParagraphStyle.tailIndent = -20
         let attributedBody = NSMutableAttributedString(string: message, attributes: [
             NSFontAttributeName: UIFont.systemFont(forStyle: bodyStyle),
             NSForegroundColorAttributeName: UIColor(rgbHex: 0x999999),
