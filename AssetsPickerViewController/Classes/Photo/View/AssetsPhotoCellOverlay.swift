@@ -26,6 +26,11 @@ open class AssetsPhotoCellOverlay: UIView {
         return label
     }()
     
+    let checkmark: SSCheckMark = {
+        let view = SSCheckMark.newAutoLayout()
+        return view
+    }()
+    
     // MARK: - Lifecycle
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -39,16 +44,21 @@ open class AssetsPhotoCellOverlay: UIView {
     
     private func commonInit() {
         dim(animated: false, color: .white, alpha: 0.25)
+        // TODO: place anywhere you want
+        countLabel.isHidden = false
         addSubview(countLabel)
+        addSubview(checkmark)
     }
     
     open override func updateConstraints() {
         if !didSetupConstraints {
             
-            countLabel.autoMatch(.width, to: .width, of: self, withMultiplier: 0.2)
-            countLabel.autoMatch(.height, to: .height, of: self, withMultiplier: 0.2)
-            countLabel.autoPinEdge(.trailing, to: .trailing, of: self, withOffset: -5)
-            countLabel.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -5)
+            countLabel.autoPinEdgesToSuperviewEdges()
+            
+            checkmark.autoSetDimension(.width, toSize: 30)
+            checkmark.autoSetDimension(.height, toSize: 30)
+            checkmark.autoPinEdge(.trailing, to: .trailing, of: self, withOffset: -1)
+            checkmark.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -1)
             
             didSetupConstraints = true
         }
