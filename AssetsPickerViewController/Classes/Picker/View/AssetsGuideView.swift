@@ -12,7 +12,9 @@ import SwiftARGB
 open class AssetsGuideView: UIView {
     
     private var didSetupConstraints: Bool = false
-    private let lineSpace: CGFloat = 10
+    var lineSpace: CGFloat = 10
+    var titleStyle: UIFontTextStyle = .title1
+    var bodyStyle: UIFontTextStyle = .body
 
     fileprivate lazy var messageLabel: UILabel = {
         let label = UILabel.newAutoLayout()
@@ -38,31 +40,35 @@ open class AssetsGuideView: UIView {
     
     open override func updateConstraints() {
         if !didSetupConstraints {
-            messageLabel.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20))
+            messageLabel.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15))
             didSetupConstraints = true
         }
         super.updateConstraints()
     }
     
     open func set(title: String, message: String) {
+        
         let attributedString = NSMutableAttributedString()
+        
+        let titleParagraphStyle = NSMutableParagraphStyle()
+        titleParagraphStyle.paragraphSpacing = lineSpace
+        titleParagraphStyle.alignment = .center
         let attributedTitle = NSMutableAttributedString(string: "\(title)\n", attributes: [
-            NSFontAttributeName: UIFont.systemFont(forStyle: UIFontTextStyle.title1),
-            NSForegroundColorAttributeName: UIColor(rgbHex: 0x999999)
+            NSFontAttributeName: UIFont.systemFont(forStyle: titleStyle),
+            NSForegroundColorAttributeName: UIColor(rgbHex: 0x999999),
+            NSParagraphStyleAttributeName: titleParagraphStyle
             ])
-        let lineStyle = NSMutableParagraphStyle()
-        lineStyle.lineSpacing = lineSpace
-        let line = NSMutableAttributedString(string: "\n", attributes: [
-            NSParagraphStyleAttributeName: lineStyle,
-            NSFontAttributeName: UIFont.systemFont(ofSize: 1)
+        
+        let bodyParagraphStyle = NSMutableParagraphStyle()
+        bodyParagraphStyle.alignment = .center
+        let attributedBody = NSMutableAttributedString(string: message, attributes: [
+            NSFontAttributeName: UIFont.systemFont(forStyle: bodyStyle),
+            NSForegroundColorAttributeName: UIColor(rgbHex: 0x999999),
+            NSParagraphStyleAttributeName: bodyParagraphStyle
             ])
-        let attributedDesc = NSMutableAttributedString(string: message, attributes: [
-            NSFontAttributeName: UIFont.systemFont(forStyle: UIFontTextStyle.body),
-            NSForegroundColorAttributeName: UIColor(rgbHex: 0x999999)
-            ])
+        
         attributedString.append(attributedTitle)
-        attributedString.append(line)
-        attributedString.append(attributedDesc)
+        attributedString.append(attributedBody)
         messageLabel.attributedText = attributedString
     }
 }

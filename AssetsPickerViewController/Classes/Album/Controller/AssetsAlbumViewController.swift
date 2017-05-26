@@ -256,6 +256,8 @@ extension AssetsAlbumViewController {
 // MARK: - AssetsManagerDelegate
 extension AssetsAlbumViewController: AssetsManagerDelegate {
     
+    public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {}
+    
     public func assetsManagerReloaded(manager: AssetsManager) {
         AssetsManager.shared.cacheAlbums(cacheSize: imageSize)
         collectionView.reloadData()

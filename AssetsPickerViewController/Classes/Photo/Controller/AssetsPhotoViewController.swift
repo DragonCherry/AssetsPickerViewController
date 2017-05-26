@@ -89,11 +89,12 @@ open class AssetsPhotoViewController: UIViewController {
         setupCommon()
         setupBarButtonItems()
         updateEmptyView(count: 0)
+        updateNoPermissionView()
         AssetsManager.shared.authorize { (isGranted) in
+            self.updateNoPermissionView()
             if isGranted {
                 self.setupAssets()
             } else {
-                self.updateNoPermissionView()
                 self.delegate?.assetsPickerCannotAccessPhotoLibrary(controller: self.picker)
             }
         }
@@ -135,6 +136,10 @@ open class AssetsPhotoViewController: UIViewController {
             }
         }
         updateLayout(layout: collectionView.collectionViewLayout, isPortrait: size.height > size.width)
+    }
+    
+    open override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -211,10 +216,12 @@ extension AssetsPhotoViewController {
                 emptyView.isHidden = true
             }
         }
+        logi("emptyView.isHidden: \(emptyView.isHidden), count: \(count)")
     }
     
     func updateNoPermissionView() {
         noPermissionView.isHidden = PHPhotoLibrary.authorizationStatus() == .authorized
+        logi("isHidden: \(noPermissionView.isHidden)")
     }
     
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
@@ -476,6 +483,19 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
 
 // MARK: - AssetsManagerDelegate
 extension AssetsPhotoViewController: AssetsManagerDelegate {
+    
+    public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {
+        if oldStatus != .authorized {
+            if newStatus == .authorized {
+                updateNoPermissionView()
+                AssetsManager.shared.fetchPhotos(isRefetch: true, completion: { (_) in
+                    self.collectionView.reloadData()
+                })
+            }
+        } else {
+            updateNoPermissionView()
+        }
+    }
     
     public func assetsManagerReloaded(manager: AssetsManager) {
         

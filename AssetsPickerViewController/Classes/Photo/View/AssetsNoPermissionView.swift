@@ -12,8 +12,7 @@ import SwiftARGB
 open class AssetsNoPermissionView: AssetsGuideView {
    
     override func commonInit() {
-        super.commonInit()
-        backgroundColor = .white
         set(title: String(key: "Title_No_Permission"), message: String(key: "Message_No_Permission"))
+        super.commonInit()
     }
 }

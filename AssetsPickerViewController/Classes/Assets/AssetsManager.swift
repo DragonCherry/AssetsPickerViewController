@@ -13,6 +13,7 @@ import OptionalTypes
 
 // MARK: - AssetsManagerDelegate
 public protocol AssetsManagerDelegate: class {
+    func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus)
     func assetsManagerReloaded(manager: AssetsManager)
     func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath)
     func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath])
@@ -26,6 +27,7 @@ open class AssetsManager: NSObject {
     open static let shared = AssetsManager()
     
     fileprivate let imageManager = PHCachingImageManager()
+    fileprivate var authorizationStatus = PHPhotoLibrary.authorizationStatus()
     fileprivate var subscribers = [AssetsManagerDelegate]()
     
     fileprivate var albumsFetchArray = [PHFetchResult<PHAssetCollection>]()
@@ -81,11 +83,13 @@ extension AssetsManager {
             completion(true)
         } else {
             PHPhotoLibrary.requestAuthorization({ (status) in
-                switch status {
-                case .authorized:
-                    completion(true)
-                default:
-                    completion(false)
+                DispatchQueue.main.async {
+                    switch status {
+                    case .authorized:
+                        completion(true)
+                    default:
+                        completion(false)
+                    }
                 }
             })
         }
@@ -261,9 +265,12 @@ extension AssetsManager {
     open func fetchAlbums(isRefetch: Bool = false, completion: (([[PHAssetCollection]]) -> Void)? = nil) {
         
         if isRefetch {
+            selectedAlbum = nil
             isFetchedAlbums = false
-            fetchMap.removeAll()
             albumsArray.removeAll()
+            albumsFetchArray.removeAll()
+            fetchMap.removeAll()
+            albumMap.removeAll()
         }
         
         if !isFetchedAlbums {
@@ -275,9 +282,13 @@ extension AssetsManager {
         completion?(albumsArray)
     }
     
-    open func fetchPhotos(completion: (([PHAsset]) -> Void)? = nil) {
+    open func fetchPhotos(isRefetch: Bool = false, completion: (([PHAsset]) -> Void)? = nil) {
         
-        fetchAlbums()
+        fetchAlbums(isRefetch: isRefetch)
+        
+        if isRefetch {
+            photoArray.removeAll()
+        }
         
         // set default album
         select(album: defaultAlbum)
@@ -420,6 +431,17 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
         
         var isNeedReloadAlbums: Bool = false
         
+        let newStatus = PHPhotoLibrary.authorizationStatus()
+        if authorizationStatus != newStatus {
+            let oldStatus = authorizationStatus
+            authorizationStatus = newStatus
+            DispatchQueue.main.async {
+                for subscriber in self.subscribers {
+                    subscriber.assetsManager(manager: self, authorizationStatusChanged: oldStatus, newStatus: newStatus)
+                }
+            }
+        }
+        
         // notify changes of albums
         for albumsFetchResult in albumsFetchArray {
             guard let albumsChangeDetail = changeInstance.changeDetails(for: albumsFetchResult) else {
@@ -452,6 +474,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 guard let fetchResult = fetchMap[album.localIdentifier], let assetsChangeDetails = changeInstance.changeDetails(for: fetchResult) else {
                     continue
                 }
+                fetchMap[album.localIdentifier] = assetsChangeDetails.fetchResultAfterChanges
                 guard assetsChangeDetails.hasIncrementalChanges else {
                     for subscriber in subscribers {
                         if let indexPathForAlbum = indexPath(forAlbum: album) {
@@ -477,13 +500,11 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 
                 // sync removed assets
                 if let removedIndexesSet = assetsChangeDetails.removedIndexes {
-                    let fetchResultAfterRemove = assetsChangeDetails.fetchResultAfterChanges
                     let removedIndexes = removedIndexesSet.asArray().sorted(by: { $0.row > $1.row })
                     var removedAssets = [PHAsset]()
                     for removedIndex in removedIndexes {
                         removedAssets.append(photoArray.remove(at: removedIndex.row))
                     }
-                    fetchMap[album.localIdentifier] = fetchResultAfterRemove
                     // stop caching for removed assets
                     stopCache(assets: removedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
                     DispatchQueue.main.async {
@@ -502,7 +523,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         insertedAssets.append(insertedAsset)
                         photoArray.insert(insertedAsset, at: insertedIndex.row)
                     }
-                    fetchMap[album.localIdentifier] = fetchResultAfterInsert
                     // start caching for inserted assets
                     cache(assets: insertedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
                     DispatchQueue.main.async {
@@ -520,7 +540,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         let updatedAsset = fetchResultAfterUpdate.object(at: updatedIndex.row)
                         updatedAssets.append(updatedAsset)
                     }
-                    fetchMap[album.localIdentifier] = fetchResultAfterUpdate
                     // stop caching for updated assets
                     stopCache(assets: updatedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
                     cache(assets: updatedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
