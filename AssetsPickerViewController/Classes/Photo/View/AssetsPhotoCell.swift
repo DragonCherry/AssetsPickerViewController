@@ -12,6 +12,7 @@ import PureLayout
 
 public protocol AssetsPhotoCellProtocol {
     var isSelected: Bool { get set }
+    var isVideo: Bool { get set }
     var imageView: UIImageView { get }
     var count: Int { set get }
     var duration: TimeInterval { set get }
@@ -19,15 +20,18 @@ public protocol AssetsPhotoCellProtocol {
 
 open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     
-    open override var isSelected: Bool {
+    // MARK: - AssetsPhotoCellProtocol
+    open var isVideo: Bool = false {
         didSet {
-            countLabel.isHidden = !isSelected
-            if isSelected {
-                imageView.dim(animated: false, color: .white, alpha: 0.25)
-            } else {
-                imageView.undim(animated: false)
+            durationLabel.isHidden = !isVideo
+            if !isVideo {
+                imageView.removeGradient()
             }
         }
+    }
+    
+    open override var isSelected: Bool {
+        didSet { overlay.isHidden = !isSelected }
     }
     
     open let imageView: UIImageView = {
@@ -39,33 +43,33 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }()
     
     open var count: Int = 0 {
-        didSet { countLabel.text = "\(count)" }
+        didSet { overlay.countLabel.text = "\(count)" }
     }
     
     open var duration: TimeInterval = 0 {
         didSet {
-            
+            durationLabel.text = String(duration: duration)
         }
     }
     
-//    open let timeLabel: UILabel = {
-//        let label = UILabel.newAutoLayout()
-//        label.textColor = .black
-//        label.font = UIFont.systemFont(forStyle: .subheadline)
-//        return label
-//    }()
-    
+    // MARK: - Views
     private var didSetupConstraints: Bool = false
     
-    private let countLabel: UILabel = {
+    private let durationLabel: UILabel = {
         let label = UILabel.newAutoLayout()
-        label.textAlignment = .center
-        label.textColor = UIColor.white
-        label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.systemFont(forStyle: .subheadline)
+        label.textColor = .white
+        label.textAlignment = .right
+        label.font = UIFont.systemFont(forStyle: .caption1)
         return label
     }()
     
+    private let overlay: AssetsPhotoCellOverlay = {
+        let overlay = AssetsPhotoCellOverlay.newAutoLayout()
+        overlay.isHidden = true
+        return overlay
+    }()
+    
+    // MARK: - Lifecycle
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         commonInit()
@@ -79,19 +83,33 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     private func commonInit() {
         contentView.configureForAutoLayout()
         contentView.addSubview(imageView)
-        contentView.addSubview(countLabel)
+        contentView.addSubview(durationLabel)
+        contentView.addSubview(overlay)
     }
     
     open override func updateConstraints() {
         if !didSetupConstraints {
+            
             contentView.autoPinEdgesToSuperviewEdges()
+            
             imageView.autoPinEdgesToSuperviewEdges()
-            countLabel.autoMatch(.width, to: .width, of: contentView, withMultiplier: 0.2)
-            countLabel.autoMatch(.height, to: .height, of: contentView, withMultiplier: 0.2)
-            countLabel.autoPinEdge(.trailing, to: .trailing, of: contentView, withOffset: -5)
-            countLabel.autoPinEdge(.bottom, to: .bottom, of: contentView, withOffset: -5)
+            
+            durationLabel.autoSetDimension(.height, toSize: durationLabel.font.pointSize + 10)
+            durationLabel.autoPinEdge(.leading, to: .leading, of: contentView, withOffset: 8)
+            durationLabel.autoPinEdge(.trailing, to: .trailing, of: contentView, withOffset: -8)
+            durationLabel.autoPinEdge(.bottom, to: .bottom, of: contentView)
+            
+            overlay.autoPinEdgesToSuperviewEdges()
+            
             didSetupConstraints = true
         }
         super.updateConstraints()
+    }
+    
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+        if isVideo {
+            imageView.setGradient(.fromBottom, start: 0, end: 0.2, startAlpha: 0.75, color: .black)
+        }
     }
 }

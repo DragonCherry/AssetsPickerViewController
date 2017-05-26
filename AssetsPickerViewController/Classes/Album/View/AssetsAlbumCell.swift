@@ -19,6 +19,7 @@ public protocol AssetsAlbumCellProtocol {
 
 open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     
+    // MARK: - AssetsAlbumCellProtocol
     open override var isSelected: Bool {
         didSet {
             if isSelected {
@@ -50,6 +51,7 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
         }
     }
     
+    // MARK: - Views
     fileprivate let titleLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textColor = .black
@@ -66,6 +68,7 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     
     private var didSetupConstraints: Bool = false
     
+    // MARK: - Lifecycle
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         commonInit()

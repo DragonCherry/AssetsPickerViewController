@@ -388,13 +388,39 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath)
-        guard let _ = cell as? AssetsPhotoCellProtocol else {
+        guard var photoCell = cell as? AssetsPhotoCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return cell
         }
+        photoCell.isVideo = AssetsManager.shared.photoArray[indexPath.row].mediaType == .video
         cell.setNeedsUpdateConstraints()
         cell.updateConstraintsIfNeeded()
         return cell
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard var photoCell = cell as? AssetsPhotoCellProtocol else {
+            logw("Failed to cast UICollectionViewCell.")
+            return
+        }
+        
+        let asset = AssetsManager.shared.photoArray[indexPath.row]
+        photoCell.isVideo = asset.mediaType == .video
+        if photoCell.isVideo {
+            photoCell.duration = asset.duration
+        }
+        
+        if let selectedAsset = selectedMap[asset.localIdentifier] {
+            // update cell UI as selected
+            if let targetIndex = selectedArray.index(of: selectedAsset) {
+                photoCell.count = targetIndex + 1
+            }
+        } else {
+            // update cell UI as normal
+        }
+        AssetsManager.shared.image(at: indexPath.row, size: AssetsPhotoAttributes.thumbnailCacheSize, completion: { (image) in
+            photoCell.imageView.image = image
+        })
     }
     
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -406,24 +432,6 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         footerView.updateConstraintsIfNeeded()
         footerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
         return footerView
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard var photoCell = cell as? AssetsPhotoCellProtocol else {
-            logw("Failed to cast UICollectionViewCell.")
-            return
-        }
-        if let asset = selectedMap[AssetsManager.shared.photoArray[indexPath.row].localIdentifier] {
-            // update cell UI as selected
-            if let targetIndex = selectedArray.index(of: asset) {
-                photoCell.count = targetIndex + 1
-            }
-        } else {
-            // update cell UI as normal
-        }
-        AssetsManager.shared.image(at: indexPath.row, size: AssetsPhotoAttributes.thumbnailCacheSize, completion: { (image) in
-            photoCell.imageView.image = image
-        })
     }
 }
 
