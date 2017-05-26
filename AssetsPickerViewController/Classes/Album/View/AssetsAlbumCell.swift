@@ -13,13 +13,11 @@ import PureLayout
 public protocol AssetsAlbumCellProtocol {
     var isSelected: Bool { get set }
     var imageView: UIImageView { get }
-    var titleLabel: UILabel { get }
-    var countLabel: UILabel { get }
+    var titleText: String? { get set }
+    var count: Int { get set }
 }
 
 open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
-    
-    private var didSetupConstraints: Bool = false
     
     open override var isSelected: Bool {
         didSet {
@@ -40,19 +38,33 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
         return view
     }()
     
-    open let titleLabel: UILabel = {
+    open var titleText: String? {
+        didSet {
+            titleLabel.text = titleText
+        }
+    }
+    
+    open var count: Int = 0 {
+        didSet {
+            countLabel.text = "\(NumberFormatter.decimalString(value: count))"
+        }
+    }
+    
+    fileprivate let titleLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textColor = .black
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
     
-    open let countLabel: UILabel = {
+    fileprivate let countLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textColor = UIColor(rgbHex: 0x8C8C91)
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
+    
+    private var didSetupConstraints: Bool = false
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

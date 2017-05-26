@@ -13,13 +13,11 @@ import PureLayout
 public protocol AssetsPhotoCellProtocol {
     var isSelected: Bool { get set }
     var imageView: UIImageView { get }
-//    var timeLabel: UILabel { get }
-    var countLabel: UILabel { get }
+    var count: Int { set get }
+    var duration: TimeInterval { set get }
 }
 
 open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
-    
-    private var didSetupConstraints: Bool = false
     
     open override var isSelected: Bool {
         didSet {
@@ -40,6 +38,16 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
         return view
     }()
     
+    open var count: Int = 0 {
+        didSet { countLabel.text = "\(count)" }
+    }
+    
+    open var duration: TimeInterval = 0 {
+        didSet {
+            
+        }
+    }
+    
 //    open let timeLabel: UILabel = {
 //        let label = UILabel.newAutoLayout()
 //        label.textColor = .black
@@ -47,10 +55,13 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
 //        return label
 //    }()
     
-    open let countLabel: UILabel = {
+    private var didSetupConstraints: Bool = false
+    
+    private let countLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textAlignment = .center
         label.textColor = UIColor.white
+        label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
@@ -68,7 +79,6 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     private func commonInit() {
         contentView.configureForAutoLayout()
         contentView.addSubview(imageView)
-//        contentView.addSubview(titleLabel)
         contentView.addSubview(countLabel)
     }
     

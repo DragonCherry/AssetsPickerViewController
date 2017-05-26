@@ -140,7 +140,7 @@ extension AssetsAlbumViewController {
     
     func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
-        navigationItem.rightBarButtonItem = searchButtonItem
+//        navigationItem.rightBarButtonItem = searchButtonItem
     }
     
     func numberOfCell(isPortrait: Bool) -> Int { return isPortrait ? 2 : 3 }
@@ -198,12 +198,12 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         log("[\(indexPath.section)][\(indexPath.row)]")
-        guard let albumCell = cell as? AssetsAlbumCellProtocol else {
+        guard var albumCell = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return
         }
-        albumCell.titleLabel.text = AssetsManager.shared.title(at: indexPath)
-        albumCell.countLabel.text = NumberFormatter.decimalString(value: AssetsManager.shared.numberOfAssets(at: indexPath))
+        albumCell.titleText = AssetsManager.shared.title(at: indexPath)
+        albumCell.count = AssetsManager.shared.numberOfAssets(at: indexPath)
         albumCell.imageView.image = nil
         AssetsManager.shared.imageOfAlbum(at: indexPath, size: imageSize, isNeedDegraded: false) { (image) in
             albumCell.imageView.image = image

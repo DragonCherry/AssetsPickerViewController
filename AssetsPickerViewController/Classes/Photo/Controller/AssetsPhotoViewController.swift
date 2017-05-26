@@ -245,7 +245,7 @@ extension AssetsPhotoViewController {
             logw("Invalid status.")
             return
         }
-        photoCell.countLabel.text = "\(selectedArray.count)"
+        photoCell.count = selectedArray.count
     }
     
     func deselect(asset: PHAsset, at indexPath: IndexPath) {
@@ -268,7 +268,7 @@ extension AssetsPhotoViewController {
         for visibleIndexPath in visibleIndexPaths {
             if let selectedAsset = selectedMap[AssetsManager.shared.photoArray[visibleIndexPath.row].localIdentifier], let photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCell {
                 if let selectedIndex = selectedArray.index(of: selectedAsset) {
-                    photoCell.countLabel.text = "\(selectedIndex + 1)"
+                    photoCell.count = selectedIndex + 1
                 }
             }
         }
@@ -409,14 +409,14 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let photoCell = cell as? AssetsPhotoCellProtocol else {
+        guard var photoCell = cell as? AssetsPhotoCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return
         }
         if let asset = selectedMap[AssetsManager.shared.photoArray[indexPath.row].localIdentifier] {
             // update cell UI as selected
             if let targetIndex = selectedArray.index(of: asset) {
-                photoCell.countLabel.text = "\(targetIndex + 1)"
+                photoCell.count = targetIndex + 1
             }
         } else {
             // update cell UI as normal
