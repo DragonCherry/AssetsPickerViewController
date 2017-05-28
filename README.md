@@ -8,9 +8,23 @@ Customizable assets picker controller that supports selecting multiple photos an
 
 ## Screenshots
 
+Album UX like iOS
+
 ![albums_portrait](https://cloud.githubusercontent.com/assets/20486591/26525542/43036a42-4395-11e7-98f0-5bf3f40f923d.PNG)
+
+
+Selecting UX like iOS
+
 ![photos_portrait](https://cloud.githubusercontent.com/assets/20486591/26525538/42b1d6dc-4395-11e7-9c16-b9abdb2e9247.PNG)
+
+
+For landscape, keeps focusing indexes even during decelerating.
+
 ![photos_landscape](https://cloud.githubusercontent.com/assets/20486591/26525541/42f44f4e-4395-11e7-80e2-e1dd890a4d16.PNG)
+
+
+Handles exception cases.
+
 ![no_photos](https://cloud.githubusercontent.com/assets/20486591/26525540/42f25e82-4395-11e7-9dc2-73e04bcc9f00.PNG)
 ![no_permission](https://cloud.githubusercontent.com/assets/20486591/26525539/42e6759a-4395-11e7-9bae-1b90f6d3ec44.PNG)
 
@@ -48,9 +62,11 @@ Any advice and suggestions will be greatly appreciated.
 
 - fully customizable configuration by settings struct model
 
-- Enhance example codes
+- enhance example codes
 
-- etc
+- option to show empty albums
+
+- any other customizable options
 
 
 ## Example
