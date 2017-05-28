@@ -6,6 +6,13 @@
 
 Customizable assets picker controller that supports selecting multiple photos and videos, fully written in Swift.
 
+
+## Developer's Message
+
+This project is still under development so many features will be added, and will get better in the near future.
+Any advice, suggestions, and pull request will be greatly appreciated.
+
+
 ## Screenshots
 
 Album UX like iOS Photos App
@@ -27,14 +34,6 @@ Handles empty or no permisson cases.
 
 ![no_photos](https://cloud.githubusercontent.com/assets/20486591/26525540/42f25e82-4395-11e7-9dc2-73e04bcc9f00.PNG)
 ![no_permission](https://cloud.githubusercontent.com/assets/20486591/26525539/42e6759a-4395-11e7-9bae-1b90f6d3ec44.PNG)
-
-## Example
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-This project is still under development as many features will be added in the future.
-
-Any advice and suggestions will be greatly appreciated.
 
 
 ## Features Done
@@ -66,10 +65,14 @@ Any advice and suggestions will be greatly appreciated.
 
 - option to show empty albums
 
+- support many languages(German, French, Spanish, Chinese, Japanese, etc)
+
 - any other customizable options
 
 
 ## Example
+
+To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ```ruby
 // to show
