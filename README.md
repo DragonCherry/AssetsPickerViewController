@@ -53,6 +53,8 @@ Handles empty or no permisson cases.
 
 ## Features To-do
 
+- iPad support
+
 - customizable album order
 
 - customizable asset order
