@@ -13,6 +13,7 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		E10E44491EDBA7020075C641 /* CommonExampleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E44481EDBA7020075C641 /* CommonExampleController.swift */; };
 		E11119271ECC136200DC2302 /* SimpleExampleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11119261ECC136200DC2302 /* SimpleExampleController.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		8FC9EECB4B9C8308CFA54C20 /* Pods_AssetsPickerViewController_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AssetsPickerViewController_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB946C56DEB423024F5AB0E3 /* Pods-AssetsPickerViewController_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Tests/Pods-AssetsPickerViewController_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		DF68D535ED8F5EDE6BB13809 /* Pods-AssetsPickerViewController_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Example/Pods-AssetsPickerViewController_Example.release.xcconfig"; sourceTree = "<group>"; };
+		E10E44481EDBA7020075C641 /* CommonExampleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExampleController.swift; sourceTree = "<group>"; };
 		E11119261ECC136200DC2302 /* SimpleExampleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleExampleController.swift; sourceTree = "<group>"; };
 		E159E9F4E24E25BE57C1159B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		FED5796E98C093EFDFDF9B23 /* AssetsPickerViewController.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = AssetsPickerViewController.podspec; path = ../AssetsPickerViewController.podspec; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 		607FACD21AFB9204008FA782 /* Example for AssetsPickerViewController */ = {
 			isa = PBXGroup;
 			children = (
+				E10E44471EDBA6CB0075C641 /* Common */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* MainViewController.swift */,
 				E11119261ECC136200DC2302 /* SimpleExampleController.swift */,
@@ -118,6 +121,14 @@
 				1592F9C610477996A6411204 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		E10E44471EDBA6CB0075C641 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				E10E44481EDBA7020075C641 /* CommonExampleController.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		F046B0C69710D25AFBA9FC7D /* Pods */ = {
@@ -265,6 +276,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */,
+				E10E44491EDBA7020075C641 /* CommonExampleController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				E11119271ECC136200DC2302 /* SimpleExampleController.swift in Sources */,
 			);

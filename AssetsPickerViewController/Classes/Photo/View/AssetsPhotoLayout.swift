@@ -43,8 +43,8 @@ extension AssetsPhotoLayout {
     }
     
     open func expectedContentHeight(isPortrait: Bool) -> CGFloat {
-        var rows = AssetsManager.shared.photoArray.count / (isPortrait ? AssetsPhotoAttributes.portraitColumnCount : AssetsPhotoAttributes.landscapeColumnCount)
-        let remainder = AssetsManager.shared.photoArray.count % (isPortrait ? AssetsPhotoAttributes.portraitColumnCount : AssetsPhotoAttributes.landscapeColumnCount)
+        var rows = AssetsManager.shared.assetArray.count / (isPortrait ? AssetsPhotoAttributes.portraitColumnCount : AssetsPhotoAttributes.landscapeColumnCount)
+        let remainder = AssetsManager.shared.assetArray.count % (isPortrait ? AssetsPhotoAttributes.portraitColumnCount : AssetsPhotoAttributes.landscapeColumnCount)
         rows += remainder > 0 ? 1 : 0
         
         let cellSize = isPortrait ? AssetsPhotoAttributes.portraitCellSize : AssetsPhotoAttributes.landscapeCellSize

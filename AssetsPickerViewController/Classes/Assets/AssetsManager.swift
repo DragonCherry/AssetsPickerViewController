@@ -44,7 +44,7 @@ open class AssetsManager: NSObject {
     deinit { logd("Released \(type(of: self))") }
     
     fileprivate var albumsArray = [[PHAssetCollection]]()
-    fileprivate(set) open var photoArray = [PHAsset]()
+    fileprivate(set) open var assetArray = [PHAsset]()
     
     fileprivate var defaultAlbum: PHAssetCollection!
     fileprivate(set) open var selectedAlbum: PHAssetCollection?
@@ -153,7 +153,7 @@ extension AssetsManager {
         fetchMap.removeAll()
         albumMap.removeAll()
         albumsArray.removeAll()
-        photoArray.removeAll()
+        assetArray.removeAll()
         
         selectedAlbum = nil
         
@@ -203,7 +203,7 @@ extension AssetsManager {
     
     open func image(at index: Int, size: CGSize, completion: @escaping ((UIImage?) -> Void)) {
         imageManager.requestImage(
-            for: photoArray[index],
+            for: assetArray[index],
             targetSize: size,
             contentMode: .aspectFill,
             options: nil,
@@ -251,7 +251,7 @@ extension AssetsManager {
                 let asset = fetchResult.object(at: i)
                 photos.append(asset)
             }
-            photoArray = photos
+            assetArray = photos
             return true
         } else {
             return false
@@ -287,13 +287,13 @@ extension AssetsManager {
         fetchAlbums(isRefetch: isRefetch)
         
         if isRefetch {
-            photoArray.removeAll()
+            assetArray.removeAll()
         }
         
         // set default album
         select(album: defaultAlbum)
         
-        completion?(photoArray)
+        completion?(assetArray)
     }
     
     fileprivate func fetchAlbum(albumType: PHAssetCollectionType) {
@@ -492,7 +492,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     let removedIndexes = removedIndexesSet.asArray().sorted(by: { $0.row > $1.row })
                     var removedAssets = [PHAsset]()
                     for removedIndex in removedIndexes {
-                        removedAssets.append(photoArray.remove(at: removedIndex.row))
+                        removedAssets.append(assetArray.remove(at: removedIndex.row))
                     }
                     // stop caching for removed assets
                     stopCache(assets: removedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
@@ -510,7 +510,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     for insertedIndex in insertedIndexes {
                         let insertedAsset = fetchResultAfterInsert.object(at: insertedIndex.row)
                         insertedAssets.append(insertedAsset)
-                        photoArray.insert(insertedAsset, at: insertedIndex.row)
+                        assetArray.insert(insertedAsset, at: insertedIndex.row)
                     }
                     // start caching for inserted assets
                     cache(assets: insertedAssets, size: AssetsPhotoAttributes.thumbnailCacheSize)
