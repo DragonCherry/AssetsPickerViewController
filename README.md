@@ -7,7 +7,7 @@
 Customizable assets picker controller that supports selecting multiple photos and videos, fully written in Swift.
 
 
-## Developer's Message
+## Comment
 
 This project is still under development so many features will be added, and will get better in the near future.
 Any advice, suggestions, and pull request will be greatly appreciated.
@@ -72,7 +72,7 @@ Handles empty or no permisson cases.
 - any other customizable options
 
 
-## Example
+## Usage
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
