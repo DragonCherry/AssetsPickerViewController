@@ -111,10 +111,11 @@ open class AssetsAlbumViewController: UIViewController {
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        let space = pickerConfig.albumItemSpace(isPortrait: size.height > size.width)
+        let isPortrait = size.height > size.width
+        let space = pickerConfig.albumItemSpace(isPortrait: isPortrait)
         let insets = collectionView.contentInset
         collectionView.contentInset = UIEdgeInsets(top: insets.top, left: space, bottom: insets.bottom, right: space)
-        collectionView.collectionViewLayout.invalidateLayout()
+        updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
     }
 }
 
@@ -132,7 +133,7 @@ extension AssetsAlbumViewController {
     
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
         if let flowLayout = layout as? UICollectionViewFlowLayout {
-            flowLayout.itemSize = pickerConfig.albumCellSize
+            flowLayout.itemSize = isPortrait ? pickerConfig.albumPortraitCellSize : pickerConfig.albumLandscapeCellSize
             flowLayout.minimumLineSpacing = pickerConfig.albumDefaultSpace
             flowLayout.minimumInteritemSpacing = pickerConfig.albumItemSpace(isPortrait: isPortrait)
         }
@@ -201,12 +202,14 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return pickerConfig.albumCellSize
-    }
+//    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        let cellSize = collectionView.bounds.height > collectionView.bounds.width ? pickerConfig.albumPortraitCellSize : pickerConfig.albumLandscapeCellSize
+//        logi("[\(indexPath.row)] \(cellSize)")
+//        return cellSize
+//    }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return pickerConfig.albumDefaultSpace
+        return pickerConfig.albumLineSpace
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

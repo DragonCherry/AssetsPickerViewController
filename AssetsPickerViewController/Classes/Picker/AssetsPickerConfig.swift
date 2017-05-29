@@ -33,15 +33,19 @@ open class AssetsPickerConfig {
     // MARK: Custom Layout
     open var albumCellType: AnyClass = AssetsAlbumCell.classForCoder()
     open var albumDefaultSpace: CGFloat = 20
+    open var albumLineSpace: CGFloat = 0
     open var albumPortraitColumnCount: Int = 2
-    open var albumForcedCellHeight: CGFloat?
-    open var albumCellSize: CGSize = .zero
+    open var albumPortraitForcedCellHeight: CGFloat?
+    open var albumPortraitCellSize: CGSize = .zero
     
     open var albumLandscapeColumnCount: Int = 3
+    open var albumLandscapeForcedCellHeight: CGFloat?
+    open var albumLandscapeCellSize: CGSize = .zero
     
     func albumItemSpace(isPortrait: Bool) -> CGFloat {
         let size = isPortrait ? UIScreen.main.portraitSize : UIScreen.main.landscapeSize
         let count = CGFloat(isPortrait ? albumPortraitColumnCount : albumLandscapeColumnCount)
+        let albumCellSize = isPortrait ? albumPortraitCellSize : albumLandscapeCellSize
         let space = (size.width - count * albumCellSize.width) / (count + 1)
         return space
     }
@@ -91,13 +95,22 @@ open class AssetsPickerConfig {
         
         /* initialize album attributes */
         
+        // album line space
+        if albumLineSpace < 0 {
+            albumLineSpace = albumDefaultSpace
+        }
+        
         // initialize album cell size
-        let albumPivotCount = CGFloat(self.albumPortraitColumnCount)
-        let albumWidth = (UIScreen.main.portraitSize.width - self.albumDefaultSpace * (albumPivotCount + 1)) / albumPivotCount
-        albumCellSize = CGSize(width: albumWidth, height: albumForcedCellHeight ?? albumWidth * 1.25)
+        let albumPortraitCount = CGFloat(self.albumPortraitColumnCount)
+        let albumPortraitWidth = (UIScreen.main.portraitSize.width - self.albumDefaultSpace * (albumPortraitCount + 1)) / albumPortraitCount
+        albumPortraitCellSize = CGSize(width: albumPortraitWidth, height: albumPortraitForcedCellHeight ?? albumPortraitWidth * 1.25)
+        
+        let albumLandscapeCount = CGFloat(self.albumLandscapeColumnCount)
+        let albumLandscapeWidth = (UIScreen.main.landscapeSize.width - self.albumDefaultSpace * (albumLandscapeCount + 1)) / albumLandscapeCount
+        albumLandscapeCellSize = CGSize(width: albumLandscapeWidth, height: albumLandscapeForcedCellHeight ?? albumLandscapeWidth * 1.25)
         
         // initialize cache size for album thumbnail
-        _albumCacheSize = CGSize(width: albumWidth * scale, height: albumWidth * scale)
+        _albumCacheSize = CGSize(width: albumPortraitWidth * scale, height: albumPortraitWidth * scale)
         
         
         

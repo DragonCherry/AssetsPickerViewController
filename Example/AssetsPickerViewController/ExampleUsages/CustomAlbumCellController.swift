@@ -83,7 +83,7 @@ class CustomAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
         if !didSetupConstraints {
             imageView.autoSetDimensions(to: imageSize)
             imageView.autoPinEdge(.leading, to: .leading, of: contentView)
-            titleLabel.autoPinEdge(.leading, to: .trailing, of: imageView)
+            titleLabel.autoPinEdge(.leading, to: .trailing, of: imageView, withOffset: 10)
             titleLabel.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .leading)
             didSetupConstraints = true
         }
@@ -97,9 +97,11 @@ class CustomAlbumCellController: CommonExampleController {
         
         let pickerConfig = AssetsPickerConfig()
         pickerConfig.albumCellType = CustomAlbumCell.classForCoder()
-        pickerConfig.albumForcedCellHeight = imageSize.height
+        pickerConfig.albumPortraitForcedCellHeight = imageSize.height
+        pickerConfig.albumLandscapeForcedCellHeight = imageSize.height
         pickerConfig.albumForcedCacheSize = imageSize
         pickerConfig.albumDefaultSpace = 0
+        pickerConfig.albumLineSpace = 1
         pickerConfig.albumPortraitColumnCount = 1
         pickerConfig.albumLandscapeColumnCount = 1
         
