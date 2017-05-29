@@ -25,29 +25,38 @@ public protocol AssetsPickerViewControllerDelegate {
 open class AssetsPickerViewController: UISplitViewController {
     
     open var pickerDelegate: AssetsPickerViewControllerDelegate?
+    var pickerConfig: AssetsPickerConfig
     
     open var pickerNavigation: AssetsPickerNavigationController = {
         let controller = AssetsPickerNavigationController()
         return controller
     }()
     
-    open var photoViewController: AssetsPhotoViewController = {
+    open lazy var photoViewController: AssetsPhotoViewController = {
         let controller = AssetsPhotoViewController()
+        controller.pickerConfig = self.pickerConfig
         return controller
     }()
     
     public required init?(coder aDecoder: NSCoder) {
+        pickerConfig = AssetsPickerConfig()
         super.init(coder: aDecoder)
         commonInit()
     }
     
     public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        pickerConfig = AssetsPickerConfig()
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         commonInit()
     }
     
+    public init(pickerConfig: AssetsPickerConfig) {
+        self.pickerConfig = pickerConfig
+        self.init()
+        commonInit()
+    }
+    
     func commonInit() {
-        AssetsPhotoAttributes.prepare()
         AssetsManager.shared.registerObserver()
         viewControllers = [pickerNavigation, photoViewController]
     }

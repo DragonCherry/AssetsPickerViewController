@@ -15,6 +15,8 @@ open class AssetsPhotoViewController: UIViewController {
     
     open var cellType: AnyClass = AssetsPhotoCell.classForCoder()
     
+    var pickerConfig: AssetsPickerConfig = AssetsPickerConfig()
+    
     fileprivate let cellReuseIdentifier: String = UUID().uuidString
     fileprivate let footerReuseIdentifier: String = UUID().uuidString
     
@@ -50,7 +52,7 @@ open class AssetsPhotoViewController: UIViewController {
     
     fileprivate lazy var collectionView: UICollectionView = {
         
-        let layout = AssetsPhotoLayout()
+        let layout = AssetsPhotoLayout(pickerConfig: self.pickerConfig)
         self.updateLayout(layout: layout, isPortrait: UIApplication.shared.statusBarOrientation.isPortrait)
         layout.scrollDirection = .vertical
         
@@ -226,9 +228,9 @@ extension AssetsPhotoViewController {
     
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
         if let flowLayout = layout as? UICollectionViewFlowLayout {
-            flowLayout.itemSize = isPortrait ? AssetsPhotoAttributes.portraitCellSize : AssetsPhotoAttributes.landscapeCellSize
-            flowLayout.minimumLineSpacing = isPortrait ? AssetsPhotoAttributes.portraitLineSpace : AssetsPhotoAttributes.landscapeLineSpace
-            flowLayout.minimumInteritemSpacing = isPortrait ? AssetsPhotoAttributes.portraitInteritemSpace : AssetsPhotoAttributes.landscapeInteritemSpace
+            flowLayout.itemSize = isPortrait ? pickerConfig.portraitCellSize : pickerConfig.landscapeCellSize
+            flowLayout.minimumLineSpacing = isPortrait ? pickerConfig.portraitLineSpace : pickerConfig.landscapeLineSpace
+            flowLayout.minimumInteritemSpacing = isPortrait ? pickerConfig.portraitInteritemSpace : pickerConfig.landscapeInteritemSpace
         }
     }
     
@@ -337,6 +339,7 @@ extension AssetsPhotoViewController {
         guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
         let navigationController = UINavigationController()
         let controller = AssetsAlbumViewController()
+        controller.pickerConfig = self.pickerConfig
         controller.delegate = self
         navigationController.viewControllers = [controller]
         present(navigationController, animated: true, completion: nil)
@@ -423,7 +426,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         } else {
             // update cell UI as normal
         }
-        AssetsManager.shared.image(at: indexPath.row, size: AssetsPhotoAttributes.thumbnailCacheSize, completion: { (image) in
+        AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.thumbnailCacheSize, completion: { (image) in
             photoCell.imageView.image = image
         })
     }
@@ -446,9 +449,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         if collectionView.numberOfSections - 1 == section {
             if collectionView.bounds.width > collectionView.bounds.height {
-                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.landscapeCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.landscapeCellSize.width * 2/3)
             } else {
-                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.portraitCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.portraitCellSize.width * 2/3)
             }
         } else {
             return .zero
@@ -463,7 +466,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSourcePrefetching {
         for indexPath in indexPaths {
             assets.append(AssetsManager.shared.assetArray[indexPath.row])
         }
-        AssetsManager.shared.cache(assets: assets, size: AssetsPhotoAttributes.thumbnailCacheSize)
+        AssetsManager.shared.cache(assets: assets, size: pickerConfig.thumbnailCacheSize)
     }
 }
 

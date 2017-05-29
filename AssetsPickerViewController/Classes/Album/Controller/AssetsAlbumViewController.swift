@@ -24,6 +24,8 @@ open class AssetsAlbumViewController: UIViewController {
     open var cellType: AnyClass = AssetsAlbumCell.classForCoder()
     open var delegate: AssetsAlbumViewControllerDelegate?
     
+    var pickerConfig: AssetsPickerConfig = AssetsPickerConfig()
+    
     let cellReuseIdentifier: String = UUID().uuidString
     let headerReuseIdentifier: String = UUID().uuidString
     
@@ -228,9 +230,9 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if collectionView.numberOfSections > 1 && section == 1 {
             if collectionView.bounds.width > collectionView.bounds.height {
-                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.landscapeCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.landscapeCellSize.width * 2/3)
             } else {
-                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.portraitCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.portraitCellSize.width * 2/3)
             }
         } else {
             return .zero

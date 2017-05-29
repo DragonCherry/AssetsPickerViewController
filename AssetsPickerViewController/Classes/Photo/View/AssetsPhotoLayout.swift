@@ -10,8 +10,18 @@ import UIKit
 import TinyLog
 
 open class AssetsPhotoLayout: UICollectionViewFlowLayout {
-
+    
     open var translatedOffset: CGPoint?
+    fileprivate var pickerConfig: AssetsPickerConfig
+    
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public init(pickerConfig: AssetsPickerConfig) {
+        self.pickerConfig = pickerConfig
+        super.init()
+    }
     
     open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
         return targetContentOffset(forProposedContentOffset: proposedContentOffset)
@@ -43,12 +53,12 @@ extension AssetsPhotoLayout {
     }
     
     open func expectedContentHeight(isPortrait: Bool) -> CGFloat {
-        var rows = AssetsManager.shared.assetArray.count / (isPortrait ? AssetsPhotoAttributes.portraitColumnCount : AssetsPhotoAttributes.landscapeColumnCount)
-        let remainder = AssetsManager.shared.assetArray.count % (isPortrait ? AssetsPhotoAttributes.portraitColumnCount : AssetsPhotoAttributes.landscapeColumnCount)
+        var rows = AssetsManager.shared.assetArray.count / (isPortrait ? pickerConfig.portraitColumnCount : pickerConfig.landscapeColumnCount)
+        let remainder = AssetsManager.shared.assetArray.count % (isPortrait ? pickerConfig.portraitColumnCount : pickerConfig.landscapeColumnCount)
         rows += remainder > 0 ? 1 : 0
         
-        let cellSize = isPortrait ? AssetsPhotoAttributes.portraitCellSize : AssetsPhotoAttributes.landscapeCellSize
-        let lineSpace = isPortrait ? AssetsPhotoAttributes.portraitLineSpace : AssetsPhotoAttributes.landscapeLineSpace
+        let cellSize = isPortrait ? pickerConfig.portraitCellSize : pickerConfig.landscapeCellSize
+        let lineSpace = isPortrait ? pickerConfig.portraitLineSpace : pickerConfig.landscapeLineSpace
         let contentHeight = CGFloat(rows) * cellSize.height + (CGFloat(max(rows - 1, 0)) * lineSpace)
         
         return contentHeight
