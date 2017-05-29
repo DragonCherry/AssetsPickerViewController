@@ -87,7 +87,6 @@ extension SimpleExampleController: AssetsPickerViewControllerDelegate {
     
     func assetsPickerCannotAccessPhotoLibrary(controller: AssetsPickerViewController) {}
     func assetsPickerDidCancel(controller: AssetsPickerViewController) {}
-    func assetsPickerNotGranted(controller: AssetsPickerViewController) {}
     func assetsPicker(controller: AssetsPickerViewController, selected assets: [PHAsset]) {
         // do your job with selected assets
     }

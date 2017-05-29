@@ -308,7 +308,15 @@ extension AssetsManager {
 
         albumFetchResult.enumerateObjects({ (album, _, _) in
             // fetch assets
-            let fetchResult = PHAsset.fetchAssets(in: album, options: self.pickerConfig.fetchOptions)
+            let fetchResult = PHAsset.fetchAssets(in: album, options: self.pickerConfig.assetFetchOptions)
+            
+            guard self.pickerConfig.albumIsShowHiddenAlbum || album.assetCollectionSubtype != .smartAlbumAllHidden else {
+                return
+            }
+            
+            guard self.pickerConfig.albumIsShowEmptyAlbum || fetchResult.count > 0 else {
+                return
+            }
             
             // cache fetch result
             self.fetchMap[album.localIdentifier] = fetchResult
@@ -317,7 +325,7 @@ extension AssetsManager {
             self.albumMap[album.localIdentifier] = album
             
             // set default album
-            if album.assetCollectionSubtype == self.pickerConfig.defaultAlbumType {
+            if album.assetCollectionSubtype == self.pickerConfig.albumDefaultType {
                 defaultAlbum = album
             }
             // save alternative album
@@ -326,7 +334,12 @@ extension AssetsManager {
             }
             albums.append(album)
         })
-        albums.sort(by: { Int(self.fetchMap[$0.localIdentifier]?.count) > Int(self.fetchMap[$1.localIdentifier]?.count) })
+        
+        if let comparator = pickerConfig.albumOrderComparator {
+            albums.sort(by: comparator)
+        } else {
+            albums.sort(by: { Int(self.fetchMap[$0.localIdentifier]?.count) > Int(self.fetchMap[$1.localIdentifier]?.count) })
+        }
         
         // set default album
         if let defaultAlbum = self.defaultAlbum {
@@ -497,7 +510,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         removedAssets.append(assetArray.remove(at: removedIndex.row))
                     }
                     // stop caching for removed assets
-                    stopCache(assets: removedAssets, size: pickerConfig.thumbnailCacheSize)
+                    stopCache(assets: removedAssets, size: pickerConfig.assetCacheSize)
                     DispatchQueue.main.async {
                         for subscriber in self.subscribers {
                             subscriber.assetsManager(manager: self, removedAssets: removedAssets, at: removedIndexes)
@@ -515,7 +528,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         assetArray.insert(insertedAsset, at: insertedIndex.row)
                     }
                     // start caching for inserted assets
-                    cache(assets: insertedAssets, size: pickerConfig.thumbnailCacheSize)
+                    cache(assets: insertedAssets, size: pickerConfig.assetCacheSize)
                     DispatchQueue.main.async {
                         for subscriber in self.subscribers {
                             subscriber.assetsManager(manager: self, insertedAssets: insertedAssets, at: insertedIndexes)
@@ -532,8 +545,8 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         updatedAssets.append(updatedAsset)
                     }
                     // stop caching for updated assets
-                    stopCache(assets: updatedAssets, size: pickerConfig.thumbnailCacheSize)
-                    cache(assets: updatedAssets, size: pickerConfig.thumbnailCacheSize)
+                    stopCache(assets: updatedAssets, size: pickerConfig.assetCacheSize)
+                    cache(assets: updatedAssets, size: pickerConfig.assetCacheSize)
                     DispatchQueue.main.async {
                         for subscriber in self.subscribers {
                             subscriber.assetsManager(manager: self, updatedAssets: updatedAssets, at: updatedIndexes)

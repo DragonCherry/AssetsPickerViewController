@@ -53,12 +53,12 @@ extension AssetsPhotoLayout {
     }
     
     open func expectedContentHeight(isPortrait: Bool) -> CGFloat {
-        var rows = AssetsManager.shared.assetArray.count / (isPortrait ? pickerConfig.portraitColumnCount : pickerConfig.landscapeColumnCount)
-        let remainder = AssetsManager.shared.assetArray.count % (isPortrait ? pickerConfig.portraitColumnCount : pickerConfig.landscapeColumnCount)
+        var rows = AssetsManager.shared.assetArray.count / (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
+        let remainder = AssetsManager.shared.assetArray.count % (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
         rows += remainder > 0 ? 1 : 0
         
-        let cellSize = isPortrait ? pickerConfig.portraitCellSize : pickerConfig.landscapeCellSize
-        let lineSpace = isPortrait ? pickerConfig.portraitLineSpace : pickerConfig.landscapeLineSpace
+        let cellSize = isPortrait ? pickerConfig.assetPortraitCellSize : pickerConfig.assetLandscapeCellSize
+        let lineSpace = isPortrait ? pickerConfig.assetPortraitLineSpace : pickerConfig.assetLandscapeLineSpace
         let contentHeight = CGFloat(rows) * cellSize.height + (CGFloat(max(rows - 1, 0)) * lineSpace)
         
         return contentHeight

@@ -21,23 +21,12 @@ public protocol AssetsAlbumViewControllerDelegate {
 // MARK: - AssetsAlbumViewController
 open class AssetsAlbumViewController: UIViewController {
     
-    open var cellType: AnyClass = AssetsAlbumCell.classForCoder()
     open var delegate: AssetsAlbumViewControllerDelegate?
     
-    var pickerConfig: AssetsPickerConfig = AssetsPickerConfig()
+    var pickerConfig: AssetsPickerConfig!
     
     let cellReuseIdentifier: String = UUID().uuidString
     let headerReuseIdentifier: String = UUID().uuidString
-    
-    let defaultSpace: CGFloat = { return 20 }()
-    lazy var cellWidth: CGFloat = {
-        let count = CGFloat(self.numberOfCell(isPortrait: true))
-        return (UIScreen.main.portraitSize.width - (count + 1) * self.defaultSpace) / count
-    }()
-    var imageSize: CGSize {
-        let width = cellWidth * 2
-        return CGSize(width: width, height: width)
-    }
     
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
@@ -54,17 +43,18 @@ open class AssetsAlbumViewController: UIViewController {
     lazy var collectionView: UICollectionView = {
         
         let isPortrait = UIApplication.shared.statusBarOrientation.isPortrait
-        let initialSize = isPortrait ? UIScreen.main.portraitSize : UIScreen.main.landscapeSize
-        let space = self.itemSpace(size: initialSize, columnCount: self.numberOfCell(isPortrait: isPortrait))
-    
+        
         let layout = AssetsAlbumLayout()
+        self.updateLayout(layout: layout, isPortrait: isPortrait)
         layout.scrollDirection = .vertical
         
+        let defaultSpace = self.pickerConfig.albumDefaultSpace
+        let itemSpace = self.pickerConfig.albumItemSpace(isPortrait: isPortrait)
         let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         view.configureForAutoLayout()
-        view.register(self.cellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
+        view.register(self.pickerConfig.albumCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsAlbumHeaderView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: self.headerReuseIdentifier)
-        view.contentInset = UIEdgeInsets(top: self.defaultSpace, left: space, bottom: self.defaultSpace, right: space)
+        view.contentInset = UIEdgeInsets(top: defaultSpace, left: itemSpace, bottom: defaultSpace, right: itemSpace)
         view.backgroundColor = UIColor.clear
         view.dataSource = self
         view.delegate = self
@@ -74,23 +64,18 @@ open class AssetsAlbumViewController: UIViewController {
         return view
     }()
     
-    public convenience init(cellType: AnyClass) {
-        self.init()
-        self.cellType = cellType
-        commonInit()
-    }
-    
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        commonInit()
     }
     
     public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        commonInit()
     }
     
-    open func commonInit() {}
+    public init(pickerConfig: AssetsPickerConfig) {
+        self.init()
+        self.pickerConfig = pickerConfig
+    }
     
     deinit { logd("Released \(type(of: self))") }
     
@@ -106,7 +91,7 @@ open class AssetsAlbumViewController: UIViewController {
         AssetsManager.shared.fetchAlbums { (albumsArray) in
             self.collectionView.reloadData()
         }
-        AssetsManager.shared.cacheAlbums(cacheSize: imageSize)
+        AssetsManager.shared.cacheAlbums(cacheSize: pickerConfig.albumCacheSize)
     }
     
     open override func viewDidLoad() {
@@ -126,14 +111,14 @@ open class AssetsAlbumViewController: UIViewController {
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        let space = itemSpace(size: size, columnCount: numberOfCell(isPortrait: size.height > size.width))
+        let space = pickerConfig.albumItemSpace(isPortrait: size.height > size.width)
         let insets = collectionView.contentInset
         collectionView.contentInset = UIEdgeInsets(top: insets.top, left: space, bottom: insets.bottom, right: space)
         collectionView.collectionViewLayout.invalidateLayout()
     }
 }
 
-// MARK: - Internal
+// MARK: - Internal APIs for UI
 extension AssetsAlbumViewController {
     func setupCommon() {
         title = String(key: "Title_Albums")
@@ -145,11 +130,12 @@ extension AssetsAlbumViewController {
 //        navigationItem.rightBarButtonItem = searchButtonItem
     }
     
-    func numberOfCell(isPortrait: Bool) -> Int { return isPortrait ? 2 : 3 }
-    
-    func itemSpace(size: CGSize, columnCount count: Int) -> CGFloat {
-        let space = (size.width - CGFloat(count) * cellWidth) / CGFloat(count + 1)
-        return space
+    func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
+        if let flowLayout = layout as? UICollectionViewFlowLayout {
+            flowLayout.itemSize = pickerConfig.albumCellSize
+            flowLayout.minimumLineSpacing = pickerConfig.albumDefaultSpace
+            flowLayout.minimumInteritemSpacing = pickerConfig.albumItemSpace(isPortrait: isPortrait)
+        }
     }
 }
 
@@ -207,7 +193,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
         albumCell.titleText = AssetsManager.shared.title(at: indexPath)
         albumCell.count = AssetsManager.shared.numberOfAssets(at: indexPath)
         albumCell.imageView.image = nil
-        AssetsManager.shared.imageOfAlbum(at: indexPath, size: imageSize, isNeedDegraded: false) { (image) in
+        AssetsManager.shared.imageOfAlbum(at: indexPath, size: pickerConfig.albumCacheSize, isNeedDegraded: false) { (image) in
             albumCell.imageView.image = image
         }
     }
@@ -216,23 +202,23 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: cellWidth, height: cellWidth * 1.25)
+        return pickerConfig.albumCellSize
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return defaultSpace
+        return pickerConfig.albumDefaultSpace
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return defaultSpace
+        return pickerConfig.albumItemSpace(isPortrait: collectionView.bounds.height > collectionView.bounds.width)
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if collectionView.numberOfSections > 1 && section == 1 {
             if collectionView.bounds.width > collectionView.bounds.height {
-                return CGSize(width: collectionView.bounds.width, height: pickerConfig.landscapeCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetLandscapeCellSize.width * 2/3)
             } else {
-                return CGSize(width: collectionView.bounds.width, height: pickerConfig.portraitCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetPortraitCellSize.width * 2/3)
             }
         } else {
             return .zero
@@ -261,7 +247,7 @@ extension AssetsAlbumViewController: AssetsManagerDelegate {
     public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {}
     
     public func assetsManagerReloaded(manager: AssetsManager) {
-        AssetsManager.shared.cacheAlbums(cacheSize: imageSize)
+        AssetsManager.shared.cacheAlbums(cacheSize: pickerConfig.albumCacheSize)
         collectionView.reloadData()
     }
     public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {

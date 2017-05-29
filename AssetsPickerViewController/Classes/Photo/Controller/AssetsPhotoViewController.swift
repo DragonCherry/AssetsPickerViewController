@@ -13,9 +13,7 @@ import TinyLog
 // MARK: - AssetsPhotoViewController
 open class AssetsPhotoViewController: UIViewController {
     
-    open var cellType: AnyClass = AssetsPhotoCell.classForCoder()
-    
-    var pickerConfig: AssetsPickerConfig = AssetsPickerConfig()
+    fileprivate var pickerConfig: AssetsPickerConfig!
     
     fileprivate let cellReuseIdentifier: String = UUID().uuidString
     fileprivate let footerReuseIdentifier: String = UUID().uuidString
@@ -60,7 +58,7 @@ open class AssetsPhotoViewController: UIViewController {
         view.configureForAutoLayout()
         view.allowsMultipleSelection = true
         view.alwaysBounceVertical = true
-        view.register(self.cellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
+        view.register(self.pickerConfig.assetCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsPhotoFooterView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: self.footerReuseIdentifier)
         view.contentInset = UIEdgeInsets(top: 1, left: 0, bottom: 0, right: 0)
         view.backgroundColor = UIColor.clear
@@ -75,6 +73,19 @@ open class AssetsPhotoViewController: UIViewController {
         
         return view
     }()
+    
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    public init(pickerConfig: AssetsPickerConfig) {
+        self.init()
+        self.pickerConfig = pickerConfig
+    }
     
     open override func loadView() {
         super.loadView()
@@ -178,11 +189,7 @@ extension AssetsPhotoViewController {
         manager.fetchAlbums()
         manager.fetchPhotos() { photos in
             self.updateEmptyView(count: photos.count)
-            if let selectedTitle = manager.selectedAlbum?.localizedTitle {
-                self.title = selectedTitle
-            } else {
-                self.title = ""
-            }
+            self.title = self.title(forAlbum: manager.selectedAlbum)
             self.collectionView.reloadData()
         }
     }
@@ -228,9 +235,9 @@ extension AssetsPhotoViewController {
     
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
         if let flowLayout = layout as? UICollectionViewFlowLayout {
-            flowLayout.itemSize = isPortrait ? pickerConfig.portraitCellSize : pickerConfig.landscapeCellSize
-            flowLayout.minimumLineSpacing = isPortrait ? pickerConfig.portraitLineSpace : pickerConfig.landscapeLineSpace
-            flowLayout.minimumInteritemSpacing = isPortrait ? pickerConfig.portraitInteritemSpace : pickerConfig.landscapeInteritemSpace
+            flowLayout.itemSize = isPortrait ? pickerConfig.assetPortraitCellSize : pickerConfig.assetLandscapeCellSize
+            flowLayout.minimumLineSpacing = isPortrait ? pickerConfig.assetPortraitLineSpace : pickerConfig.assetLandscapeLineSpace
+            flowLayout.minimumInteritemSpacing = isPortrait ? pickerConfig.assetPortraitInteritemSpace : pickerConfig.assetLandscapeInteritemSpace
         }
     }
     
@@ -293,7 +300,8 @@ extension AssetsPhotoViewController {
         let imageCount = counts.imageCount
         let videoCount = counts.videoCount
         
-        var titleString = AssetsManager.shared.selectedAlbum?.localizedTitle ?? ""
+        var titleString: String = title(forAlbum: AssetsManager.shared.selectedAlbum)
+        
         if imageCount > 0 && videoCount > 0 {
             titleString = String(format: String(key: "Title_Selected_Items"), imageCount + videoCount)
         } else {
@@ -320,6 +328,16 @@ extension AssetsPhotoViewController {
         }
         footerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
     }
+    
+    func title(forAlbum album: PHAssetCollection?) -> String {
+        var titleString: String!
+        if let albumTitle = album?.localizedTitle {
+            titleString = "\(albumTitle) ▾"
+        } else {
+            titleString = ""
+        }
+        return titleString
+    }
 }
 
 // MARK: - UI Event Handlers
@@ -338,8 +356,7 @@ extension AssetsPhotoViewController {
     func pressedTitle(gesture: UITapGestureRecognizer) {
         guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
         let navigationController = UINavigationController()
-        let controller = AssetsAlbumViewController()
-        controller.pickerConfig = self.pickerConfig
+        let controller = AssetsAlbumViewController(pickerConfig: self.pickerConfig)
         controller.delegate = self
         navigationController.viewControllers = [controller]
         present(navigationController, animated: true, completion: nil)
@@ -426,7 +443,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         } else {
             // update cell UI as normal
         }
-        AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.thumbnailCacheSize, completion: { (image) in
+        AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { (image) in
             photoCell.imageView.image = image
         })
     }
@@ -449,9 +466,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         if collectionView.numberOfSections - 1 == section {
             if collectionView.bounds.width > collectionView.bounds.height {
-                return CGSize(width: collectionView.bounds.width, height: pickerConfig.landscapeCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetLandscapeCellSize.width * 2/3)
             } else {
-                return CGSize(width: collectionView.bounds.width, height: pickerConfig.portraitCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetPortraitCellSize.width * 2/3)
             }
         } else {
             return .zero
@@ -466,7 +483,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSourcePrefetching {
         for indexPath in indexPaths {
             assets.append(AssetsManager.shared.assetArray[indexPath.row])
         }
-        AssetsManager.shared.cache(assets: assets, size: pickerConfig.thumbnailCacheSize)
+        AssetsManager.shared.cache(assets: assets, size: pickerConfig.assetCacheSize)
     }
 }
 
@@ -484,7 +501,7 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
             if selectedArray.count > 0 {
                 updateNavigationStatus()
             } else {
-                title = album.localizedTitle
+                title = title(forAlbum: album)
             }
             collectionView.reloadData()
             

@@ -87,11 +87,7 @@ extension CommonExampleController {
         tableView.reloadData()
     }
     
-    func pressedPick(_ sender: Any) {
-        let picker = AssetsPickerViewController()
-        picker.pickerDelegate = self
-        present(picker, animated: true, completion: nil)
-    }
+    func pressedPick(_ sender: Any) {}
 }
 
 extension CommonExampleController: AssetsPickerViewControllerDelegate {
@@ -102,10 +98,6 @@ extension CommonExampleController: AssetsPickerViewControllerDelegate {
     
     func assetsPickerDidCancel(controller: AssetsPickerViewController) {
         log("Cancelled.")
-    }
-    
-    func assetsPickerNotGranted(controller: AssetsPickerViewController) {
-        
     }
     
     func assetsPicker(controller: AssetsPickerViewController, selected assets: [PHAsset]) {

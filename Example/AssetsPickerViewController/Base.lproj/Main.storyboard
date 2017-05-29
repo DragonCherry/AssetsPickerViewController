@@ -46,7 +46,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="V01-fT-RbR">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Custom Album Cell Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="V01-fT-RbR">
                                                     <rect key="frame" x="15" y="0.0" width="345" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -55,6 +55,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="fOo-ag-aKn" kind="show" id="SEc-u3-6r8"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="ZnK-wU-zl5" style="IBUITableViewCellStyleDefault" id="0mg-Ig-31I">
                                         <rect key="frame" x="0.0" y="88" width="375" height="44"/>
@@ -88,10 +91,10 @@
             </objects>
             <point key="canvasLocation" x="658" y="9"/>
         </scene>
-        <!--Simple Example-->
+        <!--Simple Controller-->
         <scene sceneID="vql-j7-cMG">
             <objects>
-                <tableViewController title="Simple Example" id="O7g-nc-lvx" customClass="SimpleExampleController" customModule="AssetsPickerViewController_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="O7g-nc-lvx" customClass="SimpleController" customModule="AssetsPickerViewController_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="CoH-vX-tbt">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -107,7 +110,26 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="12Z-NP-w8r" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1420" y="-2227"/>
+            <point key="canvasLocation" x="1441" y="-697"/>
+        </scene>
+        <!--Custom Album Cell Controller-->
+        <scene sceneID="UgU-D6-FMu">
+            <objects>
+                <tableViewController id="fOo-ag-aKn" customClass="CustomAlbumCellController" customModule="AssetsPickerViewController_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="rzd-Hb-1cz">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <connections>
+                            <outlet property="dataSource" destination="fOo-ag-aKn" id="ngQ-rc-Txb"/>
+                            <outlet property="delegate" destination="fOo-ag-aKn" id="Lgb-BG-SQ1"/>
+                        </connections>
+                    </tableView>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FbL-0B-kMZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2126" y="-698"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Kvd-GF-els">
