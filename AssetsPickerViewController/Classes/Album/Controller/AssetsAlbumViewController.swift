@@ -202,11 +202,6 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
-//    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let cellSize = collectionView.bounds.height > collectionView.bounds.width ? pickerConfig.albumPortraitCellSize : pickerConfig.albumLandscapeCellSize
-//        logi("[\(indexPath.row)] \(cellSize)")
-//        return cellSize
-//    }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return pickerConfig.albumLineSpace

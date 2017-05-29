@@ -372,8 +372,10 @@ extension AssetsManager {
         }
         
         // append album fetch result
-        albumsFetchArray.append(albumFetchResult)
-        albumsArray.append(albums)
+        if albumFetchResult.count > 0 {
+            albumsFetchArray.append(albumFetchResult)
+            albumsArray.append(albums)
+        }
     }
     
     fileprivate func append(album: PHAssetCollection, inSection: Int) {

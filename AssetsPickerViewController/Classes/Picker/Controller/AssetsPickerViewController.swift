@@ -33,8 +33,13 @@ open class AssetsPickerViewController: UISplitViewController {
     }()
     
     open lazy var photoViewController: AssetsPhotoViewController = {
-        let controller = AssetsPhotoViewController(pickerConfig: self.pickerConfig)
-        return controller
+        if let pickerConfig = self.pickerConfig {
+            return AssetsPhotoViewController(pickerConfig: self.pickerConfig)
+        } else {
+            self.pickerConfig = AssetsPickerConfig().prepare()
+            let controller = AssetsPhotoViewController(pickerConfig: self.pickerConfig)
+            return controller
+        }
     }()
     
     public required init?(coder aDecoder: NSCoder) {
@@ -47,15 +52,15 @@ open class AssetsPickerViewController: UISplitViewController {
         commonInit()
     }
     
-    public convenience init(pickerConfig: AssetsPickerConfig) {
-        self.init()
-        commonInit()
+    public init(pickerConfig: AssetsPickerConfig) {
         self.pickerConfig = pickerConfig.prepare()
-        viewControllers = [pickerNavigation, photoViewController]
+        super.init(nibName: nil, bundle: nil)
+        commonInit()
     }
     
-    func commonInit(pickerConfig: AssetsPickerConfig? = nil) {
+    func commonInit() {
         AssetsManager.shared.registerObserver()
+        viewControllers = [pickerNavigation, photoViewController]
     }
     
     open override func viewDidLoad() {

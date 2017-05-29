@@ -33,7 +33,7 @@ open class AssetsPickerConfig {
     // MARK: Custom Layout
     open var albumCellType: AnyClass = AssetsAlbumCell.classForCoder()
     open var albumDefaultSpace: CGFloat = 20
-    open var albumLineSpace: CGFloat = 0
+    open var albumLineSpace: CGFloat = -1
     open var albumPortraitColumnCount: Int = 2
     open var albumPortraitForcedCellHeight: CGFloat?
     open var albumPortraitCellSize: CGSize = .zero
