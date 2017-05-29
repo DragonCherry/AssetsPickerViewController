@@ -10,6 +10,9 @@ Customizable assets picker controller that supports selecting multiple photos an
 ## Comment
 
 This project is still under development so many features will be added, and will get better in the near future.
+
+If you found any bugs - even in develop branch, do not hesitate raise an issue for it.
+
 Any advice, suggestions, and pull request will be greatly appreciated.
 
 
