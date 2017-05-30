@@ -587,12 +587,14 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 for removedIndex in removedIndexes {
                     let albumToRemove = fetchedAlbumsArray[i][removedIndex.row]
                     if let index = sortedAlbumsArray[i].index(of: albumToRemove) {
-                        remove(album: albumToRemove, indexPath: IndexPath(row: removedIndex.row, section: i), isFetchedIndex: true)
                         removedAlbums.append(albumToRemove)
                         removedIndexesInSortedAlbums.append(IndexPath(row: index, section: i))
                     } else {
                         logc("Error on model manipulation logic. Failed to find removed index in sortedAlbumsArray.")
                     }
+                }
+                for (j, removedIndex) in removedIndexes.enumerated() {
+                    remove(album: removedAlbums[j], indexPath: IndexPath(row: removedIndex.row, section: i), isFetchedIndex: true)
                 }
                 DispatchQueue.main.async {
                     for subscriber in self.subscribers {
