@@ -596,7 +596,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 for (j, removedIndex) in removedIndexes.enumerated() {
                     remove(album: removedAlbums[j], indexPath: IndexPath(row: removedIndex.row, section: i), isFetchedIndex: true)
                 }
-                DispatchQueue.main.async {
+                DispatchQueue.main.sync {
                     for subscriber in self.subscribers {
                         subscriber.assetsManager(manager: self, removedAlbums: removedAlbums, at: removedIndexesInSortedAlbums)
                     }
@@ -620,7 +620,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         logc("Error on model manipulation logic. Failed to find insertes index in sortedAlbumsArray.")
                     }
                 }
-                DispatchQueue.main.async {
+                DispatchQueue.main.sync {
                     for subscriber in self.subscribers {
                         subscriber.assetsManager(manager: self, insertedAlbums: insertedAlbums, at: insertedIndexesInSortedAlbums)
                     }
@@ -651,14 +651,14 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     }
                 }
                 
-                let sortedUpdatedIndexes = updatedIndexesSetInSortedAlbums.asArray().sorted(by: { $0.row < $1.row })
+                let sortedUpdatedIndexes = updatedIndexesSetInSortedAlbums.asArray(section: i).sorted(by: { $0.row < $1.row })
                 updatedAlbums.removeAll()
                 
                 for sortedUpdatedIndex in sortedUpdatedIndexes {
                     updatedAlbums.append(sortedAlbumsArray[i][sortedUpdatedIndex.row])
                 }
                 
-                DispatchQueue.main.async {
+                DispatchQueue.main.sync {
                     for subscriber in self.subscribers {
                         subscriber.assetsManager(manager: self, updatedAlbums: updatedAlbums, at: sortedUpdatedIndexes)
                     }
@@ -687,7 +687,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 }
                 
                 if let albumIndexPath = self.indexPath(forAlbum: album), isThumbnailChanged(changeDetails: assetsChangeDetails) {
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.sync {
                         for subscriber in self.subscribers {
                             subscriber.assetsManager(manager: self, reloadedAlbum: album, at: albumIndexPath)
                         }
@@ -706,7 +706,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     }
                     // stop caching for removed assets
                     stopCache(assets: removedAssets, size: pickerConfig.assetCacheSize)
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.sync {
                         for subscriber in self.subscribers {
                             subscriber.assetsManager(manager: self, removedAssets: removedAssets, at: removedIndexes)
                         }
@@ -723,7 +723,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     }
                     // start caching for inserted assets
                     cache(assets: insertedAssets, size: pickerConfig.assetCacheSize)
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.sync {
                         for subscriber in self.subscribers {
                             subscriber.assetsManager(manager: self, insertedAssets: insertedAssets, at: insertedIndexes)
                         }
@@ -739,7 +739,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     // stop caching for updated assets
                     stopCache(assets: updatedAssets, size: pickerConfig.assetCacheSize)
                     cache(assets: updatedAssets, size: pickerConfig.assetCacheSize)
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.sync {
                         for subscriber in self.subscribers {
                             subscriber.assetsManager(manager: self, updatedAssets: updatedAssets, at: updatedIndexes)
                         }
@@ -761,10 +761,10 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
 
 // MARK: - IndexSet Utility
 extension IndexSet {
-    fileprivate func asArray() -> [IndexPath] {
+    fileprivate func asArray(section: Int? = nil) -> [IndexPath] {
         var indexPaths = [IndexPath]()
         for entry in enumerated() {
-            indexPaths.append(IndexPath(row: entry.element, section: 0))
+            indexPaths.append(IndexPath(row: entry.element, section: section ?? 0))
         }
         return indexPaths
     }
