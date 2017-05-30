@@ -204,7 +204,6 @@ extension AssetsManager {
             for (j, album) in albums.enumerated() {
                 subtypeIndex = j
                 if target.localIdentifier == album.localIdentifier {
-                    logi("Found indexPath for album.")
                     break
                 }
             }
@@ -212,6 +211,7 @@ extension AssetsManager {
         if typeIndex > -1 && subtypeIndex > -1 {
             return IndexPath(row: subtypeIndex, section: typeIndex)
         } else {
+            logw("Failed to find indexPath for album: \(target.localizedTitle ?? "")")
             return nil
         }
     }
@@ -667,14 +667,15 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
         }
     }
     
-    func synchronizeAssets(changeInstance: PHChange) {
+    func synchronizeAssets(fetchMapBeforeChanges fetchMap: [String: PHFetchResult<PHAsset>], changeInstance: PHChange) {
+        
         // notify changes of assets
         for albums in sortedAlbumsArray {
             for album in albums {
+                log("Looping album: \(album.localizedTitle ?? "")")
                 guard let fetchResult = fetchMap[album.localIdentifier], let assetsChangeDetails = changeInstance.changeDetails(for: fetchResult) else {
                     continue
                 }
-                fetchMap[album.localIdentifier] = assetsChangeDetails.fetchResultAfterChanges
                 guard assetsChangeDetails.hasIncrementalChanges else {
                     for subscriber in subscribers {
                         if let indexPathForAlbum = indexPath(forAlbum: album) {
@@ -684,14 +685,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                         }
                     }
                     continue
-                }
-                
-                if let albumIndexPath = self.indexPath(forAlbum: album), isThumbnailChanged(changeDetails: assetsChangeDetails) {
-                    DispatchQueue.main.sync {
-                        for subscriber in self.subscribers {
-                            subscriber.assetsManager(manager: self, reloadedAlbum: album, at: albumIndexPath)
-                        }
-                    }
                 }
                 
                 guard let selectedAlbum = self.selectedAlbum, selectedAlbum.localIdentifier == album.localIdentifier else {
@@ -750,12 +743,14 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
     }
     
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
+        logi("Called!")
         guard notifyIfAuthorizationStatusChanged() else {
             logw("Does not have access to photo library.")
             return
         }
+        let fetchMapBeforeChanges = fetchMap
         synchronizeAlbums(changeInstance: changeInstance)
-        synchronizeAssets(changeInstance: changeInstance)
+        synchronizeAssets(fetchMapBeforeChanges: fetchMapBeforeChanges, changeInstance: changeInstance)
     }
 }
 
