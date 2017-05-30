@@ -534,8 +534,20 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         }
     }
     
-    public func assetsManagerReloaded(manager: AssetsManager) {
+    public func assetsManager(manager: AssetsManager, reloadedAlbumsInSection section: Int) {
         
+    }
+    
+    public func assetsManager(manager: AssetsManager, insertedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+    
+    }
+    
+    public func assetsManager(manager: AssetsManager, removedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        
+    }
+    
+    public func assetsManager(manager: AssetsManager, updatedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+    
     }
     
     public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {

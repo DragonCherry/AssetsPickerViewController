@@ -15,9 +15,10 @@ open class AssetsPickerConfig {
     open var albumDefaultType: PHAssetCollectionSubtype = .smartAlbumUserLibrary
     open var albumIsShowEmptyAlbum: Bool = true
     open var albumIsShowHiddenAlbum: Bool = true
+    open var albumIsShowMomentAlbums: Bool = false
     
     // MARK: Order
-    open var albumOrderComparator: ((PHAssetCollection, PHAssetCollection) -> Bool)?
+    open var albumOrderComparator: (((PHAssetCollection, PHFetchResult<PHAsset>), (PHAssetCollection, PHFetchResult<PHAsset>)) -> Bool)?
     
     // MARK: Cache
     private var _albumCacheSize: CGSize = .zero

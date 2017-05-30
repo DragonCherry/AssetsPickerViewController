@@ -88,7 +88,7 @@ open class AssetsAlbumViewController: UIViewController {
         view.setNeedsUpdateConstraints()
         
         AssetsManager.shared.subscribe(subscriber: self)
-        AssetsManager.shared.fetchAlbums { (albumsArray) in
+        AssetsManager.shared.fetchAlbums { (_) in
             self.collectionView.reloadData()
         }
         AssetsManager.shared.cacheAlbums(cacheSize: pickerConfig.albumCacheSize)
@@ -155,13 +155,15 @@ extension AssetsAlbumViewController: UICollectionViewDelegate {
 extension AssetsAlbumViewController: UICollectionViewDataSource {
     
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
-        logi("\(AssetsManager.shared.numberOfSections)")
-        return AssetsManager.shared.numberOfSections
+        let count = AssetsManager.shared.numberOfSections
+        logi("\(count)")
+        return count
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        logi("\(section)")
-        return AssetsManager.shared.numberOfAlbums(inSection: section)
+        let count = AssetsManager.shared.numberOfAlbums(inSection: section)
+        logi("numberOfItemsInSection[\(section)] \(count)")
+        return count
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -186,7 +188,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        log("[\(indexPath.section)][\(indexPath.row)]")
+        log("willDisplay[\(indexPath.section)][\(indexPath.row)]")
         guard var albumCell = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return
@@ -212,15 +214,14 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if collectionView.numberOfSections > 1 && section == 1 {
+        if collectionView.numberOfSections > 1 && AssetsManager.shared.numberOfAlbums(inSection: 1) > 0 && section == 1 {
             if collectionView.bounds.width > collectionView.bounds.height {
                 return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetLandscapeCellSize.width * 2/3)
             } else {
                 return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetPortraitCellSize.width * 2/3)
             }
-        } else {
-            return .zero
         }
+        return .zero
     }
 }
 
@@ -243,14 +244,32 @@ extension AssetsAlbumViewController {
 extension AssetsAlbumViewController: AssetsManagerDelegate {
     
     public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {}
-    
-    public func assetsManagerReloaded(manager: AssetsManager) {
-        AssetsManager.shared.cacheAlbums(cacheSize: pickerConfig.albumCacheSize)
-        collectionView.reloadData()
+
+    public func assetsManager(manager: AssetsManager, reloadedAlbumsInSection section: Int) {
+        logi("reloadedAlbumsInSection section: \(section)")
+        collectionView.reloadSections(IndexSet(integer: section))
     }
+    
+    public func assetsManager(manager: AssetsManager, insertedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        logi("insertedAlbums at indexPaths: \(indexPaths)")
+        collectionView.insertItems(at: indexPaths)
+    }
+    
+    public func assetsManager(manager: AssetsManager, removedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        logi("removedAlbums at indexPaths: \(indexPaths)")
+        collectionView.deleteItems(at: indexPaths)
+    }
+    
+    public func assetsManager(manager: AssetsManager, updatedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        logi("updatedAlbums at indexPaths: \(indexPaths)")
+        collectionView.reloadItems(at: indexPaths)
+    }
+    
     public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
+        logi("reloadedAlbum at indexPath: \(indexPath)")
         collectionView.reloadItems(at: [indexPath])
     }
+    
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
