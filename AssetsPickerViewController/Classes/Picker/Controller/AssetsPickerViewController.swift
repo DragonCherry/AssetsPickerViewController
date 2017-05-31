@@ -54,6 +54,7 @@ open class AssetsPickerViewController: UISplitViewController {
     
     public init(pickerConfig: AssetsPickerConfig) {
         self.pickerConfig = pickerConfig.prepare()
+        AssetsManager.shared.pickerConfig = self.pickerConfig
         super.init(nibName: nil, bundle: nil)
         commonInit()
     }

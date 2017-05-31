@@ -15,6 +15,7 @@ open class AssetsPickerConfig {
     open var albumDefaultType: PHAssetCollectionSubtype = .smartAlbumUserLibrary
     open var albumIsShowEmptyAlbum: Bool = true
     open var albumIsShowHiddenAlbum: Bool = true
+    /// Not yet fully implemeted, do not set this true until it's completed.
     open var albumIsShowMomentAlbums: Bool = false
     
     // MARK: Fetch
@@ -130,7 +131,7 @@ open class AssetsPickerConfig {
         
         _assetCacheSize = CGSize(width: assetWidth * scale, height: assetWidth * scale)
         
-        // asset fetch options
+        // asset fetch options by default
         if assetFetchOptions == nil {
             let options = PHFetchOptions()
             options.sortDescriptors = [

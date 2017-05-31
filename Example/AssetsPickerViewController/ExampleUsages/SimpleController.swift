@@ -7,9 +7,7 @@
 //
 
 import UIKit
-import Photos
 import AssetsPickerViewController
-import TinyLog
 
 class SimpleController: CommonExampleController {
     

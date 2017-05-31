@@ -68,12 +68,8 @@ open class AssetsAlbumViewController: UIViewController {
         super.init(coder: aDecoder)
     }
     
-    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-    
     public init(pickerConfig: AssetsPickerConfig) {
-        self.init()
+        super.init(nibName: nil, bundle: nil)
         self.pickerConfig = pickerConfig
     }
     
