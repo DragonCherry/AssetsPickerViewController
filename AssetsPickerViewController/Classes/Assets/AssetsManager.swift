@@ -594,13 +594,11 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     if let index = sortedAlbumsArray[section].index(of: albumToRemove) {
                         removedAlbums.append(albumToRemove)
                         removedIndexesInSortedAlbums.append(IndexPath(row: index, section: section))
-                    } else {
-                        logc("Error on model manipulation logic. Failed to find removed index in sortedAlbumsArray.")
                     }
                 }
-                for (j, removedIndex) in removedIndexes.enumerated() {
+                for removedIndex in removedIndexesInSortedAlbums {
                     // update fetchedAlbumsArray & sortedAlbumsArray
-                    remove(album: removedAlbums[j], indexPath: IndexPath(row: removedIndex.row, section: section), isFetchedIndex: true)
+                    remove(album: sortedAlbumsArray[section][removedIndex.row], indexPath: removedIndex, isFetchedIndex: false)
                 }
                 DispatchQueue.main.sync {
                     for subscriber in self.subscribers {
@@ -625,8 +623,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     if let index = sortedAlbumsArray[section].index(of: insertedAlbum) {
                         insertedIndexesInSortedAlbums.append(IndexPath(row: index, section: section))
                         updateMap[index] = true
-                    } else {
-                        logc("Error on model manipulation logic. Failed to find insertes index in sortedAlbumsArray.")
                     }
                 }
                 DispatchQueue.main.sync {
@@ -641,7 +637,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 var updatedAlbums = [PHAssetCollection]()
                 var updatedIndexesSetInSortedAlbums = IndexSet()
                 
-                let oldSortedAlbums = sortedAlbumsArray[section]
+                var oldSortedAlbums = sortedAlbumsArray[section]
                 
                 for updatedIndex in updatedIndexes {
                     let updatedAlbum = albumsChangeDetail.fetchResultAfterChanges.object(at: updatedIndex.row)
@@ -653,19 +649,23 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 }
                 
                 // get renewed array
-                sortedAlbumsArray[section] = sortedAlbums(fromAlbums: fetchedAlbumsArray[section])
-            
+                let newlySortedAlbums = sortedAlbums(fromAlbums: fetchedAlbumsArray[section])
+             
                 // find removed indexPaths
                 var removedIndexPaths = [IndexPath]()
                 var removedAlbums = [PHAssetCollection]()
-                for (i, oldSortedAlbum) in oldSortedAlbums.enumerated() {
-                    guard sortedAlbumsArray[section].contains(oldSortedAlbum) else {
+                for (i, oldSortedAlbum) in oldSortedAlbums.enumerated().reversed() {
+                    guard newlySortedAlbums.contains(oldSortedAlbum) else {
                         removedAlbums.append(oldSortedAlbum)
                         removedIndexPaths.append(IndexPath(row: i, section: section))
+                        oldSortedAlbums.remove(at: i)
                         updatedIndexesSetInSortedAlbums.remove(i)
                         continue
                     }
                 }
+                // update albums before notify removed albums
+                sortedAlbumsArray[section] = oldSortedAlbums
+                
                 // notify removed indexPaths
                 if removedIndexPaths.count > 0 {
                     DispatchQueue.main.sync {
@@ -678,13 +678,16 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 // find inserted indexPaths
                 var insertedIndexPaths = [IndexPath]()
                 var insertedAlbums = [PHAssetCollection]()
-                for (i, sortedAlbum) in sortedAlbumsArray[section].enumerated() {
+                for (i, sortedAlbum) in newlySortedAlbums.enumerated() {
                     guard oldSortedAlbums.contains(sortedAlbum) else {
                         insertedAlbums.append(sortedAlbum)
                         insertedIndexPaths.append(IndexPath(row: i, section: section))
                         continue
                     }
                 }
+                // update albums before notify inserted albums
+                sortedAlbumsArray[section] = newlySortedAlbums
+                
                 // notify inserted indexPaths
                 if insertedIndexPaths.count > 0 {
                     DispatchQueue.main.sync {
