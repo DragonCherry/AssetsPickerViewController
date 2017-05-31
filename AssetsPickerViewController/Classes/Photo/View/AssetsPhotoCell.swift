@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import Photos
 import Dimmer
 import PureLayout
 
 public protocol AssetsPhotoCellProtocol {
+    var asset: PHAsset? { get set }
     var isSelected: Bool { get set }
     var isVideo: Bool { get set }
     var imageView: UIImageView { get }
@@ -21,6 +23,12 @@ public protocol AssetsPhotoCellProtocol {
 open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     
     // MARK: - AssetsPhotoCellProtocol
+    open var asset: PHAsset? {
+        didSet {
+            // customizable
+        }
+    }
+    
     open var isVideo: Bool = false {
         didSet {
             durationLabel.isHidden = !isVideo

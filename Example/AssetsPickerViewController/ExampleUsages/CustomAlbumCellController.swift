@@ -18,6 +18,10 @@ private let imageSize = CGSize(width: 80, height: 80)
 class CustomAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     
     // MARK: - AssetsAlbumCellProtocol
+    var album: PHAssetCollection? {
+        didSet {}
+    }
+    
     override var isSelected: Bool {
         didSet {
             if isSelected {

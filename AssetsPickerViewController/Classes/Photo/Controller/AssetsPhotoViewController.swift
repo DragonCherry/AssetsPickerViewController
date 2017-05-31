@@ -250,7 +250,7 @@ extension AssetsPhotoViewController {
         selectedMap[asset.localIdentifier] = asset
         
         // update selected UI
-        guard let photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCell else {
+        guard var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else {
             logw("Invalid status.")
             return
         }
@@ -279,7 +279,7 @@ extension AssetsPhotoViewController {
                 logw("Referred wrong index\(visibleIndexPath.row) while asset count is \(AssetsManager.shared.assetArray.count).")
                 break
             }
-            if let selectedAsset = selectedMap[AssetsManager.shared.assetArray[visibleIndexPath.row].localIdentifier], let photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCell {
+            if let selectedAsset = selectedMap[AssetsManager.shared.assetArray[visibleIndexPath.row].localIdentifier], var photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCellProtocol {
                 if let selectedIndex = selectedArray.index(of: selectedAsset) {
                     photoCell.count = selectedIndex + 1
                 }
@@ -430,6 +430,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         }
         
         let asset = AssetsManager.shared.assetArray[indexPath.row]
+        photoCell.asset = asset
         photoCell.isVideo = asset.mediaType == .video
         if photoCell.isVideo {
             photoCell.duration = asset.duration

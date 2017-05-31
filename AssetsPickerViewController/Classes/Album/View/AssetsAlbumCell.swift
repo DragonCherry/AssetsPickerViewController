@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import Photos
 import Dimmer
 import PureLayout
 
 public protocol AssetsAlbumCellProtocol {
+    var album: PHAssetCollection? { get set }
     var isSelected: Bool { get set }
     var imageView: UIImageView { get }
     var titleText: String? { get set }
@@ -20,6 +22,12 @@ public protocol AssetsAlbumCellProtocol {
 open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     
     // MARK: - AssetsAlbumCellProtocol
+    open var album: PHAssetCollection? {
+        didSet {
+            // customizable
+        }
+    }
+    
     open override var isSelected: Bool {
         didSet {
             if isSelected {

@@ -59,8 +59,28 @@
                                             <segue destination="fOo-ag-aKn" kind="show" id="SEc-u3-6r8"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="ZnK-wU-zl5" style="IBUITableViewCellStyleDefault" id="0mg-Ig-31I">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="bFM-04-mtq" style="IBUITableViewCellStyleDefault" id="NC8-Al-Qan">
                                         <rect key="frame" x="0.0" y="88" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NC8-Al-Qan" id="5K1-2V-fzO">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Custom Asset Cell" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="bFM-04-mtq">
+                                                    <rect key="frame" x="15" y="0.0" width="345" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="2oF-Oj-UuA" kind="show" id="sD3-8I-ZJ5"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="ZnK-wU-zl5" style="IBUITableViewCellStyleDefault" id="0mg-Ig-31I">
+                                        <rect key="frame" x="0.0" y="132" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0mg-Ig-31I" id="V9n-cS-dsU">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
@@ -109,7 +129,6 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="12Z-NP-w8r" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -128,7 +147,6 @@
                             <outlet property="delegate" destination="fOo-ag-aKn" id="Lgb-BG-SQ1"/>
                         </connections>
                     </tableView>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FbL-0B-kMZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -147,11 +165,28 @@
                             <outlet property="delegate" destination="IDa-3J-nNB" id="S0Y-Rx-5ap"/>
                         </connections>
                     </tableView>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kGm-ZK-OoQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2817" y="-699"/>
+        </scene>
+        <!--Custom Asset Cell Controller-->
+        <scene sceneID="Cof-hW-KNu">
+            <objects>
+                <tableViewController id="2oF-Oj-UuA" customClass="CustomAssetCellController" customModule="AssetsPickerViewController_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="gKH-ho-8hr">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <connections>
+                            <outlet property="dataSource" destination="2oF-Oj-UuA" id="WlR-U8-Xhd"/>
+                            <outlet property="delegate" destination="2oF-Oj-UuA" id="iO7-KI-R9J"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Kc4-wS-azC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3505" y="-698"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Kvd-GF-els">

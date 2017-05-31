@@ -41,38 +41,36 @@ Handles empty or no permisson cases.
 
 ## Features Done
 
-- iOS friendly style album & photo UI
+- iOS friendly UI for album & photo controllers
 
 - select album
 
 - select multiple photos and videos
 
-- realtime sync for library change in albums & photos
+- realtime synchronization for library change in albums & photos
 
 - customizable album cell
 
+- customizable album order
+
 - customizable asset cell
+
+- customizable asset order
+
+- option to show empty albums
+
+- fully customizable configuration by settings struct model
 
 
 ## Features To-do
 
 - iPad support
 
-- customizable album order
-
-- customizable asset order
-
 - single select mode with crop
-
-- fully customizable configuration by settings struct model
 
 - enhance example codes
 
-- option to show empty albums
-
 - support many languages(German, French, Spanish, Chinese, Japanese, etc)
-
-- any other customizable options
 
 
 ## Usage

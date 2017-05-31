@@ -188,6 +188,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
             logw("Failed to cast UICollectionViewCell.")
             return
         }
+        albumCell.album = AssetsManager.shared.album(at: indexPath)
         albumCell.titleText = AssetsManager.shared.title(at: indexPath)
         albumCell.count = AssetsManager.shared.numberOfAssets(at: indexPath)
         albumCell.imageView.image = nil
