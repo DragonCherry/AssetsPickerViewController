@@ -17,8 +17,14 @@ open class AssetsPickerConfig {
     open var albumIsShowHiddenAlbum: Bool = true
     open var albumIsShowMomentAlbums: Bool = false
     
+    // MARK: Fetch
+    open var albumFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
+    
     // MARK: Order
-    open var albumOrderComparator: (((PHAssetCollection, PHFetchResult<PHAsset>), (PHAssetCollection, PHFetchResult<PHAsset>)) -> Bool)?
+    /// by giving this comparator, albumFetchOptions going to be useless
+    open var albumComparator: [
+        PHAssetCollectionType: ((PHAssetCollectionType, (PHAssetCollection, PHFetchResult<PHAsset>), (PHAssetCollection, PHFetchResult<PHAsset>)) -> Bool)
+    ]?
     
     // MARK: Cache
     private var _albumCacheSize: CGSize = .zero
@@ -55,7 +61,7 @@ open class AssetsPickerConfig {
     open var assetIsShowSelectedSequence: Bool = true
     
     // MARK: Fetch
-    open var assetFetchOptions: PHFetchOptions?
+    open var assetFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
     
     // MARK: Custom Layout
     open var assetCellType: AnyClass = AssetsPhotoCell.classForCoder()
@@ -131,7 +137,11 @@ open class AssetsPickerConfig {
                 NSSortDescriptor(key: "creationDate", ascending: true),
                 NSSortDescriptor(key: "modificationDate", ascending: true)
             ]
-            assetFetchOptions = options
+            assetFetchOptions = [
+                .smartAlbum: options,
+                .album: options,
+                .moment: options
+            ]
         }
         
         return self

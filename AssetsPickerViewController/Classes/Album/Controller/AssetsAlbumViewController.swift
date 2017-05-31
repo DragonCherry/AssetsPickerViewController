@@ -91,7 +91,6 @@ open class AssetsAlbumViewController: UIViewController {
         AssetsManager.shared.fetchAlbums { (_) in
             self.collectionView.reloadData()
         }
-        AssetsManager.shared.cacheAlbums(cacheSize: pickerConfig.albumCacheSize)
     }
     
     open override func viewDidLoad() {
