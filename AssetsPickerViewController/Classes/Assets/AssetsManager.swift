@@ -294,6 +294,16 @@ extension AssetsManager {
 // MARK: - Model Manipulation
 extension AssetsManager {
     
+    fileprivate func isQualified(album: PHAssetCollection) -> Bool {
+        guard self.pickerConfig.albumIsShowHiddenAlbum || album.assetCollectionSubtype != .smartAlbumAllHidden else {
+            return false
+        }
+        guard let fetchResult = self.fetchMap[album.localIdentifier], self.pickerConfig.albumIsShowEmptyAlbum || fetchResult.count > 0 else {
+            return false
+        }
+        return true
+    }
+    
     fileprivate func remove(albumsWithType type: PHAssetCollectionType) {
         var albumsIndex: Int = -1
         switch type {
@@ -362,8 +372,9 @@ extension AssetsManager {
             logw("sortedAlbums has empty albums.")
             return albums
         }
+        let filtered = albums.filter { self.isQualified(album: $0) }
         if let comparator = pickerConfig.albumComparator?[albumType] {
-            return albums.sorted(by: { (leftAlbum, rightAlbum) -> Bool in
+            return filtered.sorted(by: { (leftAlbum, rightAlbum) -> Bool in
                 if let leftResult = self.fetchMap[leftAlbum.localIdentifier], let rightResult = self.fetchMap[rightAlbum.localIdentifier] {
                     return comparator(leftAlbum.assetCollectionType, (leftAlbum, leftResult), (rightAlbum, rightResult))
                 } else {
@@ -374,10 +385,10 @@ extension AssetsManager {
         } else {
             if let _ = pickerConfig.albumFetchOptions?[albumType] {
                 // return fetched album as it is
-                return albums
+                return filtered
             } else {
                 // default: by count
-                return albums.sorted(by: { Int(self.fetchMap[$0.localIdentifier]?.count) > Int(self.fetchMap[$1.localIdentifier]?.count) })
+                return filtered.sorted(by: { Int(self.fetchMap[$0.localIdentifier]?.count) > Int(self.fetchMap[$1.localIdentifier]?.count) })
             }
         }
     }
@@ -486,9 +497,7 @@ extension AssetsManager {
         
         albumFetchResult.enumerateObjects({ (album, _, _) in
             // fetch assets
-            guard let _ = self.fetchAlbum(album: album) else {
-                return
-            }
+            self.fetchAlbum(album: album)
             
             // set default album
             if album.assetCollectionSubtype == self.pickerConfig.albumDefaultType {
@@ -530,17 +539,9 @@ extension AssetsManager {
     }
     
     @discardableResult
-    fileprivate func fetchAlbum(album: PHAssetCollection) -> PHFetchResult<PHAsset>? {
+    fileprivate func fetchAlbum(album: PHAssetCollection) -> PHFetchResult<PHAsset> {
         
         let fetchResult = PHAsset.fetchAssets(in: album, options: self.pickerConfig.assetFetchOptions?[album.assetCollectionType])
-        
-        guard self.pickerConfig.albumIsShowHiddenAlbum || album.assetCollectionSubtype != .smartAlbumAllHidden else {
-            return nil
-        }
-        
-        guard self.pickerConfig.albumIsShowEmptyAlbum || fetchResult.count > 0 else {
-            return nil
-        }
         
         // cache fetch result
         self.fetchMap[album.localIdentifier] = fetchResult
@@ -614,7 +615,9 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 for insertedIndex in insertedIndexes {
                     let insertedAlbum = albumsChangeDetail.fetchResultAfterChanges.object(at: insertedIndex.row)
                     fetchAlbum(album: insertedAlbum)
-                    insertedAlbums.append(insertedAlbum)
+                    if isQualified(album: insertedAlbum) {
+                        insertedAlbums.append(insertedAlbum)
+                    }
                     fetchedAlbumsArray[section].insert(insertedAlbum, at: insertedIndex.row)
                 }
                 sortedAlbumsArray[section] = sortedAlbums(fromAlbums: fetchedAlbumsArray[section])
@@ -649,7 +652,47 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     }
                 }
                 
-                sortedAlbumsArray[section] = sortedAlbums(fromAlbums: sortedAlbumsArray[section])
+                // get renewed array
+                sortedAlbumsArray[section] = sortedAlbums(fromAlbums: fetchedAlbumsArray[section])
+            
+                // find removed indexPaths
+                var removedIndexPaths = [IndexPath]()
+                var removedAlbums = [PHAssetCollection]()
+                for (i, oldSortedAlbum) in oldSortedAlbums.enumerated() {
+                    guard sortedAlbumsArray[section].contains(oldSortedAlbum) else {
+                        removedAlbums.append(oldSortedAlbum)
+                        removedIndexPaths.append(IndexPath(row: i, section: section))
+                        updatedIndexesSetInSortedAlbums.remove(i)
+                        continue
+                    }
+                }
+                // notify removed indexPaths
+                if removedIndexPaths.count > 0 {
+                    DispatchQueue.main.sync {
+                        for subscriber in self.subscribers {
+                            subscriber.assetsManager(manager: self, removedAlbums: removedAlbums, at: removedIndexPaths)
+                        }
+                    }
+                }
+                
+                // find inserted indexPaths
+                var insertedIndexPaths = [IndexPath]()
+                var insertedAlbums = [PHAssetCollection]()
+                for (i, sortedAlbum) in sortedAlbumsArray[section].enumerated() {
+                    guard oldSortedAlbums.contains(sortedAlbum) else {
+                        insertedAlbums.append(sortedAlbum)
+                        insertedIndexPaths.append(IndexPath(row: i, section: section))
+                        continue
+                    }
+                }
+                // notify inserted indexPaths
+                if insertedIndexPaths.count > 0 {
+                    DispatchQueue.main.sync {
+                        for subscriber in self.subscribers {
+                            subscriber.assetsManager(manager: self, insertedAlbums: insertedAlbums, at: insertedIndexPaths)
+                        }
+                    }
+                }
                 
                 for updatedAlbum in updatedAlbums {
                     if let newIndex = sortedAlbumsArray[section].index(of: updatedAlbum) {
@@ -802,8 +845,10 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
 extension IndexSet {
     fileprivate func asArray(section: Int? = nil) -> [IndexPath] {
         var indexPaths = [IndexPath]()
-        for entry in enumerated() {
-            indexPaths.append(IndexPath(row: entry.element, section: section ?? 0))
+        if count > 0 {
+            for entry in enumerated() {
+                indexPaths.append(IndexPath(row: entry.element, section: section ?? 0))
+            }
         }
         return indexPaths
     }
