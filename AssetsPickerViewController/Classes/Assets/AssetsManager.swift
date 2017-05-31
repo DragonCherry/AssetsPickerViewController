@@ -53,7 +53,8 @@ open class AssetsManager: NSObject {
     fileprivate var sortedAlbumsArray = [[PHAssetCollection]]()
     fileprivate(set) open var assetArray = [PHAsset]()
     
-    fileprivate var defaultAlbum: PHAssetCollection!
+    fileprivate(set) open var defaultAlbum: PHAssetCollection?
+    fileprivate(set) open var cameraRollAlbum: PHAssetCollection!
     fileprivate(set) open var selectedAlbum: PHAssetCollection?
     
     fileprivate var isFetchedAlbums: Bool = false
@@ -472,7 +473,7 @@ extension AssetsManager {
         }
         
         // set default album
-        select(album: defaultAlbum)
+        select(album: defaultAlbum ?? cameraRollAlbum)
         
         completion?(assetArray)
     }
@@ -482,8 +483,6 @@ extension AssetsManager {
         let fetchOption = pickerConfig.albumFetchOptions?[type]
         let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: type, subtype: .any, options: fetchOption)
         var fetchedAlbums = [PHAssetCollection]()
-        var fallbackDefaultAlbum: PHAssetCollection?
-        var defaultAlbum: PHAssetCollection?
         
         albumFetchResult.enumerateObjects({ (album, _, _) in
             // fetch assets
@@ -493,11 +492,11 @@ extension AssetsManager {
             
             // set default album
             if album.assetCollectionSubtype == self.pickerConfig.albumDefaultType {
-                defaultAlbum = album
+                self.defaultAlbum = album
             }
             // save alternative album
             if album.assetCollectionSubtype == .smartAlbumUserLibrary {
-                fallbackDefaultAlbum = album
+                self.cameraRollAlbum = album
             }
             fetchedAlbums.append(album)
         })
@@ -509,22 +508,21 @@ extension AssetsManager {
         if let defaultAlbum = self.defaultAlbum {
             logi("Default album is \"\(defaultAlbum.localizedTitle ?? "")\"")
         } else {
-            if let defaultAlbum = defaultAlbum {
+            if let defaultAlbum = self.defaultAlbum {
                 logi("Set default album \"\(defaultAlbum.localizedTitle ?? "")\"")
             } else {
-                if let fallbackDefaultAlbum = fallbackDefaultAlbum {
-                    defaultAlbum = fallbackDefaultAlbum
-                    logw("Set default album with fallback default album \"\(fallbackDefaultAlbum.localizedTitle ?? "")\"")
+                if let cameraRollAlbum = self.cameraRollAlbum {
+                    self.defaultAlbum = cameraRollAlbum
+                    logw("Set default album with fallback default album \"\(cameraRollAlbum.localizedTitle ?? "")\"")
                 } else {
-                    if let firstAlbum = sortedAlbums.first {
-                        defaultAlbum = firstAlbum
+                    if let firstAlbum = sortedAlbums.first, type == .smartAlbum {
+                        self.defaultAlbum = firstAlbum
                         loge("Set default album with first item \"\(firstAlbum.localizedTitle ?? "")\"")
                     } else {
                         logc("Is this case could happen? Please raise an issue if you've met this message.")
                     }
                 }
             }
-            self.defaultAlbum = defaultAlbum
         }
         
         // append album fetch result
@@ -790,9 +788,11 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 albumsToUpdateThumbnail.append(sortedAlbumsArray[indexPath.section][indexPath.row])
             }
         }
-        DispatchQueue.main.sync {
-            for subscriber in self.subscribers {
-                subscriber.assetsManager(manager: self, updatedAlbums: albumsToUpdateThumbnail, at: indexPathsToUpdateThumbnail)
+        if albumsToUpdateThumbnail.count > 0 {
+            DispatchQueue.main.sync {
+                for subscriber in self.subscribers {
+                    subscriber.assetsManager(manager: self, updatedAlbums: albumsToUpdateThumbnail, at: indexPathsToUpdateThumbnail)
+                }
             }
         }
     }

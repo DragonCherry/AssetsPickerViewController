@@ -241,6 +241,28 @@ extension AssetsPhotoViewController {
         }
     }
     
+    func select(album: PHAssetCollection) {
+        if AssetsManager.shared.select(album: album) {
+            // set title with selected count if exists
+            if selectedArray.count > 0 {
+                updateNavigationStatus()
+            } else {
+                title = title(forAlbum: album)
+            }
+            collectionView.reloadData()
+            
+            for asset in selectedArray {
+                if let index = AssetsManager.shared.assetArray.index(of: asset) {
+                    logi("reselecting: \(index)")
+                    collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
+                }
+            }
+            if AssetsManager.shared.assetArray.count > 0 {
+                collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.assetArray.count - 1, section: 0), at: .bottom, animated: false)
+            }
+        }
+    }
+    
     func select(asset: PHAsset, at indexPath: IndexPath) {
         if let _ = selectedMap[asset.localIdentifier] {
             logw("Invalid status.")
@@ -498,30 +520,11 @@ extension AssetsPhotoViewController: UICollectionViewDataSourcePrefetching {
 extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
     
     public func assetsAlbumViewControllerCancelled(controller: AssetsAlbumViewController) {
-        log("")
+        logi("Cancelled.")
     }
     
     public func assetsAlbumViewController(controller: AssetsAlbumViewController, selected album: PHAssetCollection) {
-        
-        if AssetsManager.shared.select(album: album) {
-            // set title with selected count if exists
-            if selectedArray.count > 0 {
-                updateNavigationStatus()
-            } else {
-                title = title(forAlbum: album)
-            }
-            collectionView.reloadData()
-            
-            for asset in selectedArray {
-                if let index = AssetsManager.shared.assetArray.index(of: asset) {
-                    logi("reselecting: \(index)")
-                    collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
-                }
-            }
-            if AssetsManager.shared.assetArray.count > 0 {
-                collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.assetArray.count - 1, section: 0), at: .bottom, animated: false)
-            }
-        }
+        select(album: album)
     }
 }
 
@@ -551,6 +554,13 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     
     public func assetsManager(manager: AssetsManager, removedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         logi("removedAlbums at indexPaths: \(indexPaths)")
+        guard let selectedAlbum = manager.selectedAlbum else {
+            logw("selected album is nil.")
+            return
+        }
+        if albums.contains(selectedAlbum) {
+            select(album: manager.defaultAlbum ?? manager.cameraRollAlbum)
+        }
     }
     
     public func assetsManager(manager: AssetsManager, updatedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
