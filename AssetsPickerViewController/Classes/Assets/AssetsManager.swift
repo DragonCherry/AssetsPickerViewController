@@ -468,6 +468,9 @@ extension AssetsManager {
         var fetchedAlbums = [PHAssetCollection]()
         
         albumFetchResult.enumerateObjects({ (album, _, _) in
+            // fetch assets
+            self.fetchAlbum(album: album)
+            
             // set default album
             if album.assetCollectionSubtype == self.pickerConfig.albumDefaultType {
                 self.defaultAlbum = album
