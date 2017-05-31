@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import Photos
 import Dimmer
 import PureLayout
 
 public protocol AssetsAlbumCellProtocol {
+    var album: PHAssetCollection? { get set }
     var isSelected: Bool { get set }
     var imageView: UIImageView { get }
     var titleText: String? { get set }
@@ -20,6 +22,12 @@ public protocol AssetsAlbumCellProtocol {
 open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     
     // MARK: - AssetsAlbumCellProtocol
+    open var album: PHAssetCollection? {
+        didSet {
+            // customizable
+        }
+    }
+    
     open override var isSelected: Bool {
         didSet {
             if isSelected {
@@ -94,15 +102,15 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
             imageView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
             imageView.autoMatch(.height, to: .width, of: contentView)
             
-            titleLabel.autoPinEdge(.top, to: .bottom, of: imageView, withOffset: 7)
+            titleLabel.autoPinEdge(.top, to: .bottom, of: imageView, withOffset: 8)
             titleLabel.autoPinEdge(toSuperviewEdge: .leading)
             titleLabel.autoPinEdge(toSuperviewEdge: .trailing)
-            titleLabel.autoSetDimension(.height, toSize: titleLabel.font.pointSize)
+            titleLabel.autoSetDimension(.height, toSize: titleLabel.font.pointSize + 2)
             
-            countLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 3)
+            countLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 2)
             countLabel.autoPinEdge(toSuperviewEdge: .leading)
             countLabel.autoPinEdge(toSuperviewEdge: .trailing)
-            countLabel.autoSetDimension(.height, toSize: countLabel.font.pointSize)
+            countLabel.autoSetDimension(.height, toSize: countLabel.font.pointSize + 2)
             
             didSetupConstraints = true
         }

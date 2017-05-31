@@ -25,15 +25,22 @@ public protocol AssetsPickerViewControllerDelegate {
 open class AssetsPickerViewController: UISplitViewController {
     
     open var pickerDelegate: AssetsPickerViewControllerDelegate?
+    private var pickerConfig: AssetsPickerConfig!
     
     open var pickerNavigation: AssetsPickerNavigationController = {
-        let controller = AssetsPickerNavigationController()
-        return controller
+        return AssetsPickerNavigationController()
     }()
     
-    open var photoViewController: AssetsPhotoViewController = {
-        let controller = AssetsPhotoViewController()
-        return controller
+    open lazy var photoViewController: AssetsPhotoViewController = {
+        var config: AssetsPickerConfig!
+        if let pickerConfig = self.pickerConfig {
+            config = pickerConfig.prepare()
+        } else {
+            config = AssetsPickerConfig().prepare()
+        }
+        self.pickerConfig = config
+        AssetsManager.shared.pickerConfig = config
+        return AssetsPhotoViewController(pickerConfig: config)
     }()
     
     public required init?(coder aDecoder: NSCoder) {
@@ -46,8 +53,13 @@ open class AssetsPickerViewController: UISplitViewController {
         commonInit()
     }
     
+    public init(pickerConfig: AssetsPickerConfig) {
+        self.pickerConfig = pickerConfig
+        super.init(nibName: nil, bundle: nil)
+        commonInit()
+    }
+    
     func commonInit() {
-        AssetsPhotoAttributes.prepare()
         AssetsManager.shared.registerObserver()
         viewControllers = [pickerNavigation, photoViewController]
     }

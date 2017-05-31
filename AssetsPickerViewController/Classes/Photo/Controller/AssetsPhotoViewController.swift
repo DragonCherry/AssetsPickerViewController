@@ -13,7 +13,7 @@ import TinyLog
 // MARK: - AssetsPhotoViewController
 open class AssetsPhotoViewController: UIViewController {
     
-    open var cellType: AnyClass = AssetsPhotoCell.classForCoder()
+    fileprivate var pickerConfig: AssetsPickerConfig!
     
     fileprivate let cellReuseIdentifier: String = UUID().uuidString
     fileprivate let footerReuseIdentifier: String = UUID().uuidString
@@ -50,7 +50,7 @@ open class AssetsPhotoViewController: UIViewController {
     
     fileprivate lazy var collectionView: UICollectionView = {
         
-        let layout = AssetsPhotoLayout()
+        let layout = AssetsPhotoLayout(pickerConfig: self.pickerConfig)
         self.updateLayout(layout: layout, isPortrait: UIApplication.shared.statusBarOrientation.isPortrait)
         layout.scrollDirection = .vertical
         
@@ -58,7 +58,7 @@ open class AssetsPhotoViewController: UIViewController {
         view.configureForAutoLayout()
         view.allowsMultipleSelection = true
         view.alwaysBounceVertical = true
-        view.register(self.cellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
+        view.register(self.pickerConfig.assetCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsPhotoFooterView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: self.footerReuseIdentifier)
         view.contentInset = UIEdgeInsets(top: 1, left: 0, bottom: 0, right: 0)
         view.backgroundColor = UIColor.clear
@@ -73,6 +73,19 @@ open class AssetsPhotoViewController: UIViewController {
         
         return view
     }()
+    
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    public init(pickerConfig: AssetsPickerConfig) {
+        self.init()
+        self.pickerConfig = pickerConfig
+    }
     
     open override func loadView() {
         super.loadView()
@@ -103,7 +116,7 @@ open class AssetsPhotoViewController: UIViewController {
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !didSetInitialPosition {
-            let count = AssetsManager.shared.photoArray.count
+            let count = AssetsManager.shared.assetArray.count
             if count > 0 {
                 if self.collectionView.collectionViewLayout.collectionViewContentSize.height > 0 {
                     let lastRow = self.collectionView.numberOfItems(inSection: 0) - 1
@@ -176,11 +189,7 @@ extension AssetsPhotoViewController {
         manager.fetchAlbums()
         manager.fetchPhotos() { photos in
             self.updateEmptyView(count: photos.count)
-            if let selectedTitle = manager.selectedAlbum?.localizedTitle {
-                self.title = selectedTitle
-            } else {
-                self.title = ""
-            }
+            self.title = self.title(forAlbum: manager.selectedAlbum)
             self.collectionView.reloadData()
         }
     }
@@ -226,9 +235,9 @@ extension AssetsPhotoViewController {
     
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
         if let flowLayout = layout as? UICollectionViewFlowLayout {
-            flowLayout.itemSize = isPortrait ? AssetsPhotoAttributes.portraitCellSize : AssetsPhotoAttributes.landscapeCellSize
-            flowLayout.minimumLineSpacing = isPortrait ? AssetsPhotoAttributes.portraitLineSpace : AssetsPhotoAttributes.landscapeLineSpace
-            flowLayout.minimumInteritemSpacing = isPortrait ? AssetsPhotoAttributes.portraitInteritemSpace : AssetsPhotoAttributes.landscapeInteritemSpace
+            flowLayout.itemSize = isPortrait ? pickerConfig.assetPortraitCellSize : pickerConfig.assetLandscapeCellSize
+            flowLayout.minimumLineSpacing = isPortrait ? pickerConfig.assetPortraitLineSpace : pickerConfig.assetLandscapeLineSpace
+            flowLayout.minimumInteritemSpacing = isPortrait ? pickerConfig.assetPortraitInteritemSpace : pickerConfig.assetLandscapeInteritemSpace
         }
     }
     
@@ -241,7 +250,7 @@ extension AssetsPhotoViewController {
         selectedMap[asset.localIdentifier] = asset
         
         // update selected UI
-        guard let photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCell else {
+        guard var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else {
             logw("Invalid status.")
             return
         }
@@ -266,7 +275,11 @@ extension AssetsPhotoViewController {
     func updateSelectionCount() {
         let visibleIndexPaths = collectionView.indexPathsForVisibleItems
         for visibleIndexPath in visibleIndexPaths {
-            if let selectedAsset = selectedMap[AssetsManager.shared.photoArray[visibleIndexPath.row].localIdentifier], let photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCell {
+            guard AssetsManager.shared.assetArray.count > visibleIndexPath.row else {
+                logw("Referred wrong index\(visibleIndexPath.row) while asset count is \(AssetsManager.shared.assetArray.count).")
+                break
+            }
+            if let selectedAsset = selectedMap[AssetsManager.shared.assetArray[visibleIndexPath.row].localIdentifier], var photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCellProtocol {
                 if let selectedIndex = selectedArray.index(of: selectedAsset) {
                     photoCell.count = selectedIndex + 1
                 }
@@ -275,6 +288,7 @@ extension AssetsPhotoViewController {
     }
     
     func updateNavigationStatus() {
+        
         doneButtonItem.isEnabled = selectedArray.count > 0
         
         let counts: (imageCount: Int, videoCount: Int) = selectedArray.reduce((0, 0)) { (result, asset) -> (Int, Int) in
@@ -286,7 +300,8 @@ extension AssetsPhotoViewController {
         let imageCount = counts.imageCount
         let videoCount = counts.videoCount
         
-        var titleString = AssetsManager.shared.selectedAlbum?.localizedTitle ?? ""
+        var titleString: String = title(forAlbum: AssetsManager.shared.selectedAlbum)
+        
         if imageCount > 0 && videoCount > 0 {
             titleString = String(format: String(key: "Title_Selected_Items"), imageCount + videoCount)
         } else {
@@ -313,6 +328,16 @@ extension AssetsPhotoViewController {
         }
         footerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
     }
+    
+    func title(forAlbum album: PHAssetCollection?) -> String {
+        var titleString: String!
+        if let albumTitle = album?.localizedTitle {
+            titleString = "\(albumTitle) ▾"
+        } else {
+            titleString = ""
+        }
+        return titleString
+    }
 }
 
 // MARK: - UI Event Handlers
@@ -331,7 +356,7 @@ extension AssetsPhotoViewController {
     func pressedTitle(gesture: UITapGestureRecognizer) {
         guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
         let navigationController = UINavigationController()
-        let controller = AssetsAlbumViewController()
+        let controller = AssetsAlbumViewController(pickerConfig: self.pickerConfig)
         controller.delegate = self
         navigationController.viewControllers = [controller]
         present(navigationController, animated: true, completion: nil)
@@ -348,14 +373,14 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
 
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if let delegate = self.delegate {
-            return delegate.assetsPicker(controller: picker, shouldSelect: AssetsManager.shared.photoArray[indexPath.row], at: indexPath)
+            return delegate.assetsPicker(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath)
         } else {
             return true
         }
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let asset = AssetsManager.shared.photoArray[indexPath.row]
+        let asset = AssetsManager.shared.assetArray[indexPath.row]
         select(asset: asset, at: indexPath)
         updateNavigationStatus()
         delegate?.assetsPicker(controller: picker, didSelect: asset, at: indexPath)
@@ -363,14 +388,14 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
         if let delegate = self.delegate {
-            return delegate.assetsPicker(controller: picker, shouldDeselect: AssetsManager.shared.photoArray[indexPath.row], at: indexPath)
+            return delegate.assetsPicker(controller: picker, shouldDeselect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath)
         } else {
             return true
         }
     }
     
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let asset = AssetsManager.shared.photoArray[indexPath.row]
+        let asset = AssetsManager.shared.assetArray[indexPath.row]
         deselect(asset: asset, at: indexPath)
         updateNavigationStatus()
         delegate?.assetsPicker(controller: picker, didDeselect: asset, at: indexPath)
@@ -381,7 +406,7 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
 extension AssetsPhotoViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = AssetsManager.shared.photoArray.count
+        let count = AssetsManager.shared.assetArray.count
         updateEmptyView(count: count)
         return count
     }
@@ -392,7 +417,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             logw("Failed to cast UICollectionViewCell.")
             return cell
         }
-        photoCell.isVideo = AssetsManager.shared.photoArray[indexPath.row].mediaType == .video
+        photoCell.isVideo = AssetsManager.shared.assetArray[indexPath.row].mediaType == .video
         cell.setNeedsUpdateConstraints()
         cell.updateConstraintsIfNeeded()
         return cell
@@ -404,7 +429,8 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             return
         }
         
-        let asset = AssetsManager.shared.photoArray[indexPath.row]
+        let asset = AssetsManager.shared.assetArray[indexPath.row]
+        photoCell.asset = asset
         photoCell.isVideo = asset.mediaType == .video
         if photoCell.isVideo {
             photoCell.duration = asset.duration
@@ -418,8 +444,14 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         } else {
             // update cell UI as normal
         }
-        AssetsManager.shared.image(at: indexPath.row, size: AssetsPhotoAttributes.thumbnailCacheSize, completion: { (image) in
-            photoCell.imageView.image = image
+        AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { (image) in
+            UIView.transition(
+                with: photoCell.imageView,
+                duration: 0.125,
+                options: .transitionCrossDissolve,
+                animations: { photoCell.imageView.image = image },
+                completion: nil
+            )
         })
     }
     
@@ -441,9 +473,9 @@ extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         if collectionView.numberOfSections - 1 == section {
             if collectionView.bounds.width > collectionView.bounds.height {
-                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.landscapeCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetLandscapeCellSize.width * 2/3)
             } else {
-                return CGSize(width: collectionView.bounds.width, height: AssetsPhotoAttributes.portraitCellSize.width * 2/3)
+                return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetPortraitCellSize.width * 2/3)
             }
         } else {
             return .zero
@@ -456,9 +488,9 @@ extension AssetsPhotoViewController: UICollectionViewDataSourcePrefetching {
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         var assets = [PHAsset]()
         for indexPath in indexPaths {
-            assets.append(AssetsManager.shared.photoArray[indexPath.row])
+            assets.append(AssetsManager.shared.assetArray[indexPath.row])
         }
-        AssetsManager.shared.cache(assets: assets, size: AssetsPhotoAttributes.thumbnailCacheSize)
+        AssetsManager.shared.cache(assets: assets, size: pickerConfig.assetCacheSize)
     }
 }
 
@@ -472,18 +504,22 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
     public func assetsAlbumViewController(controller: AssetsAlbumViewController, selected album: PHAssetCollection) {
         
         if AssetsManager.shared.select(album: album) {
-            
-            title = album.localizedTitle
+            // set title with selected count if exists
+            if selectedArray.count > 0 {
+                updateNavigationStatus()
+            } else {
+                title = title(forAlbum: album)
+            }
             collectionView.reloadData()
             
             for asset in selectedArray {
-                if let index = AssetsManager.shared.photoArray.index(of: asset) {
+                if let index = AssetsManager.shared.assetArray.index(of: asset) {
                     logi("reselecting: \(index)")
                     collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
                 }
             }
-            if AssetsManager.shared.photoArray.count > 0 {
-                collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.photoArray.count - 1, section: 0), at: .bottom, animated: false)
+            if AssetsManager.shared.assetArray.count > 0 {
+                collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.assetArray.count - 1, section: 0), at: .bottom, animated: false)
             }
         }
     }
@@ -505,12 +541,24 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         }
     }
     
-    public func assetsManagerReloaded(manager: AssetsManager) {
-        
+    public func assetsManager(manager: AssetsManager, reloadedAlbumsInSection section: Int) {
+        logi("reloadedAlbumsInSection section: \(section)")
+    }
+    
+    public func assetsManager(manager: AssetsManager, insertedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        logi("insertedAlbums at indexPaths: \(indexPaths)")
+    }
+    
+    public func assetsManager(manager: AssetsManager, removedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        logi("removedAlbums at indexPaths: \(indexPaths)")
+    }
+    
+    public func assetsManager(manager: AssetsManager, updatedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
+        logi("updatedAlbums at indexPaths: \(indexPaths)")
     }
     
     public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
-        logi("reloaded album: \(indexPath)")
+        logi("reloadedAlbum at indexPath: \(indexPath)")
     }
     
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
