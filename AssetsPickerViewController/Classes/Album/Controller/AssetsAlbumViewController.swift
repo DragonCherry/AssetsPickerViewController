@@ -157,7 +157,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let count = AssetsManager.shared.numberOfAlbums(inSection: section)
-        logi("numberOfItemsInSection[\(section)] \(count)")
+        logi("numberOfItemsInSection[\(section)]: \(count)")
         return count
     }
     
