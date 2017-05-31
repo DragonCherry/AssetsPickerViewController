@@ -592,13 +592,16 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 for removedIndex in removedIndexes {
                     let albumToRemove = fetchedAlbumsArray[section][removedIndex.row]
                     if let index = sortedAlbumsArray[section].index(of: albumToRemove) {
-                        removedAlbums.append(albumToRemove)
                         removedIndexesInSortedAlbums.append(IndexPath(row: index, section: section))
                     }
                 }
+                removedIndexesInSortedAlbums.sort(by: { $0.row > $1.row })
                 for removedIndex in removedIndexesInSortedAlbums {
                     // update fetchedAlbumsArray & sortedAlbumsArray
-                    remove(album: sortedAlbumsArray[section][removedIndex.row], indexPath: removedIndex, isFetchedIndex: false)
+                    logi("before remove [\(removedIndex.section)][\(removedIndex.row)]")
+                    let albumToRemove = sortedAlbumsArray[section][removedIndex.row]
+                    removedAlbums.append(albumToRemove)
+                    remove(album: albumToRemove, indexPath: removedIndex, isFetchedIndex: false)
                 }
                 DispatchQueue.main.sync {
                     for subscriber in self.subscribers {
