@@ -444,7 +444,13 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             // update cell UI as normal
         }
         AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { (image) in
-            photoCell.imageView.image = image
+            UIView.transition(
+                with: photoCell.imageView,
+                duration: 0.125,
+                options: .transitionCrossDissolve,
+                animations: { photoCell.imageView.image = image },
+                completion: nil
+            )
         })
     }
     

@@ -192,7 +192,13 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
         albumCell.count = AssetsManager.shared.numberOfAssets(at: indexPath)
         albumCell.imageView.image = nil
         AssetsManager.shared.imageOfAlbum(at: indexPath, size: pickerConfig.albumCacheSize, isNeedDegraded: false) { (image) in
-            albumCell.imageView.image = image
+            UIView.transition(
+                with: albumCell.imageView,
+                duration: 0.20,
+                options: .transitionCrossDissolve,
+                animations: { albumCell.imageView.image = image },
+                completion: nil
+            )
         }
     }
 }

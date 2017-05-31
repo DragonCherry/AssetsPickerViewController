@@ -92,9 +92,7 @@ open class AssetsPickerConfig {
         return CGSize(width: edge, height: edge)
     }()
     
-    public init() {
-        
-    }
+    public init() {}
     
     @discardableResult
     open func prepare() -> Self {

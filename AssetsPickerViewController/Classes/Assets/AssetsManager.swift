@@ -63,6 +63,36 @@ open class AssetsManager: NSObject {
     }
     
     deinit { logd("Released \(type(of: self))") }
+    
+    open func clear() {
+        
+        // clear observer & subscriber
+        unregisterObserver()
+        unsubscribeAll()
+        
+        // clear cache
+        if PHPhotoLibrary.authorizationStatus() == .authorized {
+            imageManager.stopCachingImagesForAllAssets()
+        }
+        
+        // clear albums
+        albumMap.removeAll()
+        fetchedAlbumsArray.removeAll()
+        sortedAlbumsArray.removeAll()
+        
+        // clear assets
+        assetArray.removeAll()
+        
+        // clear fetch results
+        albumsFetchArray.removeAll()
+        fetchMap.removeAll()
+        
+        // clear flags
+        selectedAlbum = nil
+        isFetchedAlbums = false
+        
+        logd("cleared AssetsManager object.")
+    }
 }
 
 // MARK: - Subscribe
@@ -136,34 +166,6 @@ extension AssetsManager {
 
 // MARK: - Sources
 extension AssetsManager {
-
-    open func clear() {
-        
-        // clear observer & subscriber
-        unregisterObserver()
-        unsubscribeAll()
-        
-        // clear cache
-        if PHPhotoLibrary.authorizationStatus() == .authorized {
-            imageManager.stopCachingImagesForAllAssets()
-        }
-        
-        // clear albums
-        albumMap.removeAll()
-        fetchedAlbumsArray.removeAll()
-        sortedAlbumsArray.removeAll()
-        
-        // clear assets
-        assetArray.removeAll()
-        
-        // clear fetch results
-        albumsFetchArray.removeAll()
-        fetchMap.removeAll()
-        
-        // clear flags
-        selectedAlbum = nil
-        isFetchedAlbums = false
-    }
     
     open var numberOfSections: Int {
         return sortedAlbumsArray.count
