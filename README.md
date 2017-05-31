@@ -40,10 +40,12 @@ Handles empty or no permisson cases.
 
 
 Customizable Album Layout
+
 ![customize_album](https://cloud.githubusercontent.com/assets/20486591/26616647/1d343c24-460b-11e7-94cf-3b46a0f2e0a2.png)
 
 
 Customizable Asset Layout
+
 ![customize_asset](https://cloud.githubusercontent.com/assets/20486591/26616648/1d385746-460b-11e7-9324-62ea634e2fcb.png)
 
 
