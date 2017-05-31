@@ -32,7 +32,11 @@ open class AssetsManager: NSObject {
     
     open static let shared = AssetsManager()
     
-    open var pickerConfig = AssetsPickerConfig()
+    open var pickerConfig = AssetsPickerConfig() {
+        didSet {
+            isFetchedAlbums = false
+        }
+    }
     
     fileprivate let imageManager = PHCachingImageManager()
     fileprivate var authorizationStatus = PHPhotoLibrary.authorizationStatus()
