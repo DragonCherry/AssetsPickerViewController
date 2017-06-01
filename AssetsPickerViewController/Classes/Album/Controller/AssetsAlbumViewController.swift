@@ -106,11 +106,14 @@ open class AssetsAlbumViewController: UIViewController {
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        let isPortrait = size.height > size.width
-        let space = pickerConfig.albumItemSpace(isPortrait: isPortrait)
-        let insets = collectionView.contentInset
-        collectionView.contentInset = UIEdgeInsets(top: insets.top, left: space, bottom: insets.bottom, right: space)
-        updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
+        coordinator.animateAlongsideTransition(in: collectionView, animation: { (context) in
+            let isPortrait = size.height > size.width
+            let space = self.pickerConfig.albumItemSpace(isPortrait: isPortrait)
+            let insets = self.collectionView.contentInset
+            self.collectionView.contentInset = UIEdgeInsets(top: insets.top, left: space, bottom: insets.bottom, right: space)
+            self.updateLayout(layout: self.collectionView.collectionViewLayout, isPortrait: isPortrait)
+        }) { (_) in
+        }
     }
 }
 
@@ -131,6 +134,7 @@ extension AssetsAlbumViewController {
             flowLayout.itemSize = isPortrait ? pickerConfig.albumPortraitCellSize : pickerConfig.albumLandscapeCellSize
             flowLayout.minimumLineSpacing = pickerConfig.albumDefaultSpace
             flowLayout.minimumInteritemSpacing = pickerConfig.albumItemSpace(isPortrait: isPortrait)
+            logi("flowLayout: itemSize=\(flowLayout.itemSize), minimumInteritemSpacing=\(flowLayout.minimumInteritemSpacing)")
         }
     }
 }
