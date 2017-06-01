@@ -18,13 +18,9 @@ Any advice, suggestions, and pull request will be greatly appreciated.
 
 ## Screenshots
 
-iOS friendly UI for Album
+iOS friendly UI for Album & Asset
 
 ![albums_portrait](https://cloud.githubusercontent.com/assets/20486591/26525542/43036a42-4395-11e7-98f0-5bf3f40f923d.PNG)
-
-
-iOS friendly UI for Asset
-
 ![photos_portrait](https://cloud.githubusercontent.com/assets/20486591/26525538/42b1d6dc-4395-11e7-9c16-b9abdb2e9247.PNG)
 
 
@@ -39,13 +35,9 @@ Handles empty or no permisson cases.
 ![no_permission](https://cloud.githubusercontent.com/assets/20486591/26525539/42e6759a-4395-11e7-9bae-1b90f6d3ec44.PNG)
 
 
-Customizable Album Layout
+Customizable Album & Asset Layout
 
 ![customize_album](https://cloud.githubusercontent.com/assets/20486591/26616647/1d343c24-460b-11e7-94cf-3b46a0f2e0a2.png)
-
-
-Customizable Asset Layout
-
 ![customize_asset](https://cloud.githubusercontent.com/assets/20486591/26616648/1d385746-460b-11e7-9324-62ea634e2fcb.png)
 
 
