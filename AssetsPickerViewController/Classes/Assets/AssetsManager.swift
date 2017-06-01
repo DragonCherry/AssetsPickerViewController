@@ -384,6 +384,10 @@ extension AssetsManager {
         return authorizationStatus == .authorized
     }
     
+    func isCountChanged(changeDetails: PHFetchResultChangeDetails<PHAsset>) -> Bool {
+        return changeDetails.fetchResultBeforeChanges.count != changeDetails.fetchResultAfterChanges.count
+    }
+    
     func isThumbnailChanged(changeDetails: PHFetchResultChangeDetails<PHAsset>) -> Bool {
         
         var isChanged: Bool = false
@@ -562,7 +566,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 var removedAlbums = [PHAssetCollection]()
                 var removedIndexesInSortedAlbums = [IndexPath]()
                 for removedIndex in removedIndexes {
-                    let albumToRemove = fetchedAlbumsArray[section][removedIndex.row]
+                    let albumToRemove = fetchedAlbumsArray[section].remove(at: removedIndex.row)
                     if let index = sortedAlbumsArray[section].index(of: albumToRemove) {
                         removedIndexesInSortedAlbums.append(IndexPath(row: index, section: section))
                     }
@@ -705,7 +709,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 }
                 
                 // check thumbnail
-                if isThumbnailChanged(changeDetails: assetsChangeDetails) {
+                if isThumbnailChanged(changeDetails: assetsChangeDetails) || isCountChanged(changeDetails: assetsChangeDetails) {
                     if let sortedIndex = sortedAlbumsArray[section].index(of: album) {
                         thumbnailUpdatedIndexPaths.append(IndexPath(row: sortedIndex, section: section))
                     }
