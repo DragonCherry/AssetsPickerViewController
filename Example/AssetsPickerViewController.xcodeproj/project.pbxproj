@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E0AB8FB1EE05BED0002902B /* ShowHiddenAlbumController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */; };
 		0ED76B9C99BCC7CF96D6E7C7 /* Pods_AssetsPickerViewController_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4844A87E6E07F756E26D8BE5 /* Pods_AssetsPickerViewController_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
@@ -14,13 +15,14 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		E10E44491EDBA7020075C641 /* CommonExampleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E44481EDBA7020075C641 /* CommonExampleController.swift */; };
-		E12081AE1EDE5DA600E4DB16 /* ExcludeEmptyAlbumsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081AD1EDE5DA600E4DB16 /* ExcludeEmptyAlbumsController.swift */; };
+		E12081AE1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */; };
 		E12081B01EDE794900E4DB16 /* CustomAssetCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081AF1EDE794900E4DB16 /* CustomAssetCellController.swift */; };
 		E19F61021EDBDFE700B8091B /* SimpleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61011EDBDFE700B8091B /* SimpleController.swift */; };
 		E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowHiddenAlbumController.swift; sourceTree = "<group>"; };
 		1592F9C610477996A6411204 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		42159084843244398BBCF4A5 /* Pods-AssetsPickerViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Tests/Pods-AssetsPickerViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		4844A87E6E07F756E26D8BE5 /* Pods_AssetsPickerViewController_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AssetsPickerViewController_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -38,7 +40,7 @@
 		BB946C56DEB423024F5AB0E3 /* Pods-AssetsPickerViewController_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Tests/Pods-AssetsPickerViewController_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		DF68D535ED8F5EDE6BB13809 /* Pods-AssetsPickerViewController_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Example/Pods-AssetsPickerViewController_Example.release.xcconfig"; sourceTree = "<group>"; };
 		E10E44481EDBA7020075C641 /* CommonExampleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExampleController.swift; sourceTree = "<group>"; };
-		E12081AD1EDE5DA600E4DB16 /* ExcludeEmptyAlbumsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeEmptyAlbumsController.swift; sourceTree = "<group>"; };
+		E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HideEmptyAlbumsController.swift; sourceTree = "<group>"; };
 		E12081AF1EDE794900E4DB16 /* CustomAssetCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAssetCellController.swift; sourceTree = "<group>"; };
 		E159E9F4E24E25BE57C1159B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		E19F61011EDBDFE700B8091B /* SimpleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleController.swift; sourceTree = "<group>"; };
@@ -143,7 +145,8 @@
 				E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */,
 				E12081AF1EDE794900E4DB16 /* CustomAssetCellController.swift */,
 				E19F61011EDBDFE700B8091B /* SimpleController.swift */,
-				E12081AD1EDE5DA600E4DB16 /* ExcludeEmptyAlbumsController.swift */,
+				E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */,
+				0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */,
 			);
 			path = ExampleUsages;
 			sourceTree = "<group>";
@@ -296,8 +299,9 @@
 				E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */,
 				E10E44491EDBA7020075C641 /* CommonExampleController.swift in Sources */,
 				E12081B01EDE794900E4DB16 /* CustomAssetCellController.swift in Sources */,
+				0E0AB8FB1EE05BED0002902B /* ShowHiddenAlbumController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
-				E12081AE1EDE5DA600E4DB16 /* ExcludeEmptyAlbumsController.swift in Sources */,
+				E12081AE1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift in Sources */,
 				E19F61021EDBDFE700B8091B /* SimpleController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

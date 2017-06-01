@@ -86,7 +86,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Exclude Empty Albums" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZnK-wU-zl5">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Show/Hide Empty Albums" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZnK-wU-zl5">
                                                     <rect key="frame" x="15" y="0.0" width="345" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -97,6 +97,26 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <segue destination="IDa-3J-nNB" kind="show" id="uCL-eh-mJV"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="pp8-mo-h2x" style="IBUITableViewCellStyleDefault" id="xYE-mB-Sp8">
+                                        <rect key="frame" x="0.0" y="176" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xYE-mB-Sp8" id="IUf-c5-zKE">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Show/Hide Hidden Album" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pp8-mo-h2x">
+                                                    <rect key="frame" x="15" y="0.0" width="345" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="cCi-dh-eQw" kind="show" id="7iP-24-EMw"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -152,10 +172,10 @@
             </objects>
             <point key="canvasLocation" x="2126" y="-698"/>
         </scene>
-        <!--Exclude Empty Albums Controller-->
+        <!--Hide Empty Albums Controller-->
         <scene sceneID="oo6-g4-XFY">
             <objects>
-                <tableViewController id="IDa-3J-nNB" customClass="ExcludeEmptyAlbumsController" customModule="AssetsPickerViewController_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="IDa-3J-nNB" customClass="HideEmptyAlbumsController" customModule="AssetsPickerViewController_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="5YK-qT-EZO">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -168,7 +188,25 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kGm-ZK-OoQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2817" y="-699"/>
+            <point key="canvasLocation" x="3494" y="-698"/>
+        </scene>
+        <!--Show Hidden Album Controller-->
+        <scene sceneID="E0J-dU-mwl">
+            <objects>
+                <tableViewController id="cCi-dh-eQw" customClass="ShowHiddenAlbumController" customModule="AssetsPickerViewController_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Vkh-kE-vpY">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <connections>
+                            <outlet property="dataSource" destination="cCi-dh-eQw" id="n0Q-mk-ZhM"/>
+                            <outlet property="delegate" destination="cCi-dh-eQw" id="Pm9-H1-iG4"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rSx-hi-w2e" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4172" y="-698"/>
         </scene>
         <!--Custom Asset Cell Controller-->
         <scene sceneID="Cof-hW-KNu">
@@ -186,7 +224,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kc4-wS-azC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3505" y="-698"/>
+            <point key="canvasLocation" x="2810" y="-698"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Kvd-GF-els">
