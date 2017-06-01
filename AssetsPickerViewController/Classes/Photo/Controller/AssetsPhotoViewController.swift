@@ -544,13 +544,8 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         }
     }
     
-    public func assetsManager(manager: AssetsManager, reloadedAlbumsInSection section: Int) {
-        logi("reloadedAlbumsInSection section: \(section)")
-    }
-    
-    public func assetsManager(manager: AssetsManager, insertedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
-        logi("insertedAlbums at indexPaths: \(indexPaths)")
-    }
+    public func assetsManager(manager: AssetsManager, reloadedAlbumsInSection section: Int) {}
+    public func assetsManager(manager: AssetsManager, insertedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {}
     
     public func assetsManager(manager: AssetsManager, removedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         logi("removedAlbums at indexPaths: \(indexPaths)")
@@ -563,13 +558,8 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         }
     }
     
-    public func assetsManager(manager: AssetsManager, updatedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
-        logi("updatedAlbums at indexPaths: \(indexPaths)")
-    }
-    
-    public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
-        logi("reloadedAlbum at indexPath: \(indexPath)")
-    }
+    public func assetsManager(manager: AssetsManager, updatedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {}
+    public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {}
     
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("insertedAssets at: \(indexPaths)")

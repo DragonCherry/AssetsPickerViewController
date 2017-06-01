@@ -627,31 +627,25 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 let newSortedAlbums = sortedAlbums(fromAlbums: fetchedAlbumsArray[section])
              
                 // find removed indexPaths
-                var removedIndexPaths = [IndexPath]()
-                var removedAlbums = [PHAssetCollection]()
-                for (i, oldSortedAlbum) in oldSortedAlbums.enumerated().reversed() {
-                    guard newSortedAlbums.contains(oldSortedAlbum) else {
-                        removedAlbums.append(oldSortedAlbum)
-                        removedIndexPaths.append(IndexPath(row: i, section: section))
-                        oldSortedAlbums.remove(at: i)
-                        updatedIndexesSetInSortedAlbums.remove(i)
-                        continue
-                    }
+                let removedInfo = removedIndexPaths(from: newSortedAlbums, oldAlbums: oldSortedAlbums, section: section)
+                for removedIndex in removedInfo.indexPaths {
+                    oldSortedAlbums.remove(at: removedIndex.row)
+                    updatedIndexesSetInSortedAlbums.remove(removedIndex.row)
                 }
                 // update albums before notify removed albums
                 sortedAlbumsArray[section] = oldSortedAlbums
                 
                 // notify removed indexPaths
-                if removedIndexPaths.count > 0 {
+                if removedInfo.indexPaths.count > 0 {
                     DispatchQueue.main.sync {
                         for subscriber in self.subscribers {
-                            subscriber.assetsManager(manager: self, removedAlbums: removedAlbums, at: removedIndexPaths)
+                            subscriber.assetsManager(manager: self, removedAlbums: removedInfo.albums, at: removedInfo.indexPaths)
                         }
                     }
                 }
                 
                 // find inserted indexPaths
-                let insertedInfo = insertedIndexPaths(from: oldSortedAlbums, using: newSortedAlbums, section: section)
+                let insertedInfo = insertedIndexPaths(from: oldSortedAlbums, oldAlbums: newSortedAlbums, section: section)
                 
                 // update albums before notify inserted albums
                 sortedAlbumsArray[section] = newSortedAlbums
@@ -810,7 +804,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             
             // insert & notify newly qualified albums
             let newSortedAlbums = sortedAlbums(fromAlbums: fetchedAlbumsArray[section])
-            let insertedInfo = insertedIndexPaths(from: newSortedAlbums, using: sortedAlbumsArray[section], section: section)
+            let insertedInfo = insertedIndexPaths(from: newSortedAlbums, oldAlbums: sortedAlbumsArray[section], section: section)
             sortedAlbumsArray[section] = newSortedAlbums
             
             // notify inserted indexPaths
@@ -826,7 +820,21 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
         return thumbnailUpdatedIndexPaths
     }
     
-    public func insertedIndexPaths(from newAlbums: [PHAssetCollection], using oldAlbums: [PHAssetCollection], section: Int) -> (indexPaths: [IndexPath], albums: [PHAssetCollection]) {
+    public func removedIndexPaths(from newAlbums: [PHAssetCollection], oldAlbums: [PHAssetCollection], section: Int) -> (indexPaths: [IndexPath], albums: [PHAssetCollection]) {
+        // find removed indexPaths
+        var removedIndexPaths = [IndexPath]()
+        var removedAlbums = [PHAssetCollection]()
+        for (i, oldSortedAlbum) in oldAlbums.enumerated().reversed() {
+            guard newAlbums.contains(oldSortedAlbum) else {
+                removedAlbums.append(oldSortedAlbum)
+                removedIndexPaths.append(IndexPath(row: i, section: section))
+                continue
+            }
+        }
+        return (removedIndexPaths, removedAlbums)
+    }
+    
+    public func insertedIndexPaths(from newAlbums: [PHAssetCollection], oldAlbums: [PHAssetCollection], section: Int) -> (indexPaths: [IndexPath], albums: [PHAssetCollection]) {
         // find inserted indexPaths
         var insertedIndexPaths = [IndexPath]()
         var insertedAlbums = [PHAssetCollection]()
