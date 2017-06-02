@@ -151,6 +151,7 @@ open class AssetsPickerConfig {
         // asset fetch options by default
         if assetFetchOptions == nil {
             let options = PHFetchOptions()
+            options.includeHiddenAssets = albumIsShowHiddenAlbum
             options.sortDescriptors = [
                 NSSortDescriptor(key: "creationDate", ascending: true),
                 NSSortDescriptor(key: "modificationDate", ascending: true)
