@@ -1,20 +1,20 @@
 //
-//  ExcludeEmptyAlbumsController.swift
+//  ShowHiddenAlbumController.swift
 //  AssetsPickerViewController
 //
-//  Created by DragonCherry on 5/31/17.
+//  Created by DragonCherry on 6/1/17.
 //  Copyright © 2017 CocoaPods. All rights reserved.
 //
 
 import UIKit
 import AssetsPickerViewController
 
-class ExcludeEmptyAlbumsController: CommonExampleController {
+class ShowHiddenAlbumController: CommonExampleController {
     
     override func pressedPick(_ sender: Any) {
         
         let pickerConfig = AssetsPickerConfig()
-        pickerConfig.albumIsShowEmptyAlbum = false
+        pickerConfig.albumIsShowHiddenAlbum = true
         
         let picker = AssetsPickerViewController(pickerConfig: pickerConfig)
         picker.pickerDelegate = self

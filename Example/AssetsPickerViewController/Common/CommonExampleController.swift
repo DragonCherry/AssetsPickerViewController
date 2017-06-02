@@ -14,7 +14,9 @@ import TinyLog
 class CommonExampleController: UITableViewController {
     
     let kCellReuseIdentifier: String = UUID().uuidString
-    let imageManager = PHCachingImageManager()
+    lazy var imageManager = {
+        return PHCachingImageManager()
+    }()
     lazy var cellSize: CGSize = {
         return CGSize(width: self.view.bounds.width, height: 60)
     }()

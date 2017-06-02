@@ -29,10 +29,8 @@ open class AssetsPhotoLayout: UICollectionViewFlowLayout {
     
     open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         if let translatedOffset = self.translatedOffset {
-//            logi("returning translatedOffset: \(translatedOffset)")
             return translatedOffset
         } else {
-//            logi("returning proposedContentOffset: \(proposedContentOffset)")
             return proposedContentOffset
         }
     }
