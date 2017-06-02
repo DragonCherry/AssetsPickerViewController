@@ -51,21 +51,21 @@ Customizable Album & Asset Layout
 
 - realtime synchronization for library change in albums & photos
 
-- option to show empty albums
+- option to show/hide empty albums
 
 - option to show/hide "Hidden" album
 
 - customizable album cell
 
-- customizable album sorting
+- customizable album sorting by PHFetchOptions or filter block
 
-- customizable album filtering
+- customizable album filtering by PHFetchOptions or filter block
 
 - customizable asset cell
 
-- customizable asset sorting
+- customizable asset sorting by PHFetchOptions
 
-- customizable asset filtering
+- customizable asset filtering by PHFetchOptions
 
 
 ## Features To-do
