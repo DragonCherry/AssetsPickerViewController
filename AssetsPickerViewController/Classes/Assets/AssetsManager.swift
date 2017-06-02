@@ -190,24 +190,11 @@ extension AssetsManager {
         return Int(fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier]?.count)
     }
     
-    open func indexPath(forAlbum target: PHAssetCollection) -> IndexPath? {
-        var section: Int = -1
-        var row: Int = -1
-        for (i, albums) in sortedAlbumsArray.enumerated() {
-            if let collectionType = albums.first?.assetCollectionType, collectionType == target.assetCollectionType {
-                section = i
-            } else {
-                continue
-            }
-            if let j = albums.index(of: target) {
-                row = j
-                break
-            }
-        }
-        if section > -1 && row > -1 {
+    open func indexPath(forAlbum target: PHAssetCollection, inAlbumsArray albumsArray: [[PHAssetCollection]]) -> IndexPath? {
+        let section = albumSection(forType: target.assetCollectionType)
+        if let row = albumsArray[section].index(of: target) {
             return IndexPath(row: row, section: section)
         } else {
-            logw("Failed to find indexPath for album: \(target.localizedTitle ?? "")")
             return nil
         }
     }
