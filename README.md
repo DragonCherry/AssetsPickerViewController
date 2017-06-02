@@ -75,11 +75,11 @@ Customizable Album & Asset Layout
 - support many languages(German, French, Spanish, Chinese, Japanese, etc)
 
 
-## Usage
+## Basic Usage
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-```ruby
+```swift
 // to show
 let picker = AssetsPickerViewController()
 picker.pickerDelegate = self
@@ -102,6 +102,121 @@ extension SimpleExampleController: AssetsPickerViewControllerDelegate {
     }
     func assetsPicker(controller: AssetsPickerViewController, didDeselect asset: PHAsset, at indexPath: IndexPath) {}
 }
+```
+
+## Bonus
+
+### Basic
+
+To hide empty albums,
+```swift
+pickerConfig.albumIsShowEmptyAlbum = false
+```
+
+To show "Hidden" albums,
+```swift
+pickerConfig.albumIsShowHiddenAlbum = true
+```
+
+### Appearence
+
+To apply custom album cell,
+```swift
+pickerConfig.albumCellType = CustomAlbumCell.classForCoder()
+// and implement your own UICollectionViewCell which conforms to AssetsAlbumCellProtocol
+```
+
+To apply custom asset cell,
+```swift
+pickerConfig.assetCellType = CustomAssetCell.classForCoder()
+// and implement your own UICollectionViewCell which conforms to AssetsPhotoCellProtocol
+```
+
+### Sorting
+
+To sort albums by PHFetchOptions,
+```swift
+let options = PHFetchOptions()
+options.sortDescriptors = [NSSortDescriptor(key: "estimatedAssetCount", ascending: true)]
+        
+pickerConfig.albumFetchOptions = [
+    .smartAlbum: options
+]
+```
+
+To sort by block for a certain reason,
+```swift
+pickerConfig.albumComparator = { (albumType, leftEntry, rightEntry) -> Bool in
+    // return: Is leftEntry ordered before the rightEntry?
+    switch albumType {
+    case .smartAlbum:
+        return leftEntry.album.assetCollectionSubtype.rawValue < rightEntry.album.assetCollectionSubtype.rawValue
+    case .album:
+        return leftEntry.result.count < rightEntry.result.count     // ascending order by asset count
+    case .moment:
+        return true
+    }
+}
+```
+
+To sort assets by PHFetchOptions,
+```swift
+let options = PHFetchOptions()
+options.sortDescriptors = [
+    NSSortDescriptor(key: "pixelWidth", ascending: true),
+    NSSortDescriptor(key: "pixelHeight", ascending: true)
+]
+
+pickerConfig.assetFetchOptions = [
+    .smartAlbum: options
+]
+```
+
+### Filtering
+
+To filter albums by PHFetchOptions,
+```swift
+let options = PHFetchOptions()
+options.predicate = NSPredicate(
+    format: "assetCollectionSubtype = %d OR assetCollectionSubtype = %d",
+    PHAssetCollectionSubtype.smartAlbumUserLibrary.rawValue,
+    PHAssetCollectionSubtype.smartAlbumSelfPortraits.rawValue)                              // shows only Camera Roll & Selfies
+        
+pickerConfig.albumFetchOptions = [
+    .smartAlbum: options                                                                    // apply to smart albums only
+]
+```
+
+To filter albums by block for a certain reason,
+```swift
+let smartAlbumFilter: ((PHAssetCollection, PHFetchResult<PHAsset>) -> Bool) = { (album, fetchResult) in
+    // filter by album object
+    if album.assetCollectionSubtype == .smartAlbumBursts { return false }
+    if album.assetCollectionSubtype == .smartAlbumTimelapses { return false }
+    if album.assetCollectionSubtype == .smartAlbumFavorites { return false }
+            
+    // filter by fetch result
+    if fetchResult.count > 50 {
+        return true     // only shows albums that contains more than 50 assets
+    } else {
+        return false    //
+    }
+}
+pickerConfig.albumFilter = [
+    .smartAlbum: smartAlbumFilter
+]
+```
+
+To filter assets by PHFetchOptions,
+```swift
+let options = PHFetchOptions()
+options.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.video.rawValue)
+options.sortDescriptors = [NSSortDescriptor(key: "duration", ascending: true)]
+        
+pickerConfig.assetFetchOptions = [
+    .smartAlbum: options,
+    .album: options
+]
 ```
 
 ## Requirements
