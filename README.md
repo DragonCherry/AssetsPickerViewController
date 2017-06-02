@@ -181,14 +181,8 @@ pickerConfig.assetFetchOptions = [
 To filter albums by PHFetchOptions,
 ```swift
 let options = PHFetchOptions()
-options.predicate = NSPredicate(
-    format: "assetCollectionSubtype = %d OR assetCollectionSubtype = %d",
-    PHAssetCollectionSubtype.smartAlbumUserLibrary.rawValue,
-    PHAssetCollectionSubtype.smartAlbumSelfPortraits.rawValue)                              // shows only Camera Roll & Selfies
-        
-pickerConfig.albumFetchOptions = [
-    .smartAlbum: options                                                                    // apply to smart albums only
-]
+options.predicate = NSPredicate(format: "estimatedAssetCount = 0")
+pickerConfig.albumFetchOptions = [.smartAlbum: options]
 ```
 
 To filter albums by block for a certain reason,
