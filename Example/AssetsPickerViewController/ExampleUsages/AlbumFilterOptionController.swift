@@ -17,10 +17,7 @@ class AlbumFilterOptionController: CommonExampleController {
         let pickerConfig = AssetsPickerConfig()
         
         let options = PHFetchOptions()
-        options.predicate = NSPredicate(
-            format: "assetCollectionSubtype = %d OR assetCollectionSubtype = %d",
-            PHAssetCollectionSubtype.smartAlbumUserLibrary.rawValue,
-            PHAssetCollectionSubtype.smartAlbumSelfPortraits.rawValue)                              // shows only Camera Roll & Selfies
+        options.predicate = NSPredicate(format: "estimatedAssetCount = 0")
         
         pickerConfig.albumFetchOptions = [
             .smartAlbum: options                                                                    // apply to smart albums only
