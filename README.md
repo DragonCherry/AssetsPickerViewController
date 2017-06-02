@@ -51,17 +51,21 @@ Customizable Album & Asset Layout
 
 - realtime synchronization for library change in albums & photos
 
+- option to show/hide empty albums
+
+- option to show/hide "Hidden" album
+
 - customizable album cell
 
-- customizable album order
+- customizable album sorting by PHFetchOptions or filter block
+
+- customizable album filtering by PHFetchOptions or filter block
 
 - customizable asset cell
 
-- customizable asset order
+- customizable asset sorting by PHFetchOptions
 
-- option to show empty albums
-
-- fully customizable configuration by settings struct model
+- customizable asset filtering by PHFetchOptions
 
 
 ## Features To-do
@@ -177,14 +181,8 @@ pickerConfig.assetFetchOptions = [
 To filter albums by PHFetchOptions,
 ```swift
 let options = PHFetchOptions()
-options.predicate = NSPredicate(
-    format: "assetCollectionSubtype = %d OR assetCollectionSubtype = %d",
-    PHAssetCollectionSubtype.smartAlbumUserLibrary.rawValue,
-    PHAssetCollectionSubtype.smartAlbumSelfPortraits.rawValue)                              // shows only Camera Roll & Selfies
-        
-pickerConfig.albumFetchOptions = [
-    .smartAlbum: options                                                                    // apply to smart albums only
-]
+options.predicate = NSPredicate(format: "estimatedAssetCount = 0")
+pickerConfig.albumFetchOptions = [.smartAlbum: options]
 ```
 
 To filter albums by block for a certain reason,
