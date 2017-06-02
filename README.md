@@ -51,17 +51,21 @@ Customizable Album & Asset Layout
 
 - realtime synchronization for library change in albums & photos
 
+- option to show empty albums
+
+- option to show/hide "Hidden" album
+
 - customizable album cell
 
-- customizable album order
+- customizable album sorting
+
+- customizable album filtering
 
 - customizable asset cell
 
-- customizable asset order
+- customizable asset sorting
 
-- option to show empty albums
-
-- fully customizable configuration by settings struct model
+- customizable asset filtering
 
 
 ## Features To-do
