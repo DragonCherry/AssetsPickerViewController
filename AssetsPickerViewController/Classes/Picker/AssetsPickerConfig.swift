@@ -12,9 +12,18 @@ import Photos
 open class AssetsPickerConfig {
     
     // MARK: - Album Config
+
+    /// Set selected album at initial load.
     open var albumDefaultType: PHAssetCollectionSubtype = .smartAlbumUserLibrary
+    /// true: shows empty albums, false: hides empty albums
     open var albumIsShowEmptyAlbum: Bool = true
+    /// true: shows "Hidden" album, false: hides "Hidden" album
     open var albumIsShowHiddenAlbum: Bool = false
+    /// Customize your own album list by providing filter block below.
+    open var albumFilter: [
+        PHAssetCollectionType: ((PHAssetCollection, PHFetchResult<PHAsset>) -> Bool)
+    ]?
+    
     /// Not yet fully implemeted, do not set this true until it's completed.
     open var albumIsShowMomentAlbums: Bool = false
     
@@ -23,9 +32,7 @@ open class AssetsPickerConfig {
     
     // MARK: Order
     /// by giving this comparator, albumFetchOptions going to be useless
-    open var albumComparator: [
-        PHAssetCollectionType: ((PHAssetCollectionType, (PHAssetCollection, PHFetchResult<PHAsset>), (PHAssetCollection, PHFetchResult<PHAsset>)) -> Bool)
-    ]?
+    open var albumComparator: ((PHAssetCollectionType, (album: PHAssetCollection, result: PHFetchResult<PHAsset>), (album: PHAssetCollection, result: PHFetchResult<PHAsset>)) -> Bool)?
     
     // MARK: Cache
     private var _albumCacheSize: CGSize = .zero
@@ -63,7 +70,6 @@ open class AssetsPickerConfig {
     }
     
     // MARK: - Asset Config
-    open var assetIsShowSelectedSequence: Bool = true
     
     // MARK: Fetch
     open var assetFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
@@ -145,10 +151,12 @@ open class AssetsPickerConfig {
         // asset fetch options by default
         if assetFetchOptions == nil {
             let options = PHFetchOptions()
+            options.includeHiddenAssets = albumIsShowHiddenAlbum
             options.sortDescriptors = [
                 NSSortDescriptor(key: "creationDate", ascending: true),
                 NSSortDescriptor(key: "modificationDate", ascending: true)
             ]
+            options.predicate = NSPredicate(format: "mediaType = %d OR mediaType = %d", PHAssetMediaType.image.rawValue, PHAssetMediaType.video.rawValue)
             assetFetchOptions = [
                 .smartAlbum: options,
                 .album: options,

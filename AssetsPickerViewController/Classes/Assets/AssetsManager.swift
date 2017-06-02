@@ -241,6 +241,10 @@ extension AssetsManager {
         })
     }
     
+    open func fetchResult(forAlbum album: PHAssetCollection) -> PHFetchResult<PHAsset>? {
+        return fetchMap[album.localIdentifier]
+    }
+    
     open func album(at indexPath: IndexPath) -> PHAssetCollection {
         return sortedAlbumsArray[indexPath.section][indexPath.row]
     }
@@ -315,6 +319,9 @@ extension AssetsManager {
 extension AssetsManager {
     
     func isQualified(album: PHAssetCollection) -> Bool {
+        if let albumFilter = pickerConfig.albumFilter?[album.assetCollectionType], let fetchResult = fetchMap[album.localIdentifier] {
+            return albumFilter(album, fetchResult)
+        }
         guard self.pickerConfig.albumIsShowHiddenAlbum || album.assetCollectionSubtype != .smartAlbumAllHidden else {
             return false
         }
@@ -351,7 +358,7 @@ extension AssetsManager {
             return albums
         }
         let filtered = albums.filter { self.isQualified(album: $0) }
-        if let comparator = pickerConfig.albumComparator?[albumType] {
+        if let comparator = pickerConfig.albumComparator {
             return filtered.sorted(by: { (leftAlbum, rightAlbum) -> Bool in
                 if let leftResult = self.fetchMap[leftAlbum.localIdentifier], let rightResult = self.fetchMap[rightAlbum.localIdentifier] {
                     return comparator(leftAlbum.assetCollectionType, (leftAlbum, leftResult), (rightAlbum, rightResult))
