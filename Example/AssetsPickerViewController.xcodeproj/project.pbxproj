@@ -17,7 +17,13 @@
 		E10E44491EDBA7020075C641 /* CommonExampleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E44481EDBA7020075C641 /* CommonExampleController.swift */; };
 		E12081AE1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */; };
 		E12081B01EDE794900E4DB16 /* CustomAssetCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081AF1EDE794900E4DB16 /* CustomAssetCellController.swift */; };
-		E19F61021EDBDFE700B8091B /* SimpleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61011EDBDFE700B8091B /* SimpleController.swift */; };
+		E12081B81EE15CE300E4DB16 /* AlbumOrderOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081B71EE15CE300E4DB16 /* AlbumOrderOptionController.swift */; };
+		E12081BA1EE15CED00E4DB16 /* AlbumOrderBlockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081B91EE15CED00E4DB16 /* AlbumOrderBlockController.swift */; };
+		E12081BC1EE15CFD00E4DB16 /* AssetOrderOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081BB1EE15CFD00E4DB16 /* AssetOrderOptionController.swift */; };
+		E12081BE1EE15D1000E4DB16 /* AlbumFilterOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081BD1EE15D1000E4DB16 /* AlbumFilterOptionController.swift */; };
+		E12081C01EE15D2000E4DB16 /* AlbumFilterBlockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081BF1EE15D2000E4DB16 /* AlbumFilterBlockController.swift */; };
+		E12081C21EE15D2900E4DB16 /* AssetFilterOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081C11EE15D2900E4DB16 /* AssetFilterOptionController.swift */; };
+		E19F61021EDBDFE700B8091B /* BasicUsageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61011EDBDFE700B8091B /* BasicUsageController.swift */; };
 		E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,8 +48,14 @@
 		E10E44481EDBA7020075C641 /* CommonExampleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExampleController.swift; sourceTree = "<group>"; };
 		E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HideEmptyAlbumsController.swift; sourceTree = "<group>"; };
 		E12081AF1EDE794900E4DB16 /* CustomAssetCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAssetCellController.swift; sourceTree = "<group>"; };
+		E12081B71EE15CE300E4DB16 /* AlbumOrderOptionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumOrderOptionController.swift; sourceTree = "<group>"; };
+		E12081B91EE15CED00E4DB16 /* AlbumOrderBlockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumOrderBlockController.swift; sourceTree = "<group>"; };
+		E12081BB1EE15CFD00E4DB16 /* AssetOrderOptionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetOrderOptionController.swift; sourceTree = "<group>"; };
+		E12081BD1EE15D1000E4DB16 /* AlbumFilterOptionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumFilterOptionController.swift; sourceTree = "<group>"; };
+		E12081BF1EE15D2000E4DB16 /* AlbumFilterBlockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumFilterBlockController.swift; sourceTree = "<group>"; };
+		E12081C11EE15D2900E4DB16 /* AssetFilterOptionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetFilterOptionController.swift; sourceTree = "<group>"; };
 		E159E9F4E24E25BE57C1159B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		E19F61011EDBDFE700B8091B /* SimpleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleController.swift; sourceTree = "<group>"; };
+		E19F61011EDBDFE700B8091B /* BasicUsageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicUsageController.swift; sourceTree = "<group>"; };
 		E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbumCellController.swift; sourceTree = "<group>"; };
 		FED5796E98C093EFDFDF9B23 /* AssetsPickerViewController.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = AssetsPickerViewController.podspec; path = ../AssetsPickerViewController.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -139,14 +151,52 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
-		E19F61001EDBDFA000B8091B /* ExampleUsages */ = {
+		E12081B31EE15C8000E4DB16 /* Basics */ = {
+			isa = PBXGroup;
+			children = (
+				E19F61011EDBDFE700B8091B /* BasicUsageController.swift */,
+				E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */,
+				0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */,
+			);
+			name = Basics;
+			sourceTree = "<group>";
+		};
+		E12081B41EE15C8F00E4DB16 /* Appearence */ = {
 			isa = PBXGroup;
 			children = (
 				E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */,
 				E12081AF1EDE794900E4DB16 /* CustomAssetCellController.swift */,
-				E19F61011EDBDFE700B8091B /* SimpleController.swift */,
-				E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */,
-				0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */,
+			);
+			name = Appearence;
+			sourceTree = "<group>";
+		};
+		E12081B51EE15CA900E4DB16 /* Sorting */ = {
+			isa = PBXGroup;
+			children = (
+				E12081B71EE15CE300E4DB16 /* AlbumOrderOptionController.swift */,
+				E12081B91EE15CED00E4DB16 /* AlbumOrderBlockController.swift */,
+				E12081BB1EE15CFD00E4DB16 /* AssetOrderOptionController.swift */,
+			);
+			name = Sorting;
+			sourceTree = "<group>";
+		};
+		E12081B61EE15CB500E4DB16 /* Filtering */ = {
+			isa = PBXGroup;
+			children = (
+				E12081BD1EE15D1000E4DB16 /* AlbumFilterOptionController.swift */,
+				E12081BF1EE15D2000E4DB16 /* AlbumFilterBlockController.swift */,
+				E12081C11EE15D2900E4DB16 /* AssetFilterOptionController.swift */,
+			);
+			name = Filtering;
+			sourceTree = "<group>";
+		};
+		E19F61001EDBDFA000B8091B /* ExampleUsages */ = {
+			isa = PBXGroup;
+			children = (
+				E12081B31EE15C8000E4DB16 /* Basics */,
+				E12081B41EE15C8F00E4DB16 /* Appearence */,
+				E12081B51EE15CA900E4DB16 /* Sorting */,
+				E12081B61EE15CB500E4DB16 /* Filtering */,
 			);
 			path = ExampleUsages;
 			sourceTree = "<group>";
@@ -296,14 +346,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E12081BE1EE15D1000E4DB16 /* AlbumFilterOptionController.swift in Sources */,
 				607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */,
 				E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */,
 				E10E44491EDBA7020075C641 /* CommonExampleController.swift in Sources */,
 				E12081B01EDE794900E4DB16 /* CustomAssetCellController.swift in Sources */,
+				E12081BA1EE15CED00E4DB16 /* AlbumOrderBlockController.swift in Sources */,
 				0E0AB8FB1EE05BED0002902B /* ShowHiddenAlbumController.swift in Sources */,
+				E12081BC1EE15CFD00E4DB16 /* AssetOrderOptionController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				E12081C21EE15D2900E4DB16 /* AssetFilterOptionController.swift in Sources */,
 				E12081AE1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift in Sources */,
-				E19F61021EDBDFE700B8091B /* SimpleController.swift in Sources */,
+				E12081B81EE15CE300E4DB16 /* AlbumOrderOptionController.swift in Sources */,
+				E19F61021EDBDFE700B8091B /* BasicUsageController.swift in Sources */,
+				E12081C01EE15D2000E4DB16 /* AlbumFilterBlockController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
