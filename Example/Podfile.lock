@@ -2,7 +2,7 @@ PODS:
   - Alamofire (4.4.0)
   - AlamofireImage (3.2.0):
     - Alamofire (~> 4.1)
-  - AssetsPickerViewController (0.9.1):
+  - AssetsPickerViewController (0.9.2):
     - AlamofireImage
     - Dimmer
     - FadeView
@@ -33,7 +33,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
   AlamofireImage: 157ed682cc81d3b9db4fb90c1f12180ac552d93b
-  AssetsPickerViewController: 39d4d58d09b539d04f0688e18e12fdc2e0c6946b
+  AssetsPickerViewController: c373ca7bbc52cb6f6d6822a13646d8ea6b178e25
   Dimmer: d69bad35b7e4545c3d36b64737b2623b59fac55c
   FadeView: 7d4cdefa83ac9c17782613e9068c9fac0457285e
   OptionalTypes: a51c1b33edaf7e848d506c66f37bd8eece408092
