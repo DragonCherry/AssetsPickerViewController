@@ -34,7 +34,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 continue
             }
             // sync removed albums
-            if let removedIndexes = albumsChangeDetail.removedIndexes {
+            if let removedIndexes = albumsChangeDetail.removedIndexes?.reversed() {
                 for removedIndex in removedIndexes.enumerated() {
                     remove(indexPath: IndexPath(row: removedIndex.element, section: section))
                 }
