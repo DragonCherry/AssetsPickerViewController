@@ -208,6 +208,7 @@
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = GD2PMHGGVD;
 						LastSwiftMigration = 0820;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -420,6 +421,7 @@
 			baseConfigurationReference = 5BEE18E51A64448333376230 /* Pods-AssetsPickerViewController_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = GD2PMHGGVD;
 				INFOPLIST_FILE = AssetsPickerViewController/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -428,6 +430,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"DEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -438,6 +441,7 @@
 			baseConfigurationReference = DF68D535ED8F5EDE6BB13809 /* Pods-AssetsPickerViewController_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = GD2PMHGGVD;
 				INFOPLIST_FILE = AssetsPickerViewController/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -446,6 +450,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"DEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

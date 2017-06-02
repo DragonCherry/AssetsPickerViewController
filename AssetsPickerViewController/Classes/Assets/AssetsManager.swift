@@ -96,7 +96,7 @@ open class AssetsManager: NSObject {
     }
 }
 
-// MARK: - Subscribe
+// MARK: - Subscriber
 extension AssetsManager {
     
     open func subscribe(subscriber: AssetsManagerDelegate) {
@@ -111,6 +111,16 @@ extension AssetsManager {
 
     open func unsubscribeAll() {
         subscribers.removeAll()
+    }
+    
+    open func notifySubscribers(_ action: @escaping ((AssetsManagerDelegate) -> Void), condition: Bool = true) {
+        if condition {
+            DispatchQueue.main.sync {
+                for subscriber in self.subscribers {
+                    action(subscriber)
+                }
+            }
+        }
     }
 }
 
@@ -248,6 +258,31 @@ extension AssetsManager {
         return sortedAlbumsArray[indexPath.section][indexPath.row]
     }
     
+    open func albumSection(forType type: PHAssetCollectionType) -> Int {
+        switch type {
+        case .smartAlbum:
+            return 0
+        case .album:
+            return 1
+        case .moment:
+            return 2
+        }
+    }
+    
+    open func albumType(forSection section: Int) -> PHAssetCollectionType {
+        switch section {
+        case 0:
+            return .smartAlbum
+        case 1:
+            return .album
+        case 2:
+            return .moment
+        default:
+            loge("Section number error: \(section)")
+            return .album
+        }
+    }
+    
     open func count(ofType type: PHAssetMediaType) -> Int {
         if let album = self.selectedAlbum, let fetchResult = fetchMap[album.localIdentifier] {
             return fetchResult.countOfAssets(with: type)
@@ -302,41 +337,25 @@ extension AssetsManager {
         return true
     }
     
-    func remove(albumsWithType type: PHAssetCollectionType) {
-        var albumsIndex: Int = -1
-        switch type {
-        case .smartAlbum:
-            albumsIndex = 0
-        case .album:
-            albumsIndex = 1
-        case .moment:
-            albumsIndex = 2
-        }
-        guard sortedAlbumsArray.count > albumsIndex else {
-            logc("Cannot remove albums with type - \(type.rawValue)")
-            return
-        }
-        
-        let albums = sortedAlbumsArray[albumsIndex]
-        
-        fetchedAlbumsArray[albumsIndex].removeAll()
-        sortedAlbumsArray[albumsIndex].removeAll()
-        
-        for album in albums {
-            remove(album: album)
+    func remove(album: PHAssetCollection? = nil, indexPath: IndexPath? = nil) {
+        if let indexPath = indexPath {
+            fetchedAlbumsArray[indexPath.section].remove(at: indexPath.row)
+        } else if let albumToRemove = album {
+            for (section, fetchedAlbums) in fetchedAlbumsArray.enumerated() {
+                if let row = fetchedAlbums.index(of: albumToRemove) {
+                    fetchedAlbumsArray[section].remove(at: row)
+                }
+            }
+        } else {
+            logw("Empty parameters.")
         }
     }
     
-    func remove(album: PHAssetCollection, indexPath: IndexPath? = nil) {
-        if let indexPath = indexPath {
-            sortedAlbumsArray[indexPath.section].remove(at: indexPath.row)
-        } else {
-            for (section, sortedAlbums) in sortedAlbumsArray.enumerated() {
-                if let row = sortedAlbums.index(of: album) {
-                    sortedAlbumsArray[section].remove(at: row)
-                }
-            }
-        }
+    func refetchAlbum(forType type: PHAssetCollectionType) {
+        let fetchedInfo = fetchAlbums(forAlbumType: type)
+        fetchedAlbumsArray[albumSection(forType: type)] = fetchedInfo.fetchedAlbums
+        sortedAlbumsArray[albumSection(forType: type)] = fetchedInfo.sortedAlbums
+        albumsFetchArray[albumSection(forType: type)] = fetchedInfo.fetchResult
     }
     
     func sortedAlbums(fromAlbums albums: [PHAssetCollection]) -> [PHAssetCollection] {
