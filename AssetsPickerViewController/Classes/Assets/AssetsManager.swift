@@ -354,7 +354,6 @@ extension AssetsManager {
     
     func sortedAlbums(fromAlbums albums: [PHAssetCollection]) -> [PHAssetCollection] {
         guard let albumType = albums.first?.assetCollectionType else {
-            logw("sortedAlbums has empty albums.")
             return albums
         }
         let filtered = albums.filter { self.isQualified(album: $0) }
