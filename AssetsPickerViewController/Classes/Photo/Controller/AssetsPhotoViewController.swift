@@ -34,10 +34,10 @@ open class AssetsPhotoViewController: UIViewController {
     }()
     
     fileprivate var delegate: AssetsPickerViewControllerDelegate? {
-        return (splitViewController as? AssetsPickerViewController)?.pickerDelegate
+        return (navigationController as? AssetsPickerViewController)?.pickerDelegate
     }
     fileprivate var picker: AssetsPickerViewController! {
-        return splitViewController as! AssetsPickerViewController
+        return navigationController as! AssetsPickerViewController
     }
     fileprivate var tapGesture: UITapGestureRecognizer?
     fileprivate var syncOffsetRatio: CGFloat = -1
@@ -366,12 +366,12 @@ extension AssetsPhotoViewController {
 extension AssetsPhotoViewController {
     
     func pressedCancel(button: UIBarButtonItem) {
-        splitViewController?.dismiss(animated: true, completion: nil)
+        navigationController?.dismiss(animated: true, completion: nil)
         delegate?.assetsPickerDidCancel(controller: picker)
     }
     
     func pressedDone(button: UIBarButtonItem) {
-        splitViewController?.dismiss(animated: true, completion: nil)
+        navigationController?.dismiss(animated: true, completion: nil)
         delegate?.assetsPicker(controller: picker, selected: selectedArray)
     }
     
@@ -471,7 +471,12 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
                 with: photoCell.imageView,
                 duration: 0.125,
                 options: .transitionCrossDissolve,
-                animations: { photoCell.imageView.image = image },
+                animations: {
+                    photoCell.imageView.image = image
+                    if let imageSize = image?.size {
+                        logi("imageSize[\(indexPath.section)][\(indexPath.row)]: \(imageSize)")
+                    }
+                },
                 completion: nil
             )
         })

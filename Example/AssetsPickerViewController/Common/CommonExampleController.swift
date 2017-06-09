@@ -73,8 +73,8 @@ class CommonExampleController: UITableViewController {
         imageManager.requestImage(for: asset, targetSize: CGSize(width: imageWidth, height: imageWidth), contentMode: .aspectFill, options: nil) { (image, info) in
             cell.imageView?.contentMode = .scaleAspectFill
             cell.imageView?.image = image
-            cell.setNeedsUpdateConstraints()
-            cell.updateConstraintsIfNeeded()
+            cell.setNeedsLayout()
+            cell.layoutIfNeeded()
         }
     }
     
