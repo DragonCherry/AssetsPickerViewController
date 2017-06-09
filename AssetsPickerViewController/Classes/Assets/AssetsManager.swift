@@ -200,8 +200,7 @@ extension AssetsManager {
     }
     
     open func title(at indexPath: IndexPath) -> String? {
-        let album = sortedAlbumsArray[indexPath.section][indexPath.row]
-        return album.localizedTitle
+        return sortedAlbumsArray[indexPath.section][indexPath.row].localizedTitle
     }
     
     open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
@@ -216,6 +215,9 @@ extension AssetsManager {
                         if !isNeedDegraded && Bool(info?[PHImageResultIsDegradedKey]) {
                             return
                         }
+                        if let image = image, !Bool(info?[PHImageResultIsDegradedKey]) && size != image.size {
+                            logw("Requested size: \(size), Returned size: \(image.size)")
+                        }
                         DispatchQueue.main.async {
                             completion(image)
                         }
@@ -228,13 +230,16 @@ extension AssetsManager {
         }
     }
     
-    open func image(at index: Int, size: CGSize, completion: @escaping ((UIImage?) -> Void)) {
+    open func image(at index: Int, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
         imageManager.requestImage(
             for: assetArray[index],
             targetSize: size,
             contentMode: .aspectFill,
             options: nil,
             resultHandler: { (image, info) in
+                if !isNeedDegraded && Bool(info?[PHImageResultIsDegradedKey]) {
+                    return
+                }
                 DispatchQueue.main.async {
                     completion(image)
                 }
@@ -354,7 +359,6 @@ extension AssetsManager {
     
     func sortedAlbums(fromAlbums albums: [PHAssetCollection]) -> [PHAssetCollection] {
         guard let albumType = albums.first?.assetCollectionType else {
-            logw("sortedAlbums has empty albums.")
             return albums
         }
         let filtered = albums.filter { self.isQualified(album: $0) }

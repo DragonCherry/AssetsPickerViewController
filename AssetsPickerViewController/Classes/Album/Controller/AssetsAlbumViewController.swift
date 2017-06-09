@@ -58,6 +58,9 @@ open class AssetsAlbumViewController: UIViewController {
         view.backgroundColor = UIColor.clear
         view.dataSource = self
         view.delegate = self
+        if #available(iOS 10.0, *) {
+            view.prefetchDataSource = self
+        }
         view.showsHorizontalScrollIndicator = false
         view.showsVerticalScrollIndicator = true
         
@@ -166,6 +169,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        log("cellForItemAt[\(indexPath.section)][\(indexPath.row)]")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath)
         guard let _ = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
@@ -195,15 +199,42 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
         albumCell.album = AssetsManager.shared.album(at: indexPath)
         albumCell.titleText = AssetsManager.shared.title(at: indexPath)
         albumCell.count = AssetsManager.shared.numberOfAssets(at: indexPath)
-        albumCell.imageView.image = nil
-        AssetsManager.shared.imageOfAlbum(at: indexPath, size: pickerConfig.albumCacheSize, isNeedDegraded: false) { (image) in
-            UIView.transition(
-                with: albumCell.imageView,
-                duration: 0.20,
-                options: .transitionCrossDissolve,
-                animations: { albumCell.imageView.image = image },
-                completion: nil
-            )
+        
+        AssetsManager.shared.imageOfAlbum(at: indexPath, size: pickerConfig.albumCacheSize, isNeedDegraded: true) { (image) in
+            if let image = image {
+                logi("imageSize[\(indexPath.section)][\(indexPath.row)]: \(image.size)")
+                if let _ = albumCell.imageView.image {
+                    UIView.transition(
+                        with: albumCell.imageView,
+                        duration: 0.20,
+                        options: .transitionCrossDissolve,
+                        animations: {
+                            albumCell.imageView.image = image
+                        },
+                        completion: nil
+                    )
+                } else {
+                    albumCell.imageView.image = image
+                }
+            } else {
+                albumCell.imageView.image = nil
+            }
+        }
+    }
+}
+
+extension AssetsAlbumViewController: UICollectionViewDataSourcePrefetching {
+    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        var assets = [PHAsset]()
+        for albumIndexPath in indexPaths {
+            let album = AssetsManager.shared.album(at: albumIndexPath)
+            if let asset = AssetsManager.shared.fetchResult(forAlbum: album)?.lastObject {
+                assets.append(asset)
+            }
+        }
+        if assets.count > 0 {
+            AssetsManager.shared.cache(assets: assets, size: pickerConfig.albumCacheSize)
+            logi("Caching album images at \(indexPaths)")
         }
     }
 }
