@@ -67,10 +67,12 @@ Customizable Album & Asset Layout
 
 - customizable asset filtering by PHFetchOptions
 
+- iPad support
+
 
 ## Features To-do
 
-- iPad support
+- force touch to preview
 
 - single select mode with crop
 
