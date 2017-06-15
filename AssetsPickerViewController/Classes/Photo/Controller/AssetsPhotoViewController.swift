@@ -635,7 +635,6 @@ extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
     
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        logi("\(type(of: viewControllerToCommit))")
-        
+        logi("viewControllerToCommit: \(type(of: viewControllerToCommit))")
     }
 }

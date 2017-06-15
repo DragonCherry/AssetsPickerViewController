@@ -15,6 +15,10 @@ import OptionalTypes
 open class AssetsPreviewController: UIViewController {
     
     private var didSetupConstraints = false
+    
+    fileprivate var player: AVPlayer?
+    fileprivate var playerLayer: AVPlayerLayer?
+    
     open var asset: PHAsset? {
         didSet {
             guard let asset = self.asset else {
@@ -25,36 +29,73 @@ open class AssetsPreviewController: UIViewController {
                 logw("Received empty asset. Setting preview with nil content.")
                 return
             }
-            if #available(iOS 9.1, *) {
-                imageView.isHidden = true
-                livePhotoView.isHidden = false
-                if let asset = self.asset {
-                    PHCachingImageManager.default().requestLivePhoto(
-                        for: asset,
-                        targetSize: CGSize(width: asset.pixelWidth, height: asset.pixelHeight),
-                        contentMode: .aspectFill,
-                        options: nil,
-                        resultHandler: { (livePhoto, info) in
-                            if let livePhoto = livePhoto, !Bool(info?[PHImageResultIsDegradedKey]) && info?[PHImageErrorKey] == nil {
-                                self.livePhotoView.livePhoto = livePhoto
-                                self.livePhotoView.startPlayback(with: .full)
+            updatePreferredContentSize(forAsset: asset, isPortrait: UIApplication.shared.statusBarOrientation.isPortrait)
+            if asset.mediaType == .image {
+                if #available(iOS 9.1, *) {
+                    imageView.isHidden = true
+                    livePhotoView.isHidden = false
+                    if let asset = self.asset {
+                        PHCachingImageManager.default().requestLivePhoto(
+                            for: asset,
+                            targetSize: CGSize(width: asset.pixelWidth, height: asset.pixelHeight),
+                            contentMode: .aspectFill,
+                            options: nil,
+                            resultHandler: { (livePhoto, info) in
+                                if let livePhoto = livePhoto, !Bool(info?[PHImageResultIsDegradedKey]) && info?[PHImageErrorKey] == nil {
+                                    self.livePhotoView.livePhoto = livePhoto
+                                    self.livePhotoView.startPlayback(with: .full)
+                                } else {
+                                    self.imageView.isHidden = false
+                                    self.image(forAsset: asset, completion: { (image) in
+                                        self.imageView.image = image
+                                    })
+                                }
+                        })
+                    }
+                } else {
+                    imageView.isHidden = false
+                    self.image(forAsset: asset, completion: { (image) in
+                        self.imageView.image = image
+                    })
+                }
+            } else {
+                if #available(iOS 9.1, *) {
+                    livePhotoView.isHidden = true
+                }
+                PHCachingImageManager.default().requestAVAsset(
+                    forVideo: asset,
+                    options: nil,
+                    resultHandler: { (avasset, audio, info) in
+                        
+                        self.imageView.isHidden = false
+                        
+                        DispatchQueue.main.async {
+                            if let avasset = avasset {
+                                let playerItem = AVPlayerItem(asset: avasset)
+                                let player = AVPlayer(playerItem: playerItem)
+                                let playerLayer = AVPlayerLayer(player: player)
+                                playerLayer.videoGravity = AVLayerVideoGravityResizeAspect
+                                playerLayer.masksToBounds = true
+                                playerLayer.frame = self.imageView.bounds
+                                
+                                self.imageView.layer.addSublayer(playerLayer)
+                                self.playerLayer = playerLayer
+                                self.player = player
+                                
+                                player.play()
+                                
                             } else {
-                                self.imageView.isHidden = false
                                 self.image(forAsset: asset, completion: { (image) in
                                     self.imageView.image = image
                                 })
                             }
-                    })
-                }
-            } else {
-                imageView.isHidden = false
-                self.image(forAsset: asset, completion: { (image) in
-                    self.imageView.image = image
+                        }
+                        
                 })
             }
         }
     }
-    
+
     let imageView: UIImageView = {
         let view = UIImageView.newAutoLayout()
         view.clipsToBounds = false
@@ -83,6 +124,13 @@ open class AssetsPreviewController: UIViewController {
         super.viewDidLoad()
     }
     
+    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        if let asset = self.asset {
+            updatePreferredContentSize(forAsset: asset, isPortrait: size.height > size.width)
+        }
+    }
+    
     override open func updateViewConstraints() {
         if !didSetupConstraints {
             imageView.autoPinEdgesToSuperviewEdges()
@@ -93,6 +141,16 @@ open class AssetsPreviewController: UIViewController {
         }
         super.updateViewConstraints()
     }
+    
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        playerLayer?.frame = imageView.bounds
+    }
+    
+    deinit {
+        player?.pause()
+        logd("Released \(type(of: self))")
+    }
 }
 
 extension AssetsPreviewController {
@@ -100,11 +158,35 @@ extension AssetsPreviewController {
         PHCachingImageManager.default().requestImage(
             for: asset,
             targetSize: CGSize(width: asset.pixelWidth, height: asset.pixelHeight),
-            contentMode: .aspectFill,
+            contentMode: .aspectFit,
             options: nil,
             resultHandler: { (image, info) in
                 completion(image)
         })
+    }
+    
+    open func updatePreferredContentSize(forAsset asset: PHAsset, isPortrait: Bool) {
+        guard asset.pixelWidth != 0 && asset.pixelHeight != 0 else { return }
+        
+        let contentScale: CGFloat = 1
+        let assetWidth = CGFloat(asset.pixelWidth)
+        let assetHeight = CGFloat(asset.pixelHeight)
+        let assetRatio = assetHeight / assetWidth
+        let screenWidth = isPortrait ? UIScreen.main.bounds.width : UIScreen.main.bounds.height
+        let screenHeight = isPortrait ? UIScreen.main.bounds.height : UIScreen.main.bounds.width
+        let screenRatio = screenHeight / screenWidth
+        
+        if assetRatio > screenRatio {
+            // fit to height
+            let scale = screenHeight / assetHeight
+            preferredContentSize = CGSize(width: assetWidth * scale * contentScale, height: assetHeight * scale * contentScale)
+        } else {
+            // fit to width
+            let scale = screenWidth / assetWidth
+            preferredContentSize = CGSize(width: assetWidth * scale * contentScale, height: assetHeight * scale * contentScale)
+        }
+        
+        logi("preferredContentSize: \(preferredContentSize)")
     }
 }
 
