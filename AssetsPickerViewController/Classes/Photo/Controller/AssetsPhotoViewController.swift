@@ -8,6 +8,7 @@
 
 import UIKit
 import Photos
+import PhotosUI
 import TinyLog
 
 // MARK: - AssetsPhotoViewController
@@ -121,14 +122,15 @@ open class AssetsPhotoViewController: UIViewController {
     
     open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        
-        switch traitCollection.forceTouchCapability {
-        case .available:
-            logi("traitCollection.forceTouchCapability: .available")
-        case .unavailable:
-            logi("traitCollection.forceTouchCapability: .unavailable")
-        case .unknown:
-            logi("traitCollection.forceTouchCapability: .unknown")
+        if let previewing = self.previewing {
+            if traitCollection.forceTouchCapability != .available {
+                unregisterForPreviewing(withContext: previewing)
+                self.previewing = nil
+            }
+        } else {
+            if traitCollection.forceTouchCapability == .available {
+                self.previewing = registerForPreviewing(with: self, sourceView: collectionView)
+            }
         }
     }
     
@@ -177,7 +179,9 @@ open class AssetsPhotoViewController: UIViewController {
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setupGestureRecognizer()
-        previewing = registerForPreviewing(with: self, sourceView: collectionView)
+        if traitCollection.forceTouchCapability == .available {
+            previewing = registerForPreviewing(with: self, sourceView: collectionView)
+        }
     }
     
     open override func viewDidDisappear(_ animated: Bool) {
@@ -632,5 +636,6 @@ extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         logi("\(type(of: viewControllerToCommit))")
+        
     }
 }
