@@ -189,7 +189,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
     }
 
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
-        logi("Called!")
         guard notifyIfAuthorizationStatusChanged() else {
             logw("Does not have access to photo library.")
             return

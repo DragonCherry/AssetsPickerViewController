@@ -13,7 +13,9 @@ import TinyLog
 // MARK: - AssetsPhotoViewController
 open class AssetsPhotoViewController: UIViewController {
     
+    // MARK: Properties
     fileprivate var pickerConfig: AssetsPickerConfig!
+    fileprivate var previewing: UIViewControllerPreviewing?
     
     fileprivate let cellReuseIdentifier: String = UUID().uuidString
     fileprivate let footerReuseIdentifier: String = UUID().uuidString
@@ -74,6 +76,7 @@ open class AssetsPhotoViewController: UIViewController {
         return view
     }()
     
+    // MARK: Lifecycle Methods
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -99,10 +102,13 @@ open class AssetsPhotoViewController: UIViewController {
     
     open override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupCommon()
         setupBarButtonItems()
+        
         updateEmptyView(count: 0)
         updateNoPermissionView()
+        
         AssetsManager.shared.authorize { (isGranted) in
             self.updateNoPermissionView()
             if isGranted {
@@ -110,6 +116,19 @@ open class AssetsPhotoViewController: UIViewController {
             } else {
                 self.delegate?.assetsPickerCannotAccessPhotoLibrary(controller: self.picker)
             }
+        }
+    }
+    
+    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        switch traitCollection.forceTouchCapability {
+        case .available:
+            logi("traitCollection.forceTouchCapability: .available")
+        case .unavailable:
+            logi("traitCollection.forceTouchCapability: .unavailable")
+        case .unknown:
+            logi("traitCollection.forceTouchCapability: .unknown")
         }
     }
     
@@ -158,11 +177,16 @@ open class AssetsPhotoViewController: UIViewController {
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setupGestureRecognizer()
+        previewing = registerForPreviewing(with: self, sourceView: collectionView)
     }
     
     open override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeGestureRecognizer()
+        if let previewing = self.previewing {
+            self.previewing = nil
+            unregisterForPreviewing(withContext: previewing)
+        }
     }
     
     deinit {
@@ -473,9 +497,6 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
                 options: .transitionCrossDissolve,
                 animations: {
                     photoCell.imageView.image = image
-                    if let imageSize = image?.size {
-                        logi("imageSize[\(indexPath.section)][\(indexPath.row)]: \(imageSize)")
-                    }
                 },
                 completion: nil
             )
@@ -591,5 +612,25 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         collectionView.reloadItems(at: indexPaths)
         updateNavigationStatus()
         updateFooter()
+    }
+}
+
+// MARK - UIViewControllerPreviewingDelegate
+@available(iOS 9.0, *)
+extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
+    @available(iOS 9.0, *)
+    public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        logi("\(location)")
+        guard let pressingIndexPath = collectionView.indexPathForItem(at: location) else { return nil }
+        guard let pressingCell = collectionView.cellForItem(at: pressingIndexPath) else { return nil }
+        previewingContext.sourceRect = pressingCell.frame
+        let previewController = AssetsPreviewController()
+        previewController.asset = AssetsManager.shared.assetArray[pressingIndexPath.row]
+        return previewController
+    }
+    
+    @available(iOS 9.0, *)
+    public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        logi("\(type(of: viewControllerToCommit))")
     }
 }
