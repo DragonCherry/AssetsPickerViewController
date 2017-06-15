@@ -74,14 +74,12 @@ Customizable Album & Asset Layout
 
 - iPad support
 
+- force(3D) touch to preview
+
 
 ## Features To-do
 
-- force touch to preview
-
 - single select mode with crop
-
-- enhance example codes
 
 - support many languages(German, French, Spanish, Chinese, Japanese, etc)
 
