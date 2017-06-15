@@ -29,7 +29,7 @@ iPad Support
 ![ipad_landscape](https://user-images.githubusercontent.com/20486591/26968848-89474890-4d3e-11e7-9277-c949511eb491.png)
 
 
-For landscape, keeps focusing indexes even during decelerating.
+Keeps focusing indexes during orientation change.
 
 ![photos_landscape](https://cloud.githubusercontent.com/assets/20486591/26525541/42f44f4e-4395-11e7-80e2-e1dd890a4d16.PNG)
 
