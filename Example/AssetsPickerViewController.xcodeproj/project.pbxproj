@@ -54,6 +54,18 @@
 		E12081BD1EE15D1000E4DB16 /* AlbumFilterOptionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumFilterOptionController.swift; sourceTree = "<group>"; };
 		E12081BF1EE15D2000E4DB16 /* AlbumFilterBlockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumFilterBlockController.swift; sourceTree = "<group>"; };
 		E12081C11EE15D2900E4DB16 /* AssetFilterOptionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetFilterOptionController.swift; sourceTree = "<group>"; };
+		E14AF4701EF3D81D00C94BC7 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Main.strings; sourceTree = "<group>"; };
+		E14AF4711EF3D81D00C94BC7 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		E14AF4721EF3D85900C94BC7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
+		E14AF4731EF3D85900C94BC7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		E14AF4741EF3D85C00C94BC7 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
+		E14AF4751EF3D85C00C94BC7 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		E14AF4761EF3D86000C94BC7 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		E14AF4771EF3D86000C94BC7 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		E14AF4781EF3D86500C94BC7 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Main.strings"; sourceTree = "<group>"; };
+		E14AF4791EF3D86500C94BC7 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		E14AF47A1EF3D88600C94BC7 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-MX"; path = "es-MX.lproj/Main.strings"; sourceTree = "<group>"; };
+		E14AF47B1EF3D88600C94BC7 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-MX"; path = "es-MX.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		E159E9F4E24E25BE57C1159B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		E19F61011EDBDFE700B8091B /* BasicUsageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicUsageController.swift; sourceTree = "<group>"; };
 		E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbumCellController.swift; sourceTree = "<group>"; };
@@ -370,6 +382,12 @@
 			isa = PBXVariantGroup;
 			children = (
 				607FACDA1AFB9204008FA782 /* Base */,
+				E14AF4701EF3D81D00C94BC7 /* id */,
+				E14AF4721EF3D85900C94BC7 /* fr */,
+				E14AF4741EF3D85C00C94BC7 /* de */,
+				E14AF4761EF3D86000C94BC7 /* zh-Hans */,
+				E14AF4781EF3D86500C94BC7 /* zh-Hant */,
+				E14AF47A1EF3D88600C94BC7 /* es-MX */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -378,6 +396,12 @@
 			isa = PBXVariantGroup;
 			children = (
 				607FACDF1AFB9204008FA782 /* Base */,
+				E14AF4711EF3D81D00C94BC7 /* id */,
+				E14AF4731EF3D85900C94BC7 /* fr */,
+				E14AF4751EF3D85C00C94BC7 /* de */,
+				E14AF4771EF3D86000C94BC7 /* zh-Hans */,
+				E14AF4791EF3D86500C94BC7 /* zh-Hant */,
+				E14AF47B1EF3D88600C94BC7 /* es-MX */,
 			);
 			name = LaunchScreen.xib;
 			sourceTree = "<group>";
