@@ -1,0 +1,29 @@
+
+/* Common */
+"Cancel" = "Batal";
+"Done" = "Selesai";
+
+/* Albums */
+"Title_Albums" = "Albums";
+"Title_Section_MyAlbums" = "Album saya";
+
+/* Footer */
+"Footer_Photos" = "%@ Foto";
+"Footer_Videos" = "%@ Video";
+"Footer_Items" = "%@ Foto, %@ Video";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "%@ Foto Terpilih";
+"Title_Selected_Photos" = "%@ Foto Terpilih";
+"Title_Selected_Video" = "%@ Video Terpilih";
+"Title_Selected_Videos" = "%@ Video Terpilih";
+"Title_Selected_Items" = "%@ Item Terpilih";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "Tidak ada Foto atau Video";
+"Message_No_Items" = "Kamu bisa mengambil foto dan video menggunakan kamera, atau menyinkronkan foto dan video ke %@ menggunakan iTunes.";
+"Message_No_Items_Camera" = "Kamu bisa menyinkronkan foto dan video ke %@ menggunakan iTunes.";
+
+/* No Permission */
+"Title_No_Permission" = "Aplikasi ini tidak memiliki akses ke foto atau videomu.";
+"Message_No_Permission" = "Kamu bisa mengaktifkan akses di Setelan Privasi.";

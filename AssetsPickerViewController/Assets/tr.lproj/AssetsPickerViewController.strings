@@ -1,0 +1,29 @@
+
+/* Common */
+"Cancel" = "Vazgeç";
+"Done" = "Bitti";
+
+/* Albums */
+"Title_Albums" = "Albümler";
+"Title_Section_MyAlbums" = "Albümlerim";
+
+/* Footer */
+"Footer_Photos" = "%@ Fotoğraf";
+"Footer_Videos" = "%@ Vidyo";
+"Footer_Items" = "%@ Fotoğraf, %@ Vidyo";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "%@ Fotoğraf seçildi";
+"Title_Selected_Photos" = "%@ Fotoğraf seçildi";
+"Title_Selected_Video" = "%@ Vidyo seçildi";
+"Title_Selected_Videos" = "%@ Vidyo seçildi";
+"Title_Selected_Items" = "%@ Öğe seçildi";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "Hiç fotoğraf ya da vidyo bulunamadı";
+"Message_No_Items" = "Kamerayı kullanarak fotoğraf ve vidyo çekebilirsiniz ya da fotoğraf ve vidyolarınızı %@ hesabınıza iTunes kullanarak eşleyebilirsiniz.";
+"Message_No_Items_Camera" = "Fotoğraf ve vidyoları iTunes kullanarak %@ hesabınıza eşleyebilirsiniz.";
+
+/* No Permission */
+"Title_No_Permission" = "Bu uygulamanın fotoğraflarınıza ya da vidyolarınıza erişim hakkı bulunmuyor.";
+"Message_No_Permission" = "Gizlilik Ayarlarından uygulamaya izin verebilirsiniz.";
