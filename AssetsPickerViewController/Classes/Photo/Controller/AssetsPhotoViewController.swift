@@ -353,19 +353,19 @@ extension AssetsPhotoViewController {
         var titleString: String = title(forAlbum: AssetsManager.shared.selectedAlbum)
         
         if imageCount > 0 && videoCount > 0 {
-            titleString = String(format: String(key: "Title_Selected_Items"), imageCount + videoCount)
+            titleString = String(format: String(key: "Title_Selected_Items"), NumberFormatter.decimalString(value: imageCount + videoCount))
         } else {
             if imageCount > 0 {
                 if imageCount > 1 {
-                    titleString = String(format: String(key: "Title_Selected_Photos"), imageCount)
+                    titleString = String(format: String(key: "Title_Selected_Photos"), NumberFormatter.decimalString(value: imageCount))
                 } else {
-                    titleString = String(format: String(key: "Title_Selected_Photo"), imageCount)
+                    titleString = String(format: String(key: "Title_Selected_Photo"), NumberFormatter.decimalString(value: imageCount))
                 }
             } else if videoCount > 0 {
                 if videoCount > 1 {
-                    titleString = String(format: String(key: "Title_Selected_Videos"), videoCount)
+                    titleString = String(format: String(key: "Title_Selected_Videos"), NumberFormatter.decimalString(value: videoCount))
                 } else {
-                    titleString = String(format: String(key: "Title_Selected_Video"), videoCount)
+                    titleString = String(format: String(key: "Title_Selected_Video"), NumberFormatter.decimalString(value: videoCount))
                 }
             }
         }

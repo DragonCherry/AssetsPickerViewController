@@ -7,17 +7,17 @@
 "Title_Albums" = "앨범";
 "Title_Section_MyAlbums" = "나의 앨범";
 
-/* Assets */
-"Footer_Photos" = "사진 %d개";
-"Footer_Videos" = "동영상 %d개";
-"Footer_Items" = "사진 %d개, 동영상 %d개";
+/* Footer */
+"Footer_Photos" = "사진 %@개";
+"Footer_Videos" = "동영상 %@개";
+"Footer_Items" = "사진 %@개, 동영상 %@개";
 
 /* Selected Status on Title */
-"Title_Selected_Photo" = "사진 %d개 선택됨";
-"Title_Selected_Photos" = "사진 %d개 선택됨";
-"Title_Selected_Video" = "동영상 %d개 선택됨";
-"Title_Selected_Videos" = "동영상 %d개 선택됨";
-"Title_Selected_Items" = "%d개의 항목 선택됨";
+"Title_Selected_Photo" = "사진 %@개 선택됨";
+"Title_Selected_Photos" = "사진 %@개 선택됨";
+"Title_Selected_Video" = "동영상 %@개 선택됨";
+"Title_Selected_Videos" = "동영상 %@개 선택됨";
+"Title_Selected_Items" = "%@개의 항목 선택됨";
 
 /* No Items in Photo Library */
 "Title_No_Items" = "사진이나 동영상 없음";

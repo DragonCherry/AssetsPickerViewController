@@ -1,0 +1,29 @@
+
+/* Common */
+"Cancel" = "إلغاء";
+"Done" = "تم";
+
+/* Albums */
+"Title_Albums" = "ألبومات";
+"Title_Section_MyAlbums" = "ألبوماتي";
+
+/* Footer */
+"Footer_Photos" = "%@ صور";
+"Footer_Videos" = "%@ فيديوهات";
+"Footer_Items" = "%@ صور، %@ فيديو";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "تم تحديد %@ صورة";
+"Title_Selected_Photos" = "تم تحديد %@ صور";
+"Title_Selected_Video" = "تم تحديد %@ فيديو";
+"Title_Selected_Videos" = "تم تحديد %@ فيديوهات";
+"Title_Selected_Items" = "تم تحديد %@ عناصر";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "لا توجد صور أو فيديوهات";
+"Message_No_Items" = "يمكنك التقاط الصور والفيديوهات باستخدام الكاميرا، أو مزامنة الصورة والفيديوهات مع %@ الخاص بك.\nباستخدام iTunes.";
+"Message_No_Items_Camera" = "يمكنك مزامنة الصورة والفيديوهات مع %@ الخاص بك.";
+
+/* No Permission */
+"Title_No_Permission" = "لا يحق لهذا التطبيق الوصول إلى صورك أو فيديوهاتك.";
+"Message_No_Permission" = "يمكن تفعيل الوصول من إعدادات الخصوصية.";

@@ -215,9 +215,6 @@ extension AssetsManager {
                         if !isNeedDegraded && Bool(info?[PHImageResultIsDegradedKey]) {
                             return
                         }
-                        if let image = image, !Bool(info?[PHImageResultIsDegradedKey]) && size != image.size {
-                            logw("Requested size: \(size), Returned size: \(image.size)")
-                        }
                         DispatchQueue.main.async {
                             completion(image)
                         }
