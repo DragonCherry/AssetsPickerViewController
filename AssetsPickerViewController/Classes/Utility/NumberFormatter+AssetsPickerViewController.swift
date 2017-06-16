@@ -14,6 +14,6 @@ extension NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.locale = Locale.current
-        return formatter.string(from: NSNumber(value: value)) ?? "0"
+        return formatter.string(from: NSNumber(value: value)) ?? ""
     }
 }

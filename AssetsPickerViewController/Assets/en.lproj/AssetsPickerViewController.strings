@@ -7,17 +7,17 @@
 "Title_Albums" = "Albums";
 "Title_Section_MyAlbums" = "My Albums";
 
-/* Assets */
-"Footer_Photos" = "%d Photos";
-"Footer_Videos" = "%d Videos";
-"Footer_Items" = "%d Photos, %d Videos";
+/* Footer */
+"Footer_Photos" = "%@ Photos";
+"Footer_Videos" = "%@ Videos";
+"Footer_Items" = "%@ Photos, %@ Videos";
 
 /* Selected Status on Title */
-"Title_Selected_Photo" = "%d Photo Selected";
-"Title_Selected_Photos" = "%d Photos Selected";
-"Title_Selected_Video" = "%d Video Selected";
-"Title_Selected_Videos" = "%d Videos Selected";
-"Title_Selected_Items" = "%d Items Selected";
+"Title_Selected_Photo" = "%@ Photo Selected";
+"Title_Selected_Photos" = "%@ Photos Selected";
+"Title_Selected_Video" = "%@ Video Selected";
+"Title_Selected_Videos" = "%@ Videos Selected";
+"Title_Selected_Items" = "%@ Items Selected";
 
 /* No Items in Photo Library */
 "Title_No_Items" = "No Photos or Videos";

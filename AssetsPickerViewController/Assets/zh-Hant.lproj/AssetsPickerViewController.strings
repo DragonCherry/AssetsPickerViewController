@@ -1,0 +1,29 @@
+
+/* Common */
+"Cancel" = "取消";
+"Done" = "完成";
+
+/* Albums */
+"Title_Albums" = "相册";
+"Title_Section_MyAlbums" = "我的相册";
+
+/* Footer */
+"Footer_Photos" = "%@张照片";
+"Footer_Videos" = "%@个视频";
+"Footer_Items" = "%@张照片，%@个视频";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "已選取 %@ 張照片";
+"Title_Selected_Photos" = "已選取 %@ 張照片";
+"Title_Selected_Video" = "已選取 %@ 部影片";
+"Title_Selected_Videos" = "已選取 %@ 部影片";
+"Title_Selected_Items" = "已選取 %@ 個項目";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "沒有照片或影片";
+"Message_No_Items" = "您可以用相機拍照錄影或用 iTunes 將照片和影片同步到 %@。";
+"Message_No_Items_Camera" = "您可以使用 iTunes 將照片和影片同步到 %@。";
+
+/* No Permission */
+"Title_No_Permission" = "此 App 無法取用您的照片或影片。";
+"Message_No_Permission" = "您可以在「隱私權設定」中啟用存取。";

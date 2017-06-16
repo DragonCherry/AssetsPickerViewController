@@ -12,7 +12,11 @@ import SwiftARGB
 open class AssetsEmptyView: AssetsGuideView {
     
     override func commonInit() {
-        set(title: String(key: "Title_No_Items"), message: String(format: String(key: "Message_No_Items"), UIDevice.current.model))
+        var messageKey = "Message_No_Items"
+        if !UIImagePickerController.isCameraDeviceAvailable(.rear) {
+            messageKey = "Message_No_Items_Camera"
+        }
+        set(title: String(key: "Title_No_Items"), message: String(format: String(key: messageKey), UIDevice.current.model))
         titleStyle = .title2
         super.commonInit()
     }

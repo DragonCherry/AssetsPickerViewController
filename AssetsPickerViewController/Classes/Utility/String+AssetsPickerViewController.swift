@@ -11,7 +11,7 @@ import Foundation
 extension String {
     
     init(key: String) {
-        self = NSLocalizedString(key, tableName: "AssetsPickerViewController", bundle: Bundle.assetsPickerBundle, value: key, comment: "")
+        self = Bundle.assetsPickerBundle.localizedString(forKey: key, value: key, table: "AssetsPickerViewController")
     }
     
     init(duration: TimeInterval) {
