@@ -82,12 +82,12 @@ Customizable Album & Asset Layout
 
 - force(3D) touch to preview - (still, live photo, and video)
 
+- support many languages(German, French, Spanish, Chinese, Japanese, Arabic, Spanish, Korean, Indonesian, Russian, Turkish, Italian, etc)
+
 
 ## Features To-do
 
 - single select mode with crop
-
-- support many languages(German, French, Spanish, Chinese, Japanese, etc)
 
 
 ## Basic Usage
