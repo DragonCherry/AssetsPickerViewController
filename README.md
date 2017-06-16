@@ -46,6 +46,12 @@ Customizable Album & Asset Layout
 ![customize_asset](https://cloud.githubusercontent.com/assets/20486591/26616648/1d385746-460b-11e7-9324-62ea634e2fcb.png)
 
 
+3D Touch to Preview
+
+![3d_touch](https://user-images.githubusercontent.com/20486591/27173588-2d2d5a94-51f4-11e7-961e-4ca4759a97c5.PNG)
+
+
+
 ## Features Done
 
 - iOS friendly UI for album & photo controllers
@@ -74,14 +80,12 @@ Customizable Album & Asset Layout
 
 - iPad support
 
+- force(3D) touch to preview - (still, live photo, and video)
+
 
 ## Features To-do
 
-- force touch to preview
-
 - single select mode with crop
-
-- enhance example codes
 
 - support many languages(German, French, Spanish, Chinese, Japanese, etc)
 
