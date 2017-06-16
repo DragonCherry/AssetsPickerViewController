@@ -80,7 +80,7 @@ Customizable Album & Asset Layout
 
 - iPad support
 
-- force(3D) touch to preview
+- force(3D) touch to preview - (still, live photo, and video)
 
 
 ## Features To-do
