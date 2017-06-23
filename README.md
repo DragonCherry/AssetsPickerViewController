@@ -9,11 +9,11 @@ Customizable assets picker controller that supports selecting multiple photos an
 
 ## Comment
 
-This project is still under development so many features will be added, and will get better in the near future.
+AssetsPickerViewController acts like Photos App in iOS.
 
 If you found any bugs - even in develop branch, do not hesitate raise an issue for it.
 
-Any advice, suggestions, and pull request will be greatly appreciated.
+Any advice, suggestions, and pull requests for new feature will be greatly appreciated.
 
 
 ## Screenshots
@@ -198,6 +198,7 @@ pickerConfig.albumFetchOptions = [.smartAlbum: options]
 
 To filter albums by block for a certain reason,
 ```swift
+// return true to include, false to discard.
 let smartAlbumFilter: ((PHAssetCollection, PHFetchResult<PHAsset>) -> Bool) = { (album, fetchResult) in
     // filter by album object
     if album.assetCollectionSubtype == .smartAlbumBursts { return false }
@@ -228,9 +229,11 @@ pickerConfig.assetFetchOptions = [
 ]
 ```
 
-## Requirements
+## Requirements & Dependency
 
 Xcode8, Swift 3, iOS 9.0
+
+Uses [PureLayout](https://github.com/PureLayout/PureLayout) for creating UI inside library. Thanks to PureLayout development team for doing such a beautiful job.
 
 
 ## Installation
@@ -238,8 +241,14 @@ Xcode8, Swift 3, iOS 9.0
 AssetsPickerViewController is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
+For Swift 3,
 ```ruby
-pod "AssetsPickerViewController"
+pod 'AssetsPickerViewController', '~> 1.0'
+```
+
+For Swift 4,
+```ruby
+pod 'AssetsPickerViewController', '~> 2.0'
 ```
 
 ## Author
