@@ -1,5 +1,5 @@
 PODS:
-  - AssetsPickerViewController (2.0.6):
+  - AssetsPickerViewController (2.0.7):
     - Dimmer (~> 2.0)
     - FadeView (~> 2.0)
     - PureLayout
@@ -24,7 +24,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  AssetsPickerViewController: 062fefaef610625f4aab32c6b6720065bafea8b9
+  AssetsPickerViewController: 25247d68eca464589486359442d52c4b1ab4dd81
   Dimmer: f308deefd2e52ea9f59572fb43f9de8c111c82d4
   FadeView: 80197da2fbee5382b178127e8c5f988a35eef018
   PureLayout: 4d550abe49a94f24c2808b9b95db9131685fe4cd
