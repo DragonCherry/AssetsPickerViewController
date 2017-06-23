@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import TinyLog
-import OptionalTypes
 
 // MARK: - AssetsManagerDelegate
 public protocol AssetsManagerDelegate: class {
@@ -187,7 +186,7 @@ extension AssetsManager {
     }
     
     open func numberOfAssets(at indexPath: IndexPath) -> Int {
-        return Int(fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier]?.count)
+        return Int(fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier]?.count ?? 0)
     }
     
     open func indexPath(forAlbum target: PHAssetCollection, inAlbumsArray albumsArray: [[PHAssetCollection]]) -> IndexPath? {
@@ -212,7 +211,7 @@ extension AssetsManager {
                     contentMode: .aspectFill,
                     options: nil,
                     resultHandler: { (image, info) in
-                        if !isNeedDegraded && Bool(info?[PHImageResultIsDegradedKey]) {
+                        if !isNeedDegraded && Bool((info?[PHImageResultIsDegradedKey] as? Bool) ?? false) {
                             return
                         }
                         DispatchQueue.main.async {
@@ -234,7 +233,7 @@ extension AssetsManager {
             contentMode: .aspectFill,
             options: nil,
             resultHandler: { (image, info) in
-                if !isNeedDegraded && Bool(info?[PHImageResultIsDegradedKey]) {
+                if !isNeedDegraded && Bool((info?[PHImageResultIsDegradedKey] as? Bool) ?? false) {
                     return
                 }
                 DispatchQueue.main.async {
@@ -374,7 +373,7 @@ extension AssetsManager {
                 return filtered
             } else {
                 // default: by count
-                return filtered.sorted(by: { Int(self.fetchMap[$0.localIdentifier]?.count) > Int(self.fetchMap[$1.localIdentifier]?.count) })
+                return filtered.sorted(by: { Int((self.fetchMap[$0.localIdentifier]?.count) ?? 0) > Int((self.fetchMap[$1.localIdentifier]?.count) ?? 0) })
             }
         }
     }

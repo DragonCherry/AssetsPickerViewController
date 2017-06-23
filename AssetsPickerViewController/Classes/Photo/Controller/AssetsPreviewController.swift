@@ -10,7 +10,6 @@ import UIKit
 import Photos
 import PhotosUI
 import TinyLog
-import OptionalTypes
 
 open class AssetsPreviewController: UIViewController {
     
@@ -41,7 +40,7 @@ open class AssetsPreviewController: UIViewController {
                             contentMode: .aspectFill,
                             options: nil,
                             resultHandler: { (livePhoto, info) in
-                                if let livePhoto = livePhoto, !Bool(info?[PHImageResultIsDegradedKey]) && info?[PHImageErrorKey] == nil {
+                                if let livePhoto = livePhoto, !Bool((info?[PHImageResultIsDegradedKey] as? Bool) ?? false) && info?[PHImageErrorKey] == nil {
                                     self.livePhotoView.livePhoto = livePhoto
                                     self.livePhotoView.startPlayback(with: .full)
                                 } else {
@@ -74,7 +73,7 @@ open class AssetsPreviewController: UIViewController {
                                 let playerItem = AVPlayerItem(asset: avasset)
                                 let player = AVPlayer(playerItem: playerItem)
                                 let playerLayer = AVPlayerLayer(player: player)
-                                playerLayer.videoGravity = AVLayerVideoGravityResizeAspect
+                                playerLayer.videoGravity = AVLayerVideoGravity.resizeAspect
                                 playerLayer.masksToBounds = true
                                 playerLayer.frame = self.imageView.bounds
                                 
