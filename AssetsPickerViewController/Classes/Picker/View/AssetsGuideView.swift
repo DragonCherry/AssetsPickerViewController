@@ -15,7 +15,7 @@ open class AssetsGuideView: UIView {
     var lineSpace: CGFloat = 10
     var titleStyle: UIFontTextStyle = .title1
     var bodyStyle: UIFontTextStyle = .body
-
+    
     fileprivate lazy var messageLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textAlignment = .center
@@ -75,4 +75,3 @@ open class AssetsGuideView: UIView {
         messageLabel.attributedText = attributedString
     }
 }
-

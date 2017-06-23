@@ -136,3 +136,4 @@ class CustomAssetCellController: CommonExampleController {
         present(picker, animated: true, completion: nil)
     }
 }
+
