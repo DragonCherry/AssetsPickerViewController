@@ -107,7 +107,7 @@ extension AssetsManager {
             subscribers.remove(at: index)
         }
     }
-
+    
     open func unsubscribeAll() {
         subscribers.removeAll()
     }
@@ -555,3 +555,4 @@ extension IndexSet {
         return indexPaths
     }
 }
+

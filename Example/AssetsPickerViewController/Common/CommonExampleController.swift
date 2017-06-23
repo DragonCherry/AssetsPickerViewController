@@ -124,3 +124,4 @@ extension CommonExampleController: AssetsPickerViewControllerDelegate {
         log("didDeselect: \(indexPath.row)")
     }
 }
+

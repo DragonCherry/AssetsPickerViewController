@@ -94,7 +94,7 @@ open class AssetsPreviewController: UIViewController {
             }
         }
     }
-
+    
     let imageView: UIImageView = {
         let view = UIImageView.newAutoLayout()
         view.clipsToBounds = false
@@ -196,3 +196,4 @@ extension AssetsPreviewController: PHLivePhotoViewDelegate {
     @available(iOS 9.1, *)
     public func livePhotoView(_ livePhotoView: PHLivePhotoView, didEndPlaybackWith playbackStyle: PHLivePhotoViewPlaybackStyle) {}
 }
+

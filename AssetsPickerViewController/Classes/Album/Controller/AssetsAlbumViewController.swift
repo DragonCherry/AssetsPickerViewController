@@ -128,7 +128,7 @@ extension AssetsAlbumViewController {
     
     func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
-//        navigationItem.rightBarButtonItem = searchButtonItem
+        //        navigationItem.rightBarButtonItem = searchButtonItem
     }
     
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
@@ -209,7 +209,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
                         options: .transitionCrossDissolve,
                         animations: {
                             albumCell.imageView.image = image
-                        },
+                    },
                         completion: nil
                     )
                 } else {
@@ -280,7 +280,7 @@ extension AssetsAlbumViewController {
 extension AssetsAlbumViewController: AssetsManagerDelegate {
     
     public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {}
-
+    
     public func assetsManager(manager: AssetsManager, reloadedAlbumsInSection section: Int) {
         logi("reloadedAlbumsInSection section: \(section)")
         collectionView.reloadSections(IndexSet(integer: section))
@@ -310,3 +310,4 @@ extension AssetsAlbumViewController: AssetsManagerDelegate {
     public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
 }
+

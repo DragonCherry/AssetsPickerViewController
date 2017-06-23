@@ -420,7 +420,7 @@ extension AssetsPhotoViewController: UIScrollViewDelegate {
 
 // MARK: - UICollectionViewDelegate
 extension AssetsPhotoViewController: UICollectionViewDelegate {
-
+    
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if let delegate = self.delegate {
             return delegate.assetsPicker(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath)
@@ -501,7 +501,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
                 options: .transitionCrossDissolve,
                 animations: {
                     photoCell.imageView.image = image
-                },
+            },
                 completion: nil
             )
         })
@@ -638,3 +638,4 @@ extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
         logi("viewControllerToCommit: \(type(of: viewControllerToCommit))")
     }
 }
+

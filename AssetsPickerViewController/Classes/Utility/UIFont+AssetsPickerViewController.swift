@@ -14,3 +14,4 @@ extension UIFont {
         return UIFont.systemFont(ofSize: font.pointSize, weight: weight)
     }
 }
+
