@@ -10,7 +10,6 @@ import UIKit
 import Photos
 import TinyLog
 import PureLayout
-import OptionalTypes
 
 // MARK: - AssetsAlbumViewControllerDelegate
 public protocol AssetsAlbumViewControllerDelegate {
@@ -265,14 +264,14 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UI Event Handlers
 extension AssetsAlbumViewController {
     
-    func pressedCancel(button: UIBarButtonItem) {
+    @objc func pressedCancel(button: UIBarButtonItem) {
         navigationController?.dismiss(animated: true, completion: {
             AssetsManager.shared.unsubscribe(subscriber: self)
         })
         delegate?.assetsAlbumViewControllerCancelled(controller: self)
     }
     
-    func pressedSearch(button: UIBarButtonItem) {
+    @objc func pressedSearch(button: UIBarButtonItem) {
         
     }
 }

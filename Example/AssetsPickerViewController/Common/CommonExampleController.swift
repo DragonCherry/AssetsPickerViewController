@@ -33,9 +33,9 @@ class CommonExampleController: UITableViewController {
     }
     
     func setupToolbarItems() {
-        let clearItem = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(pressedClear(_:)))
+        let clearItem = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(pressedClear))
         let spaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let pickItem = UIBarButtonItem(title: "Pick", style: .plain, target: self, action: #selector(pressedPick(_:)))
+        let pickItem = UIBarButtonItem(title: "Pick", style: .plain, target: self, action: #selector(pressedPick))
         toolbarItems = [clearItem, spaceItem, pickItem]
     }
     
@@ -84,12 +84,11 @@ class CommonExampleController: UITableViewController {
 }
 
 extension CommonExampleController {
-    func pressedClear(_ sender: Any) {
+    @objc func pressedClear(_ sender: Any) {
         assets.removeAll()
         tableView.reloadData()
     }
-    
-    func pressedPick(_ sender: Any) {}
+    @objc func pressedPick(_ sender: Any) {}
 }
 
 extension CommonExampleController: AssetsPickerViewControllerDelegate {

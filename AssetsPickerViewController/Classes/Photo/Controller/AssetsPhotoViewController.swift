@@ -393,17 +393,17 @@ extension AssetsPhotoViewController {
 // MARK: - UI Event Handlers
 extension AssetsPhotoViewController {
     
-    func pressedCancel(button: UIBarButtonItem) {
+    @objc func pressedCancel(button: UIBarButtonItem) {
         navigationController?.dismiss(animated: true, completion: nil)
         delegate?.assetsPickerDidCancel(controller: picker)
     }
     
-    func pressedDone(button: UIBarButtonItem) {
+    @objc func pressedDone(button: UIBarButtonItem) {
         navigationController?.dismiss(animated: true, completion: nil)
         delegate?.assetsPicker(controller: picker, selected: selectedArray)
     }
     
-    func pressedTitle(gesture: UITapGestureRecognizer) {
+    @objc func pressedTitle(gesture: UITapGestureRecognizer) {
         guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
         let navigationController = UINavigationController()
         let controller = AssetsAlbumViewController(pickerConfig: self.pickerConfig)

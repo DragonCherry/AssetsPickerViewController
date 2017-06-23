@@ -26,7 +26,7 @@ class CustomAssetCellOverlay: UIView {
     let countLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         let font = UIFont.preferredFont(forTextStyle: .headline)
-        label.font = UIFont.systemFont(ofSize: font.pointSize, weight: UIFontWeightBold)
+        label.font = UIFont.systemFont(ofSize: font.pointSize, weight: UIFont.Weight.bold)
         label.textAlignment = .center
         label.textColor = .white
         label.adjustsFontSizeToFitWidth = true
