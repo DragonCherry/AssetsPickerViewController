@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AssetsPickerViewController'
-  s.version          = '1.1.0'
+  s.version          = '1.1.1'
   s.summary          = 'Picker controller that supports multiple photos and videos written in Swift.'
 
 # This description is used to generate tags and improve search results.
@@ -41,9 +41,9 @@ Fully customizable UI.
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'PureLayout'
-  s.dependency 'Dimmer'
-  s.dependency 'FadeView'
-  s.dependency 'TinyLog'
+  s.dependency 'Dimmer', '~> 1.0'
+  s.dependency 'FadeView', '~> 1.0'
+  s.dependency 'TinyLog', '~> 1.0'
   s.dependency 'OptionalTypes'
-  s.dependency 'SwiftARGB'
+  s.dependency 'SwiftARGB', '< 2.0'
 end

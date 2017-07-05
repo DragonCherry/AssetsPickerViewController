@@ -115,7 +115,7 @@ open class AssetsPhotoViewController: UIViewController {
             if isGranted {
                 self.setupAssets()
             } else {
-                self.delegate?.assetsPickerCannotAccessPhotoLibrary(controller: self.picker)
+                self.delegate?.assetsPickerCannotAccessPhotoLibrary?(controller: self.picker)
             }
         }
     }
@@ -228,6 +228,7 @@ extension AssetsPhotoViewController {
         } else {
             let gesture = UITapGestureRecognizer(target: self, action: #selector(pressedTitle))
             navigationController?.navigationBar.addGestureRecognizer(gesture)
+            gesture.delegate = self
             tapGesture = gesture
         }
     }
@@ -395,7 +396,7 @@ extension AssetsPhotoViewController {
     
     func pressedCancel(button: UIBarButtonItem) {
         navigationController?.dismiss(animated: true, completion: nil)
-        delegate?.assetsPickerDidCancel(controller: picker)
+        delegate?.assetsPickerDidCancel?(controller: picker)
     }
     
     func pressedDone(button: UIBarButtonItem) {
@@ -413,6 +414,16 @@ extension AssetsPhotoViewController {
     }
 }
 
+// MARK: - UIGestureRecognizerDelegate
+extension AssetsPhotoViewController: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        guard let navigationBar = navigationController?.navigationBar else { return false }
+        let point = touch.location(in: navigationBar)
+        // Ignore touches on navigation buttons on both sides.
+        return point.x > navigationBar.bounds.width / 4 && point.x < navigationBar.bounds.width * 3 / 4
+    }
+}
+
 // MARK: - UIScrollViewDelegate
 extension AssetsPhotoViewController: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {}
@@ -423,7 +434,7 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
 
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if let delegate = self.delegate {
-            return delegate.assetsPicker(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath)
+            return delegate.assetsPicker?(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
         } else {
             return true
         }
@@ -433,12 +444,12 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
         let asset = AssetsManager.shared.assetArray[indexPath.row]
         select(asset: asset, at: indexPath)
         updateNavigationStatus()
-        delegate?.assetsPicker(controller: picker, didSelect: asset, at: indexPath)
+        delegate?.assetsPicker?(controller: picker, didSelect: asset, at: indexPath)
     }
     
     public func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
         if let delegate = self.delegate {
-            return delegate.assetsPicker(controller: picker, shouldDeselect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath)
+            return delegate.assetsPicker?(controller: picker, shouldDeselect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
         } else {
             return true
         }
@@ -448,7 +459,7 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
         let asset = AssetsManager.shared.assetArray[indexPath.row]
         deselect(asset: asset, at: indexPath)
         updateNavigationStatus()
-        delegate?.assetsPicker(controller: picker, didDeselect: asset, at: indexPath)
+        delegate?.assetsPicker?(controller: picker, didDeselect: asset, at: indexPath)
     }
 }
 
