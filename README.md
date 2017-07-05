@@ -243,7 +243,7 @@ it, simply add the following line to your Podfile:
 
 For Swift 3,
 ```ruby
-pod 'AssetsPickerViewController', '~> 1.0'
+pod 'AssetsPickerViewController', :git => 'https://github.com/DragonCherry/AssetsPickerViewController', :branch => 'swift3'
 ```
 
 For Swift 4,

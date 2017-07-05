@@ -1,5 +1,5 @@
 PODS:
-  - AssetsPickerViewController (2.0.7):
+  - AssetsPickerViewController (2.0.8):
     - Dimmer (~> 2.0)
     - FadeView (~> 2.0)
     - PureLayout
@@ -13,7 +13,7 @@ PODS:
   - FadeView (2.0.0)
   - PureLayout (3.0.2)
   - SwiftARGB (2.0.0)
-  - TinyLog (2.0.1)
+  - TinyLog (2.0.2)
   - UIViewKVO (2.0.0)
 
 DEPENDENCIES:
@@ -24,12 +24,12 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  AssetsPickerViewController: 25247d68eca464589486359442d52c4b1ab4dd81
+  AssetsPickerViewController: b7dea3d4da41bd7dbf2d6d224085629fc2756e57
   Dimmer: f308deefd2e52ea9f59572fb43f9de8c111c82d4
   FadeView: 80197da2fbee5382b178127e8c5f988a35eef018
   PureLayout: 4d550abe49a94f24c2808b9b95db9131685fe4cd
   SwiftARGB: 8727cfcdcfe8709e707a2391f1d5802a7c40dcad
-  TinyLog: 1a11500e422b4f5ddc7af3bd08f8d23eac53c87b
+  TinyLog: 4ce6debfcc8c95a3a910974378fd2c330c068a19
   UIViewKVO: 091f9e020d69e73c4bf5e5ef61cde7bff1c24bbf
 
 PODFILE CHECKSUM: d715880270f0b3603befd8f0fdcab2b87955e4ce
