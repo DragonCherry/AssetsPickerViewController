@@ -395,12 +395,16 @@ extension AssetsPhotoViewController {
 extension AssetsPhotoViewController {
     
     func pressedCancel(button: UIBarButtonItem) {
-        navigationController?.dismiss(animated: true, completion: nil)
+        navigationController?.dismiss(animated: true, completion: {
+            self.delegate?.assetsPicker?(controller: self.picker, didDismissByCancelling: true)
+        })
         delegate?.assetsPickerDidCancel?(controller: picker)
     }
     
     func pressedDone(button: UIBarButtonItem) {
-        navigationController?.dismiss(animated: true, completion: nil)
+        navigationController?.dismiss(animated: true, completion: {
+            self.delegate?.assetsPicker?(controller: self.picker, didDismissByCancelling: false)
+        })
         delegate?.assetsPicker(controller: picker, selected: selectedArray)
     }
     

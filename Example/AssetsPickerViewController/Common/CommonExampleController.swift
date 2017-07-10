@@ -124,4 +124,8 @@ extension CommonExampleController: AssetsPickerViewControllerDelegate {
     func assetsPicker(controller: AssetsPickerViewController, didDeselect asset: PHAsset, at indexPath: IndexPath) {
         log("didDeselect: \(indexPath.row)")
     }
+    
+    func assetsPicker(controller: AssetsPickerViewController, didDismissByCancelling byCancel: Bool) {
+        log("dismiss completed - byCancel: \(byCancel)")
+    }
 }
