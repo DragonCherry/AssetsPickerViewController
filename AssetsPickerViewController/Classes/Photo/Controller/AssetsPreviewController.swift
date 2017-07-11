@@ -33,27 +33,34 @@ open class AssetsPreviewController: UIViewController {
                 if #available(iOS 9.1, *) {
                     imageView.isHidden = true
                     livePhotoView.isHidden = false
-                    if let asset = self.asset {
+                    
+                    let options = PHLivePhotoRequestOptions()
+                    options.isNetworkAccessAllowed = true
+                    options.deliveryMode = .opportunistic
+                    
+                    if asset.mediaSubtypes == .photoLive {
                         PHCachingImageManager.default().requestLivePhoto(
                             for: asset,
                             targetSize: CGSize(width: asset.pixelWidth, height: asset.pixelHeight),
                             contentMode: .aspectFill,
-                            options: nil,
+                            options: options,
                             resultHandler: { (livePhoto, info) in
-                                if let livePhoto = livePhoto, !Bool((info?[PHImageResultIsDegradedKey] as? Bool) ?? false) && info?[PHImageErrorKey] == nil {
+                                if let livePhoto = livePhoto, info?[PHImageErrorKey] == nil {
                                     self.livePhotoView.livePhoto = livePhoto
                                     self.livePhotoView.startPlayback(with: .full)
                                 } else {
                                     self.imageView.isHidden = false
-                                    self.image(forAsset: asset, completion: { (image) in
-                                        self.imageView.image = image
-                                    })
+                                    self.image(forAsset: asset, isNeedDegraded: false, completion: { self.imageView.image = $0 })
                                 }
                         })
+                    } else {
+                        self.imageView.isHidden = false
+                        self.image(forAsset: asset, isNeedDegraded: false, completion: { self.imageView.image = $0 })
                     }
+                    
                 } else {
                     imageView.isHidden = false
-                    self.image(forAsset: asset, completion: { (image) in
+                    self.image(forAsset: asset, isNeedDegraded: false, completion: { (image) in
                         self.imageView.image = image
                     })
                 }
@@ -153,13 +160,21 @@ open class AssetsPreviewController: UIViewController {
 }
 
 extension AssetsPreviewController {
-    open func image(forAsset asset: PHAsset, completion: @escaping ((UIImage?) -> Void)) {
+    open func image(forAsset asset: PHAsset, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
+        let options = PHImageRequestOptions()
+        options.isNetworkAccessAllowed = true
+        options.deliveryMode = .opportunistic
         PHCachingImageManager.default().requestImage(
             for: asset,
             targetSize: CGSize(width: asset.pixelWidth, height: asset.pixelHeight),
             contentMode: .aspectFit,
-            options: nil,
+            options: options,
             resultHandler: { (image, info) in
+                if !isNeedDegraded {
+                    if let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool, isDegraded {
+                        return
+                    }
+                }
                 completion(image)
         })
     }
