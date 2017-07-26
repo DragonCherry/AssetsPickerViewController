@@ -302,13 +302,9 @@ extension AssetsManager {
             return false
         }
         self.selectedAlbum = newAlbum
-        var photos = [PHAsset]()
         if let fetchResult = fetchMap[newAlbum.localIdentifier] {
-            for i in 0..<fetchResult.count {
-                let asset = fetchResult.object(at: i)
-                photos.append(asset)
-            }
-            assetArray = photos
+            let indexSet = IndexSet(0..<fetchResult.count)
+            assetArray = fetchResult.objects(at: indexSet)
             return true
         } else {
             return false
