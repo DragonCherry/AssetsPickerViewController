@@ -26,9 +26,13 @@ import Photos
 open class AssetsPickerViewController: UINavigationController {
     
     open var pickerDelegate: AssetsPickerViewControllerDelegate?
+    open var selectedAssets: [PHAsset] {
+        return photoViewController.selectedAssets
+    }
+    
     private var pickerConfig: AssetsPickerConfig!
     
-    open lazy var photoViewController: AssetsPhotoViewController = {
+    lazy var photoViewController: AssetsPhotoViewController = {
         var config: AssetsPickerConfig!
         if let pickerConfig = self.pickerConfig {
             config = pickerConfig.prepare()

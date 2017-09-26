@@ -5,7 +5,7 @@ PODS:
     - PureLayout
     - SwiftARGB (~> 2.0)
     - TinyLog (~> 2.0)
-  - Dimmer (2.0.0):
+  - Dimmer (2.0.2):
     - FadeView (~> 2.0)
     - PureLayout
     - TinyLog (~> 2.0)
@@ -25,7 +25,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AssetsPickerViewController: 1bbb2bcfaed85ab7716e7cd86edf81714568ca52
-  Dimmer: f308deefd2e52ea9f59572fb43f9de8c111c82d4
+  Dimmer: ab488a82d2c31bf330a369ccebcab5f81f329f82
   FadeView: 80197da2fbee5382b178127e8c5f988a35eef018
   PureLayout: 4d550abe49a94f24c2808b9b95db9131685fe4cd
   SwiftARGB: 8727cfcdcfe8709e707a2391f1d5802a7c40dcad
@@ -34,4 +34,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: d715880270f0b3603befd8f0fdcab2b87955e4ce
 
-COCOAPODS: 1.3.0.beta.2
+COCOAPODS: 1.3.1

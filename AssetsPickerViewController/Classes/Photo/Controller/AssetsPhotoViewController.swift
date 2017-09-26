@@ -12,7 +12,7 @@ import PhotosUI
 import TinyLog
 
 // MARK: - AssetsPhotoViewController
-open class AssetsPhotoViewController: UIViewController {
+class AssetsPhotoViewController: UIViewController {
     
     // MARK: Properties
     fileprivate var pickerConfig: AssetsPickerConfig!
@@ -20,6 +20,8 @@ open class AssetsPhotoViewController: UIViewController {
     
     fileprivate let cellReuseIdentifier: String = UUID().uuidString
     fileprivate let footerReuseIdentifier: String = UUID().uuidString
+    
+    fileprivate var requestIdMap = [IndexPath: PHImageRequestID]()
     
     fileprivate lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
@@ -77,21 +79,25 @@ open class AssetsPhotoViewController: UIViewController {
         return view
     }()
     
+    var selectedAssets: [PHAsset] {
+        return selectedArray
+    }
+    
     // MARK: Lifecycle Methods
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    public init(pickerConfig: AssetsPickerConfig) {
+    init(pickerConfig: AssetsPickerConfig) {
         self.init()
         self.pickerConfig = pickerConfig
     }
     
-    open override func loadView() {
+    override func loadView() {
         super.loadView()
         view = UIView()
         view.backgroundColor = .white
@@ -101,7 +107,7 @@ open class AssetsPhotoViewController: UIViewController {
         view.setNeedsUpdateConstraints()
     }
     
-    open override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         setupCommon()
@@ -120,7 +126,7 @@ open class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if let previewing = self.previewing {
             if traitCollection.forceTouchCapability != .available {
@@ -134,7 +140,7 @@ open class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    open override func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !didSetInitialPosition {
             let count = AssetsManager.shared.assetArray.count
@@ -148,7 +154,7 @@ open class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    open override func updateViewConstraints() {
+    override func updateViewConstraints() {
         if !didSetupConstraints {
             collectionView.autoPinEdgesToSuperviewEdges()
             emptyView.autoPinEdgesToSuperviewEdges()
@@ -158,7 +164,7 @@ open class AssetsPhotoViewController: UIViewController {
         super.updateViewConstraints()
     }
     
-    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         if let photoLayout = collectionView.collectionViewLayout as? AssetsPhotoLayout {
             if let offset = photoLayout.translateOffset(forChangingSize: size, currentOffset: collectionView.contentOffset) {
@@ -172,11 +178,11 @@ open class AssetsPhotoViewController: UIViewController {
         updateLayout(layout: collectionView.collectionViewLayout, isPortrait: size.height > size.width)
     }
     
-    open override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    open override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setupGestureRecognizer()
         if traitCollection.forceTouchCapability == .available {
@@ -184,7 +190,7 @@ open class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    open override func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeGestureRecognizer()
         if let previewing = self.previewing {
@@ -201,17 +207,17 @@ open class AssetsPhotoViewController: UIViewController {
 // MARK: - Initial Setups
 extension AssetsPhotoViewController {
     
-    open func setupCommon() {
+    func setupCommon() {
         view.backgroundColor = .white
     }
     
-    open func setupBarButtonItems() {
+    func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
         navigationItem.rightBarButtonItem = doneButtonItem
         doneButtonItem.isEnabled = false
     }
     
-    open func setupAssets() {
+    func setupAssets() {
         let manager = AssetsManager.shared
         manager.subscribe(subscriber: self)
         manager.fetchAlbums()
@@ -222,18 +228,18 @@ extension AssetsPhotoViewController {
         }
     }
     
-    open func setupGestureRecognizer() {
+    func setupGestureRecognizer() {
         if let _ = self.tapGesture {
             // ignore
         } else {
             let gesture = UITapGestureRecognizer(target: self, action: #selector(pressedTitle))
-            gesture.delegate = self
             navigationController?.navigationBar.addGestureRecognizer(gesture)
+            gesture.delegate = self
             tapGesture = gesture
         }
     }
     
-    open func removeGestureRecognizer() {
+    func removeGestureRecognizer() {
         if let tapGesture = self.tapGesture {
             navigationController?.navigationBar.removeGestureRecognizer(tapGesture)
             self.tapGesture = nil
@@ -435,7 +441,7 @@ extension AssetsPhotoViewController: UIScrollViewDelegate {
 
 // MARK: - UICollectionViewDelegate
 extension AssetsPhotoViewController: UICollectionViewDelegate {
-    
+
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if let delegate = self.delegate {
             return delegate.assetsPicker?(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
@@ -509,17 +515,29 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         } else {
             // update cell UI as normal
         }
-        AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { (image) in
-            UIView.transition(
-                with: photoCell.imageView,
-                duration: 0.125,
-                options: .transitionCrossDissolve,
-                animations: {
-                    photoCell.imageView.image = image
-            },
-                completion: nil
-            )
+        
+        cancelFetching(at: indexPath)
+        let requestId = AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { [weak self] (image, isDegraded) in
+            if self?.isFetching(indexPath: indexPath) ?? true {
+                if !isDegraded {
+                    self?.removeFetching(indexPath: indexPath)
+                }
+                UIView.transition(
+                    with: photoCell.imageView,
+                    duration: 0.125,
+                    options: .transitionCrossDissolve,
+                    animations: {
+                        photoCell.imageView.image = image
+                },
+                    completion: nil
+                )
+            }
         })
+        registerFetching(requestId: requestId, at: indexPath)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        cancelFetching(at: indexPath)
     }
     
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -531,6 +549,35 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         footerView.updateConstraintsIfNeeded()
         footerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
         return footerView
+    }
+}
+
+// MARK: - Image Fetch Utility
+extension AssetsPhotoViewController {
+    
+    func cancelFetching(at indexPath: IndexPath) {
+        if let requestId = requestIdMap[indexPath] {
+            requestIdMap.removeValue(forKey: indexPath)
+            AssetsManager.shared.cancelRequest(requestId: requestId)
+        }
+    }
+    
+    func registerFetching(requestId: PHImageRequestID, at indexPath: IndexPath) {
+        requestIdMap[indexPath] = requestId
+    }
+    
+    func removeFetching(indexPath: IndexPath) {
+        if let _ = requestIdMap[indexPath] {
+            requestIdMap.removeValue(forKey: indexPath)
+        }
+    }
+    
+    func isFetching(indexPath: IndexPath) -> Bool {
+        if let _ = requestIdMap[indexPath] {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
@@ -653,4 +700,3 @@ extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
         logi("viewControllerToCommit: \(type(of: viewControllerToCommit))")
     }
 }
-
