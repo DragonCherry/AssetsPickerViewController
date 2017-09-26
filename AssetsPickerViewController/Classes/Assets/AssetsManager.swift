@@ -107,7 +107,7 @@ extension AssetsManager {
             subscribers.remove(at: index)
         }
     }
-    
+
     open func unsubscribeAll() {
         subscribers.removeAll()
     }
@@ -211,7 +211,8 @@ extension AssetsManager {
                     contentMode: .aspectFill,
                     options: nil,
                     resultHandler: { (image, info) in
-                        if !isNeedDegraded && Bool((info?[PHImageResultIsDegradedKey] as? Bool) ?? false) {
+                        let isDegraded = (info?[PHImageResultIsDegradedKey] as? Bool) ?? false
+                        if !isNeedDegraded && isDegraded {
                             return
                         }
                         DispatchQueue.main.async {
@@ -226,20 +227,26 @@ extension AssetsManager {
         }
     }
     
-    open func image(at index: Int, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
-        imageManager.requestImage(
+    @discardableResult
+    open func image(at index: Int, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?, Bool) -> Void)) -> PHImageRequestID {
+        return imageManager.requestImage(
             for: assetArray[index],
             targetSize: size,
             contentMode: .aspectFill,
             options: nil,
             resultHandler: { (image, info) in
-                if !isNeedDegraded && Bool((info?[PHImageResultIsDegradedKey] as? Bool) ?? false) {
+                let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool ?? false
+                if !isNeedDegraded && isDegraded {
                     return
                 }
                 DispatchQueue.main.async {
-                    completion(image)
+                    completion(image, isDegraded)
                 }
         })
+    }
+    
+    open func cancelRequest(requestId: PHImageRequestID) {
+        imageManager.cancelImageRequest(requestId)
     }
     
     open func fetchResult(forAlbum album: PHAssetCollection) -> PHFetchResult<PHAsset>? {
@@ -302,13 +309,9 @@ extension AssetsManager {
             return false
         }
         self.selectedAlbum = newAlbum
-        var photos = [PHAsset]()
         if let fetchResult = fetchMap[newAlbum.localIdentifier] {
-            for i in 0..<fetchResult.count {
-                let asset = fetchResult.object(at: i)
-                photos.append(asset)
-            }
-            assetArray = photos
+            let indexSet = IndexSet(0..<fetchResult.count)
+            assetArray = fetchResult.objects(at: indexSet)
             return true
         } else {
             return false
@@ -555,4 +558,3 @@ extension IndexSet {
         return indexPaths
     }
 }
-

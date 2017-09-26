@@ -108,6 +108,11 @@ extension CommonExampleController: AssetsPickerViewControllerDelegate {
     
     func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PHAsset, at indexPath: IndexPath) -> Bool {
         log("shouldSelect: \(indexPath.row)")
+        
+        // can limit selection count
+        if controller.selectedAssets.count > 3 {
+            // do your job here
+        }
         return true
     }
     
