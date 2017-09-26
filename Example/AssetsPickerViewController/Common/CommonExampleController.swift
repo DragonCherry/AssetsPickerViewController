@@ -111,7 +111,7 @@ extension CommonExampleController: AssetsPickerViewControllerDelegate {
         log("shouldSelect: \(indexPath.row)")
         
         // can limit selection count
-        if controller.selectedAssets.count > 10 {
+        if controller.selectedAssets.count > 3 {
             // do your job here
         }
         return true
