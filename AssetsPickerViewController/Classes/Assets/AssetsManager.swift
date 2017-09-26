@@ -227,20 +227,26 @@ extension AssetsManager {
         }
     }
     
-    open func image(at index: Int, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
-        imageManager.requestImage(
+    @discardableResult
+    open func image(at index: Int, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?, Bool) -> Void)) -> PHImageRequestID {
+        return imageManager.requestImage(
             for: assetArray[index],
             targetSize: size,
             contentMode: .aspectFill,
             options: nil,
             resultHandler: { (image, info) in
-                if !isNeedDegraded && Bool(info?[PHImageResultIsDegradedKey]) {
+                let isDegraded = Bool(info?[PHImageResultIsDegradedKey])
+                if !isNeedDegraded && isDegraded {
                     return
                 }
                 DispatchQueue.main.async {
-                    completion(image)
+                    completion(image, isDegraded)
                 }
         })
+    }
+    
+    open func cancelRequest(requestId: PHImageRequestID) {
+        imageManager.cancelImageRequest(requestId)
     }
     
     open func fetchResult(forAlbum album: PHAssetCollection) -> PHFetchResult<PHAsset>? {

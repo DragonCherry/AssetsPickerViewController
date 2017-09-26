@@ -21,6 +21,8 @@ class AssetsPhotoViewController: UIViewController {
     fileprivate let cellReuseIdentifier: String = UUID().uuidString
     fileprivate let footerReuseIdentifier: String = UUID().uuidString
     
+    fileprivate var requestIdMap = [IndexPath: PHImageRequestID]()
+    
     fileprivate lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
         return buttonItem
@@ -513,17 +515,29 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         } else {
             // update cell UI as normal
         }
-        AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { (image) in
-            UIView.transition(
-                with: photoCell.imageView,
-                duration: 0.125,
-                options: .transitionCrossDissolve,
-                animations: {
-                    photoCell.imageView.image = image
+        
+        cancelFetching(at: indexPath)
+        let requestId = AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { [weak self] (image, isDegraded) in
+            if self?.isFetching(indexPath: indexPath) ?? true {
+                if !isDegraded {
+                    self?.removeFetching(indexPath: indexPath)
+                }
+                UIView.transition(
+                    with: photoCell.imageView,
+                    duration: 0.125,
+                    options: .transitionCrossDissolve,
+                    animations: {
+                        photoCell.imageView.image = image
                 },
-                completion: nil
-            )
+                    completion: nil
+                )
+            }
         })
+        registerFetching(requestId: requestId, at: indexPath)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        cancelFetching(at: indexPath)
     }
     
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -535,6 +549,35 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         footerView.updateConstraintsIfNeeded()
         footerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
         return footerView
+    }
+}
+
+// MARK: - Image Fetch Utility
+extension AssetsPhotoViewController {
+    
+    func cancelFetching(at indexPath: IndexPath) {
+        if let requestId = requestIdMap[indexPath] {
+            requestIdMap.removeValue(forKey: indexPath)
+            AssetsManager.shared.cancelRequest(requestId: requestId)
+        }
+    }
+    
+    func registerFetching(requestId: PHImageRequestID, at indexPath: IndexPath) {
+        requestIdMap[indexPath] = requestId
+    }
+    
+    func removeFetching(indexPath: IndexPath) {
+        if let _ = requestIdMap[indexPath] {
+            requestIdMap.removeValue(forKey: indexPath)
+        }
+    }
+    
+    func isFetching(indexPath: IndexPath) -> Bool {
+        if let _ = requestIdMap[indexPath] {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
