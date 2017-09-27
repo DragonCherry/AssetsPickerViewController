@@ -16,9 +16,8 @@ open class AssetsPhotoFooterView: UICollectionReusableView {
     private let countLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textAlignment = .center
-        label.font = UIFont.systemFont(forStyle: .body)
+        label.font = UIFont.systemFont(forStyle: .subheadline, weight: .semibold)
         label.textColor = .darkText
-        label.text = "TEST TEST"
         return label
     }()
     
