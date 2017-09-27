@@ -72,10 +72,8 @@ open class AssetsPreviewController: UIViewController {
                     forVideo: asset,
                     options: nil,
                     resultHandler: { (avasset, audio, info) in
-                        
-                        self.imageView.isHidden = false
-                        
                         DispatchQueue.main.async {
+                            self.imageView.isHidden = false
                             if let avasset = avasset {
                                 let playerItem = AVPlayerItem(asset: avasset)
                                 let player = AVPlayer(playerItem: playerItem)
