@@ -23,6 +23,7 @@
 		E12081BE1EE15D1000E4DB16 /* AlbumFilterOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081BD1EE15D1000E4DB16 /* AlbumFilterOptionController.swift */; };
 		E12081C01EE15D2000E4DB16 /* AlbumFilterBlockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081BF1EE15D2000E4DB16 /* AlbumFilterBlockController.swift */; };
 		E12081C21EE15D2900E4DB16 /* AssetFilterOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081C11EE15D2900E4DB16 /* AssetFilterOptionController.swift */; };
+		E1725B7E1F7B7E640022F0A1 /* PreSelectedAssetsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1725B7D1F7B7E640022F0A1 /* PreSelectedAssetsController.swift */; };
 		E19F61021EDBDFE700B8091B /* BasicUsageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61011EDBDFE700B8091B /* BasicUsageController.swift */; };
 		E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */; };
 /* End PBXBuildFile section */
@@ -79,6 +80,7 @@
 		E14AF4881EF3D8DA00C94BC7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		E14AF4891EF3D8DA00C94BC7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		E159E9F4E24E25BE57C1159B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		E1725B7D1F7B7E640022F0A1 /* PreSelectedAssetsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreSelectedAssetsController.swift; sourceTree = "<group>"; };
 		E19F61011EDBDFE700B8091B /* BasicUsageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicUsageController.swift; sourceTree = "<group>"; };
 		E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbumCellController.swift; sourceTree = "<group>"; };
 		FED5796E98C093EFDFDF9B23 /* AssetsPickerViewController.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = AssetsPickerViewController.podspec; path = ../AssetsPickerViewController.podspec; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				E19F61011EDBDFE700B8091B /* BasicUsageController.swift */,
 				E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */,
 				0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */,
+				E1725B7D1F7B7E640022F0A1 /* PreSelectedAssetsController.swift */,
 			);
 			name = Basics;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */,
 				E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */,
 				E10E44491EDBA7020075C641 /* CommonExampleController.swift in Sources */,
+				E1725B7E1F7B7E640022F0A1 /* PreSelectedAssetsController.swift in Sources */,
 				E12081B01EDE794900E4DB16 /* CustomAssetCellController.swift in Sources */,
 				E12081BA1EE15CED00E4DB16 /* AlbumOrderBlockController.swift in Sources */,
 				0E0AB8FB1EE05BED0002902B /* ShowHiddenAlbumController.swift in Sources */,
