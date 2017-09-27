@@ -467,7 +467,7 @@ extension AssetsManager {
         completion?(sortedAlbumsArray)
     }
     
-    open func fetchPhotos(isRefetch: Bool = false, completion: (([PHAsset]) -> Void)? = nil) {
+    open func fetchAssets(isRefetch: Bool = false, completion: (([PHAsset]) -> Void)? = nil) {
         
         fetchAlbums(isRefetch: isRefetch)
         

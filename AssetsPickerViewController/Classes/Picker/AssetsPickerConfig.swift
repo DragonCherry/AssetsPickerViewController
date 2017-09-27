@@ -71,6 +71,9 @@ open class AssetsPickerConfig {
     
     // MARK: - Asset Config
     
+    // MARK: Asset
+    open var selectedAssets: [PHAsset]?
+    
     // MARK: Fetch
     open var assetFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
     

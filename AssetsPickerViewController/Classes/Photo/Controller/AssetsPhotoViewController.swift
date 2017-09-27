@@ -116,6 +116,10 @@ class AssetsPhotoViewController: UIViewController {
         updateEmptyView(count: 0)
         updateNoPermissionView()
         
+        if let selectedAssets = self.pickerConfig?.selectedAssets {
+            setSelectedAssets(assets: selectedAssets)
+        }
+        
         AssetsManager.shared.authorize { (isGranted) in
             self.updateNoPermissionView()
             if isGranted {
@@ -180,6 +184,7 @@ class AssetsPhotoViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        updateNavigationStatus()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -221,10 +226,26 @@ extension AssetsPhotoViewController {
         let manager = AssetsManager.shared
         manager.subscribe(subscriber: self)
         manager.fetchAlbums()
-        manager.fetchPhotos() { photos in
+        manager.fetchAssets() { [weak self] photos in
+            
+            guard let `self` = self else { return }
+            
             self.updateEmptyView(count: photos.count)
             self.title = self.title(forAlbum: manager.selectedAlbum)
-            self.collectionView.reloadData()
+            
+            self.collectionView.performBatchUpdates({ [weak self] in
+                self?.collectionView.reloadData()
+            }, completion: { [weak self] (finished) in
+                guard let `self` = self else { return }
+                // initialize preselected assets
+                self.selectedArray.forEach({ [weak self] (asset) in
+                    if let row = photos.index(of: asset) {
+                        let indexPathToSelect = IndexPath(row: row, section: 0)
+                        self?.collectionView.selectItem(at: indexPathToSelect, animated: false, scrollPosition: UICollectionViewScrollPosition(rawValue: 0))
+                    }
+                })
+                self.updateSelectionCount()
+            })
         }
     }
     
@@ -273,6 +294,18 @@ extension AssetsPhotoViewController {
             flowLayout.itemSize = isPortrait ? pickerConfig.assetPortraitCellSize : pickerConfig.assetLandscapeCellSize
             flowLayout.minimumLineSpacing = isPortrait ? pickerConfig.assetPortraitLineSpace : pickerConfig.assetLandscapeLineSpace
             flowLayout.minimumInteritemSpacing = isPortrait ? pickerConfig.assetPortraitInteritemSpace : pickerConfig.assetLandscapeInteritemSpace
+        }
+    }
+    
+    func setSelectedAssets(assets: [PHAsset]) {
+        selectedArray.removeAll()
+        selectedMap.removeAll()
+        
+        _ = assets.filter { AssetsManager.shared.isExist(asset: $0) }
+            .map { [weak self] asset in
+                guard let `self` = self else { return }
+                self.selectedArray.append(asset)
+                self.selectedMap.updateValue(asset, forKey: asset.localIdentifier)
         }
     }
     
@@ -512,8 +545,6 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             if let targetIndex = selectedArray.index(of: selectedAsset) {
                 photoCell.count = targetIndex + 1
             }
-        } else {
-            // update cell UI as normal
         }
         
         cancelFetching(at: indexPath)
@@ -627,8 +658,8 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         if oldStatus != .authorized {
             if newStatus == .authorized {
                 updateNoPermissionView()
-                AssetsManager.shared.fetchPhotos(isRefetch: true, completion: { (_) in
-                    self.collectionView.reloadData()
+                AssetsManager.shared.fetchAssets(isRefetch: true, completion: { [weak self] (_) in
+                    self?.collectionView.reloadData()
                 })
             }
         } else {
