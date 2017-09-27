@@ -84,6 +84,8 @@ Customizable Album & Asset Layout
 
 - support many languages(German, French, Spanish, Chinese, Japanese, Arabic, Spanish, Korean, Indonesian, Russian, Turkish, Italian, etc)
 
+- set selected assets before present picker controller
+
 
 ## Features To-do
 
@@ -131,6 +133,22 @@ pickerConfig.albumIsShowEmptyAlbum = false
 To show "Hidden" albums,
 ```swift
 pickerConfig.albumIsShowHiddenAlbum = true
+```
+
+To set pre-selected assets before present picker,
+```swift
+pickerConfig.selectedAssets = self.assets
+```
+
+To limit selected assets count,
+```swift
+func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PHAsset, at indexPath: IndexPath) -> Bool {   
+    if controller.selectedAssets.count > 3 {
+        // do your job here
+        return false
+    }
+    return true
+}
 ```
 
 ### Appearence
