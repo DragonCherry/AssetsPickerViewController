@@ -233,19 +233,21 @@ extension AssetsPhotoViewController {
             self.updateEmptyView(count: photos.count)
             self.title = self.title(forAlbum: manager.selectedAlbum)
             
-            self.collectionView.performBatchUpdates({ [weak self] in
-                self?.collectionView.reloadData()
-            }, completion: { [weak self] (finished) in
-                guard let `self` = self else { return }
-                // initialize preselected assets
-                self.selectedArray.forEach({ [weak self] (asset) in
-                    if let row = photos.index(of: asset) {
-                        let indexPathToSelect = IndexPath(row: row, section: 0)
-                        self?.collectionView.selectItem(at: indexPathToSelect, animated: false, scrollPosition: UICollectionViewScrollPosition(rawValue: 0))
-                    }
+            if self.selectedArray.count > 0 {
+                self.collectionView.performBatchUpdates({ [weak self] in
+                    self?.collectionView.reloadData()
+                    }, completion: { [weak self] (finished) in
+                        guard let `self` = self else { return }
+                        // initialize preselected assets
+                        self.selectedArray.forEach({ [weak self] (asset) in
+                            if let row = photos.index(of: asset) {
+                                let indexPathToSelect = IndexPath(row: row, section: 0)
+                                self?.collectionView.selectItem(at: indexPathToSelect, animated: false, scrollPosition: UICollectionViewScrollPosition(rawValue: 0))
+                            }
+                        })
+                        self.updateSelectionCount()
                 })
-                self.updateSelectionCount()
-            })
+            }
         }
     }
     
@@ -450,6 +452,9 @@ extension AssetsPhotoViewController {
     @objc func pressedTitle(gesture: UITapGestureRecognizer) {
         guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
         let navigationController = UINavigationController()
+        if #available(iOS 11.0, *) {
+            navigationController.navigationBar.prefersLargeTitles = true
+        }
         let controller = AssetsAlbumViewController(pickerConfig: self.pickerConfig)
         controller.delegate = self
         navigationController.viewControllers = [controller]
