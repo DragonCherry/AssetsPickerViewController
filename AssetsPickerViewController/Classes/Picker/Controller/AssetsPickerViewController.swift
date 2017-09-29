@@ -74,7 +74,3 @@ open class AssetsPickerViewController: UINavigationController {
         logd("Released \(type(of: self))")
     }
 }
-
-extension AssetsPickerViewController: UISplitViewControllerDelegate {
-    
-}
