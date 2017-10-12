@@ -29,7 +29,6 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             albumsFetchArray[section] = albumsChangeDetail.fetchResultAfterChanges
             
             guard albumsChangeDetail.hasIncrementalChanges else {
-                refetchAlbum(forType: albumType(forSection: section))
                 notifySubscribers({ $0.assetsManager(manager: self, reloadedAlbumsInSection: section) })
                 continue
             }
