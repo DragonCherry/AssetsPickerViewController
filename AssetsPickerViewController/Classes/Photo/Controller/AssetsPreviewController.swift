@@ -78,7 +78,7 @@ open class AssetsPreviewController: UIViewController {
                                 let playerItem = AVPlayerItem(asset: avasset)
                                 let player = AVPlayer(playerItem: playerItem)
                                 let playerLayer = AVPlayerLayer(player: player)
-                                playerLayer.videoGravity = AVLayerVideoGravity.resizeAspect
+                                playerLayer.videoGravity = AVLayerVideoGravityResizeAspect
                                 playerLayer.masksToBounds = true
                                 playerLayer.frame = self.imageView.bounds
                                 

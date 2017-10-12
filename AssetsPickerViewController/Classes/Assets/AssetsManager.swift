@@ -349,13 +349,6 @@ extension AssetsManager {
         }
     }
     
-    func refetchAlbum(forType type: PHAssetCollectionType) {
-        let fetchedInfo = fetchAlbums(forAlbumType: type)
-        fetchedAlbumsArray[albumSection(forType: type)] = fetchedInfo.fetchedAlbums
-        sortedAlbumsArray[albumSection(forType: type)] = fetchedInfo.sortedAlbums
-        albumsFetchArray[albumSection(forType: type)] = fetchedInfo.fetchResult
-    }
-    
     func sortedAlbums(fromAlbums albums: [PHAssetCollection]) -> [PHAssetCollection] {
         guard let albumType = albums.first?.assetCollectionType else {
             return albums
@@ -437,6 +430,7 @@ extension AssetsManager {
         if isRefetch {
             selectedAlbum = nil
             isFetchedAlbums = false
+            fetchedAlbumsArray.removeAll()
             sortedAlbumsArray.removeAll()
             albumsFetchArray.removeAll()
             fetchMap.removeAll()
@@ -482,6 +476,8 @@ extension AssetsManager {
     }
     
     func fetchAlbums(forAlbumType type: PHAssetCollectionType) -> (fetchedAlbums: [PHAssetCollection], sortedAlbums: [PHAssetCollection], fetchResult: PHFetchResult<PHAssetCollection>) {
+        
+        logi("type: \(type.rawValue)")
         
         let fetchOption = pickerConfig.albumFetchOptions?[type]
         let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: type, subtype: .any, options: fetchOption)

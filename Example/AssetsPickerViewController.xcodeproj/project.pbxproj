@@ -265,7 +265,7 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = GD2PMHGGVD;
+						DevelopmentTeam = 7WFZ8PB563;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -346,6 +346,7 @@
 				"${BUILT_PRODUCTS_DIR}/AssetsPickerViewController/AssetsPickerViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/Dimmer/Dimmer.framework",
 				"${BUILT_PRODUCTS_DIR}/FadeView/FadeView.framework",
+				"${BUILT_PRODUCTS_DIR}/OptionalTypes/OptionalTypes.framework",
 				"${BUILT_PRODUCTS_DIR}/PureLayout/PureLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftARGB/SwiftARGB.framework",
 				"${BUILT_PRODUCTS_DIR}/TinyLog/TinyLog.framework",
@@ -356,6 +357,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AssetsPickerViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Dimmer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FadeView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptionalTypes.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PureLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftARGB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TinyLog.framework",
@@ -550,7 +552,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = GD2PMHGGVD;
+				DEVELOPMENT_TEAM = 7WFZ8PB563;
 				INFOPLIST_FILE = AssetsPickerViewController/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -560,7 +562,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -571,7 +573,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = GD2PMHGGVD;
+				DEVELOPMENT_TEAM = 7WFZ8PB563;
 				INFOPLIST_FILE = AssetsPickerViewController/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -581,7 +583,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

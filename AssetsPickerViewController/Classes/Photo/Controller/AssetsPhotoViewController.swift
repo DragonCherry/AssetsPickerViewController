@@ -452,9 +452,6 @@ extension AssetsPhotoViewController {
     @objc func pressedTitle(gesture: UITapGestureRecognizer) {
         guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
         let navigationController = UINavigationController()
-        if #available(iOS 11.0, *) {
-            navigationController.navigationBar.prefersLargeTitles = true
-        }
         let controller = AssetsAlbumViewController(pickerConfig: self.pickerConfig)
         controller.delegate = self
         navigationController.viewControllers = [controller]
