@@ -10,6 +10,8 @@ import UIKit
 import Photos
 import PhotosUI
 import TinyLog
+import Device
+import SnapKit
 
 // MARK: - AssetsPhotoViewController
 class AssetsPhotoViewController: UIViewController {
@@ -50,7 +52,6 @@ class AssetsPhotoViewController: UIViewController {
     fileprivate var selectedArray = [PHAsset]()
     fileprivate var selectedMap = [String: PHAsset]()
     
-    fileprivate var didSetupConstraints = false
     fileprivate var didSetInitialPosition: Bool = false
     
     fileprivate lazy var collectionView: UICollectionView = {
@@ -116,6 +117,10 @@ class AssetsPhotoViewController: UIViewController {
         updateEmptyView(count: 0)
         updateNoPermissionView()
         
+        collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        emptyView.snp.makeConstraints { $0.edges.equalTo(collectionView) }
+        noPermissionView.snp.makeConstraints { $0.edges.equalTo(collectionView) }
+        
         if let selectedAssets = self.pickerConfig?.selectedAssets {
             setSelectedAssets(assets: selectedAssets)
         }
@@ -128,6 +133,12 @@ class AssetsPhotoViewController: UIViewController {
                 self.delegate?.assetsPickerCannotAccessPhotoLibrary?(controller: self.picker)
             }
         }
+    }
+    
+    @available(iOS 11.0, *)
+    override func viewLayoutMarginsDidChange() {
+        super.viewLayoutMarginsDidChange()
+        collectionView.snp.updateConstraints { $0.edges.equalTo(view.safeAreaInsets) }
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -158,14 +169,10 @@ class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    override func updateViewConstraints() {
-        if !didSetupConstraints {
-            collectionView.autoPinEdgesToSuperviewEdges()
-            emptyView.autoPinEdgesToSuperviewEdges()
-            noPermissionView.autoPinEdgesToSuperviewEdges()
-            didSetupConstraints = true
-        }
-        super.updateViewConstraints()
+    @available(iOS 11.0, *)
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
