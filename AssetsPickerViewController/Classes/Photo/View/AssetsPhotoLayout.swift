@@ -55,7 +55,7 @@ extension AssetsPhotoLayout {
         let remainder = AssetsManager.shared.assetArray.count % (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
         rows += remainder > 0 ? 1 : 0
         
-        let cellSize = isPortrait ? pickerConfig.assetPortraitCellSize : pickerConfig.assetLandscapeCellSize
+        let cellSize = isPortrait ? pickerConfig.assetPortraitCellSize(forViewSize: collectionView?.bounds.size ?? .zero) : pickerConfig.assetLandscapeCellSize(forViewSize: collectionView?.bounds.size ?? .zero)
         let lineSpace = isPortrait ? pickerConfig.assetPortraitLineSpace : pickerConfig.assetLandscapeLineSpace
         let contentHeight = CGFloat(rows) * cellSize.height + (CGFloat(max(rows - 1, 0)) * lineSpace)
         
