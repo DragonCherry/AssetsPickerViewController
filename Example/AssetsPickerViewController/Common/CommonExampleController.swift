@@ -98,7 +98,7 @@ extension CommonExampleController: AssetsPickerViewControllerDelegate {
     }
     
     func assetsPickerDidCancel(controller: AssetsPickerViewController) {
-        log("Cancelled.")
+        logi("Cancelled.")
     }
     
     func assetsPicker(controller: AssetsPickerViewController, selected assets: [PHAsset]) {
@@ -107,7 +107,7 @@ extension CommonExampleController: AssetsPickerViewControllerDelegate {
     }
     
     func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PHAsset, at indexPath: IndexPath) -> Bool {
-        log("shouldSelect: \(indexPath.row)")
+        logi("shouldSelect: \(indexPath.row)")
         
         // can limit selection count
         if controller.selectedAssets.count > 3 {
@@ -117,20 +117,20 @@ extension CommonExampleController: AssetsPickerViewControllerDelegate {
     }
     
     func assetsPicker(controller: AssetsPickerViewController, didSelect asset: PHAsset, at indexPath: IndexPath) {
-        log("didSelect: \(indexPath.row)")
+        logi("didSelect: \(indexPath.row)")
     }
     
     func assetsPicker(controller: AssetsPickerViewController, shouldDeselect asset: PHAsset, at indexPath: IndexPath) -> Bool {
-        log("shouldDeselect: \(indexPath.row)")
+        logi("shouldDeselect: \(indexPath.row)")
         return true
     }
     
     func assetsPicker(controller: AssetsPickerViewController, didDeselect asset: PHAsset, at indexPath: IndexPath) {
-        log("didDeselect: \(indexPath.row)")
+        logi("didDeselect: \(indexPath.row)")
     }
     
     func assetsPicker(controller: AssetsPickerViewController, didDismissByCancelling byCancel: Bool) {
-        log("dismiss completed - byCancel: \(byCancel)")
+        logi("dismiss completed - byCancel: \(byCancel)")
     }
 }
 
