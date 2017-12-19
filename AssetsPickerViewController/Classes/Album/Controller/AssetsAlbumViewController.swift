@@ -144,7 +144,7 @@ extension AssetsAlbumViewController {
 // MARK: - UICollectionViewDelegate
 extension AssetsAlbumViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        log("[\(indexPath.section)][\(indexPath.row)]")
+        logi("[\(indexPath.section)][\(indexPath.row)]")
         dismiss(animated: true, completion: {
             AssetsManager.shared.unsubscribe(subscriber: self)
         })
@@ -168,7 +168,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        log("cellForItemAt[\(indexPath.section)][\(indexPath.row)]")
+        logi("cellForItemAt[\(indexPath.section)][\(indexPath.row)]")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath)
         guard let _ = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
@@ -190,7 +190,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        log("willDisplay[\(indexPath.section)][\(indexPath.row)]")
+        logi("willDisplay[\(indexPath.section)][\(indexPath.row)]")
         guard var albumCell = cell as? AssetsAlbumCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return

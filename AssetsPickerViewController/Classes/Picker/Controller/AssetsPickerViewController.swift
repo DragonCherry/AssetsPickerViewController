@@ -61,6 +61,8 @@ open class AssetsPickerViewController: UINavigationController {
     }
     
     func commonInit() {
+        TinyLog.isShowInfoLog = false
+        TinyLog.isShowErrorLog = false
         AssetsManager.shared.registerObserver()
         viewControllers = [photoViewController]
     }

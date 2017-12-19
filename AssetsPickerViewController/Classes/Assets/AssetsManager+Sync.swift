@@ -70,7 +70,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             var updatedIndexSet = updatedIndexSets[section]
             
             for (_, album) in albums.enumerated() {
-                log("Looping album: \(album.localizedTitle ?? "")")
+                logd("Looping album: \(album.localizedTitle ?? "")")
                 guard let fetchResult = fetchMapBeforeChanges[album.localIdentifier], let assetsChangeDetails = changeInstance.changeDetails(for: fetchResult) else {
                     continue
                 }
