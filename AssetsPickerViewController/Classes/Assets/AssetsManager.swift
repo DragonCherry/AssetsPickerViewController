@@ -305,7 +305,7 @@ extension AssetsManager {
     @discardableResult
     open func select(album newAlbum: PHAssetCollection) -> Bool {
         if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
-            log("Selected same album.")
+            logi("Selected same album.")
             return false
         }
         self.selectedAlbum = newAlbum
