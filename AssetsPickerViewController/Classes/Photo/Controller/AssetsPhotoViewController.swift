@@ -52,7 +52,13 @@ class AssetsPhotoViewController: UIViewController {
     fileprivate var selectedArray = [PHAsset]()
     fileprivate var selectedMap = [String: PHAsset]()
     
+    fileprivate var didSetupConstraints = false
     fileprivate var didSetInitialPosition: Bool = false
+    
+    fileprivate var isPortrait: Bool = true
+    
+    var leadingConstraint: NSLayoutConstraint?
+    var trailingConstraint: NSLayoutConstraint?
     
     fileprivate lazy var collectionView: UICollectionView = {
         
@@ -117,10 +123,6 @@ class AssetsPhotoViewController: UIViewController {
         updateEmptyView(count: 0)
         updateNoPermissionView()
         
-        collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        emptyView.snp.makeConstraints { $0.edges.equalTo(collectionView) }
-        noPermissionView.snp.makeConstraints { $0.edges.equalTo(collectionView) }
-        
         if let selectedAssets = self.pickerConfig?.selectedAssets {
             setSelectedAssets(assets: selectedAssets)
         }
@@ -133,12 +135,6 @@ class AssetsPhotoViewController: UIViewController {
                 self.delegate?.assetsPickerCannotAccessPhotoLibrary?(controller: self.picker)
             }
         }
-    }
-    
-    @available(iOS 11.0, *)
-    override func viewLayoutMarginsDidChange() {
-        super.viewLayoutMarginsDidChange()
-        collectionView.snp.updateConstraints { $0.edges.equalTo(view.safeAreaInsets) }
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -169,24 +165,54 @@ class AssetsPhotoViewController: UIViewController {
         }
     }
     
+    override func updateViewConstraints() {
+        if !didSetupConstraints {
+            collectionView.autoPinEdge(toSuperviewEdge: .top)
+            
+            if #available(iOS 11.0, *) {
+                leadingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .leading, withInset: view.safeAreaInsets.left)
+            } else {
+                leadingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .leading)
+            }
+            collectionView.autoPinEdge(toSuperviewEdge: .bottom)
+            
+            if #available(iOS 11.0, *) {
+                trailingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .trailing, withInset: view.safeAreaInsets.right)
+            } else {
+                trailingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .trailing)
+            }
+            
+            emptyView.autoPinEdgesToSuperviewEdges()
+            noPermissionView.autoPinEdgesToSuperviewEdges()
+            didSetupConstraints = true
+        }
+        super.updateViewConstraints()
+    }
+    
     @available(iOS 11.0, *)
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
-        
+        leadingConstraint?.constant = view.safeAreaInsets.left
+        trailingConstraint?.constant = -view.safeAreaInsets.right
+        updateLayout(layout: collectionView.collectionViewLayout)
+        logi("\(view.safeAreaInsets)")
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        let isPortrait = size.height > size.width
+        let contentSize = CGSize(width: size.width, height: size.height)
         if let photoLayout = collectionView.collectionViewLayout as? AssetsPhotoLayout {
-            if let offset = photoLayout.translateOffset(forChangingSize: size, currentOffset: collectionView.contentOffset) {
+            if let offset = photoLayout.translateOffset(forChangingSize: contentSize, currentOffset: collectionView.contentOffset) {
                 photoLayout.translatedOffset = offset
+                logi("translated offset: \(offset)")
             }
             coordinator.animate(alongsideTransition: { (_) in
             }) { (_) in
                 photoLayout.translatedOffset = nil
             }
         }
-        updateLayout(layout: collectionView.collectionViewLayout, isPortrait: size.height > size.width)
+        updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -298,12 +324,14 @@ extension AssetsPhotoViewController {
         logi("isHidden: \(noPermissionView.isHidden)")
     }
     
-    func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
-        if let flowLayout = layout as? UICollectionViewFlowLayout {
-            flowLayout.itemSize = isPortrait ? pickerConfig.assetPortraitCellSize(forViewSize: UIScreen.main.portraitSize) : pickerConfig.assetLandscapeCellSize(forViewSize: UIScreen.main.landscapeSize)
-            flowLayout.minimumLineSpacing = isPortrait ? pickerConfig.assetPortraitLineSpace : pickerConfig.assetLandscapeLineSpace
-            flowLayout.minimumInteritemSpacing = isPortrait ? pickerConfig.assetPortraitInteritemSpace : pickerConfig.assetLandscapeInteritemSpace
+    func updateLayout(layout: UICollectionViewLayout, isPortrait: Bool? = nil) {
+        guard let flowLayout = layout as? UICollectionViewFlowLayout else { return }
+        if let isPortrait = isPortrait {
+            self.isPortrait = isPortrait
         }
+        flowLayout.itemSize = self.isPortrait ? pickerConfig.assetPortraitCellSize(forViewSize: UIScreen.main.portraitContentSize) : pickerConfig.assetLandscapeCellSize(forViewSize: UIScreen.main.landscapeContentSize)
+        flowLayout.minimumLineSpacing = self.isPortrait ? pickerConfig.assetPortraitLineSpace : pickerConfig.assetLandscapeLineSpace
+        flowLayout.minimumInteritemSpacing = self.isPortrait ? pickerConfig.assetPortraitInteritemSpace : pickerConfig.assetLandscapeInteritemSpace
     }
     
     func setSelectedAssets(assets: [PHAsset]) {
@@ -481,7 +509,9 @@ extension AssetsPhotoViewController: UIGestureRecognizerDelegate {
 
 // MARK: - UIScrollViewDelegate
 extension AssetsPhotoViewController: UIScrollViewDelegate {
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {}
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        logi("contentOffset: \(scrollView.contentOffset)")
+    }
 }
 
 // MARK: - UICollectionViewDelegate
