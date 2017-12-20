@@ -73,6 +73,7 @@ open class AssetsPickerConfig {
     
     // MARK: Asset
     open var selectedAssets: [PHAsset]?
+    open var assetsMinimumSelectionCount: Int = 1
     
     // MARK: Fetch
     open var assetFetchOptions: [PHAssetCollectionType: PHFetchOptions]?

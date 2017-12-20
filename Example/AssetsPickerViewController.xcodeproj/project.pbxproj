@@ -23,6 +23,7 @@
 		E12081BE1EE15D1000E4DB16 /* AlbumFilterOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081BD1EE15D1000E4DB16 /* AlbumFilterOptionController.swift */; };
 		E12081C01EE15D2000E4DB16 /* AlbumFilterBlockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081BF1EE15D2000E4DB16 /* AlbumFilterBlockController.swift */; };
 		E12081C21EE15D2900E4DB16 /* AssetFilterOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081C11EE15D2900E4DB16 /* AssetFilterOptionController.swift */; };
+		E132AF4C1FEA3E2800FEE536 /* ShowAlbumListOnStartupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E132AF4B1FEA3E2800FEE536 /* ShowAlbumListOnStartupController.swift */; };
 		E1725B7E1F7B7E640022F0A1 /* PreSelectedAssetsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1725B7D1F7B7E640022F0A1 /* PreSelectedAssetsController.swift */; };
 		E19F61021EDBDFE700B8091B /* BasicUsageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61011EDBDFE700B8091B /* BasicUsageController.swift */; };
 		E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */; };
@@ -53,6 +54,7 @@
 		E12081BD1EE15D1000E4DB16 /* AlbumFilterOptionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumFilterOptionController.swift; sourceTree = "<group>"; };
 		E12081BF1EE15D2000E4DB16 /* AlbumFilterBlockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumFilterBlockController.swift; sourceTree = "<group>"; };
 		E12081C11EE15D2900E4DB16 /* AssetFilterOptionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetFilterOptionController.swift; sourceTree = "<group>"; };
+		E132AF4B1FEA3E2800FEE536 /* ShowAlbumListOnStartupController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowAlbumListOnStartupController.swift; sourceTree = "<group>"; };
 		E14AF4701EF3D81D00C94BC7 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Main.strings; sourceTree = "<group>"; };
 		E14AF4711EF3D81D00C94BC7 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		E14AF4721EF3D85900C94BC7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 				E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */,
 				0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */,
 				E1725B7D1F7B7E640022F0A1 /* PreSelectedAssetsController.swift */,
+				E132AF4B1FEA3E2800FEE536 /* ShowAlbumListOnStartupController.swift */,
 			);
 			name = Basics;
 			sourceTree = "<group>";
@@ -377,6 +380,7 @@
 				E12081BE1EE15D1000E4DB16 /* AlbumFilterOptionController.swift in Sources */,
 				607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */,
 				E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */,
+				E132AF4C1FEA3E2800FEE536 /* ShowAlbumListOnStartupController.swift in Sources */,
 				E10E44491EDBA7020075C641 /* CommonExampleController.swift in Sources */,
 				E1725B7E1F7B7E640022F0A1 /* PreSelectedAssetsController.swift in Sources */,
 				E12081B01EDE794900E4DB16 /* CustomAssetCellController.swift in Sources */,
