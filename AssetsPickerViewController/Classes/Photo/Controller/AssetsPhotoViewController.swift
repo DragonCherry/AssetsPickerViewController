@@ -11,7 +11,6 @@ import Photos
 import PhotosUI
 import TinyLog
 import Device
-import SnapKit
 
 // MARK: - AssetsPhotoViewController
 class AssetsPhotoViewController: UIViewController {

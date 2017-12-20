@@ -30,7 +30,7 @@ open class AssetsPickerViewController: UINavigationController {
         return photoViewController.selectedAssets
     }
     
-    open var isShowLog: Bool = true
+    open var isShowLog: Bool = false
     private var pickerConfig: AssetsPickerConfig!
     
     lazy var photoViewController: AssetsPhotoViewController = {
