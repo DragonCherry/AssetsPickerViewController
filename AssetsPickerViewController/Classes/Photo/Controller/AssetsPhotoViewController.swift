@@ -13,7 +13,7 @@ import TinyLog
 import Device
 
 // MARK: - AssetsPhotoViewController
-class AssetsPhotoViewController: UIViewController {
+open class AssetsPhotoViewController: UIViewController {
     
     // MARK: Properties
     fileprivate var pickerConfig: AssetsPickerConfig!
@@ -90,11 +90,11 @@ class AssetsPhotoViewController: UIViewController {
     }
     
     // MARK: Lifecycle Methods
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    override public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
@@ -103,7 +103,7 @@ class AssetsPhotoViewController: UIViewController {
         self.pickerConfig = pickerConfig
     }
     
-    override func loadView() {
+    override open func loadView() {
         super.loadView()
         view = UIView()
         view.backgroundColor = .white
@@ -113,7 +113,7 @@ class AssetsPhotoViewController: UIViewController {
         view.setNeedsUpdateConstraints()
     }
     
-    override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         
         setupCommon()
@@ -126,7 +126,8 @@ class AssetsPhotoViewController: UIViewController {
             setSelectedAssets(assets: selectedAssets)
         }
         
-        AssetsManager.shared.authorize { (isGranted) in
+        AssetsManager.shared.authorize { [weak self] (isGranted) in
+            guard let `self` = self else { return }
             self.updateNoPermissionView()
             if isGranted {
                 self.setupAssets()
@@ -136,7 +137,7 @@ class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if let previewing = self.previewing {
             if traitCollection.forceTouchCapability != .available {
@@ -150,7 +151,7 @@ class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    override func viewDidLayoutSubviews() {
+    override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !didSetInitialPosition {
             let count = AssetsManager.shared.assetArray.count
@@ -164,22 +165,18 @@ class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    override func updateViewConstraints() {
+    override open func updateViewConstraints() {
         if !didSetupConstraints {
             collectionView.autoPinEdge(toSuperviewEdge: .top)
             
             if #available(iOS 11.0, *) {
                 leadingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .leading, withInset: view.safeAreaInsets.left)
-            } else {
-                leadingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .leading)
-            }
-            collectionView.autoPinEdge(toSuperviewEdge: .bottom)
-            
-            if #available(iOS 11.0, *) {
                 trailingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .trailing, withInset: view.safeAreaInsets.right)
             } else {
+                leadingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .leading)
                 trailingConstraint = collectionView.autoPinEdge(toSuperviewEdge: .trailing)
             }
+            collectionView.autoPinEdge(toSuperviewEdge: .bottom)
             
             emptyView.autoPinEdgesToSuperviewEdges()
             noPermissionView.autoPinEdgesToSuperviewEdges()
@@ -189,7 +186,7 @@ class AssetsPhotoViewController: UIViewController {
     }
     
     @available(iOS 11.0, *)
-    override func viewSafeAreaInsetsDidChange() {
+    override open func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
         leadingConstraint?.constant = view.safeAreaInsets.left
         trailingConstraint?.constant = -view.safeAreaInsets.right
@@ -197,7 +194,7 @@ class AssetsPhotoViewController: UIViewController {
         logi("\(view.safeAreaInsets)")
     }
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         let isPortrait = size.height > size.width
         let contentSize = CGSize(width: size.width, height: size.height)
@@ -214,12 +211,12 @@ class AssetsPhotoViewController: UIViewController {
         updateLayout(layout: collectionView.collectionViewLayout, isPortrait: isPortrait)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateNavigationStatus()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         setupGestureRecognizer()
         if traitCollection.forceTouchCapability == .available {
@@ -227,7 +224,7 @@ class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeGestureRecognizer()
         if let previewing = self.previewing {
@@ -415,7 +412,7 @@ extension AssetsPhotoViewController {
     
     func updateNavigationStatus() {
         
-        doneButtonItem.isEnabled = selectedArray.count > 0
+        doneButtonItem.isEnabled = selectedArray.count >= (pickerConfig.assetsMinimumSelectionCount > 0 ? pickerConfig.assetsMinimumSelectionCount : 1)
         
         let counts: (imageCount: Int, videoCount: Int) = selectedArray.reduce((0, 0)) { (result, asset) -> (Int, Int) in
             let imageCount = asset.mediaType == .image ? 1 : 0
@@ -455,6 +452,19 @@ extension AssetsPhotoViewController {
         footerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
     }
     
+    func presentAlbumController(animated: Bool = true) {
+        guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
+        let navigationController = UINavigationController()
+        if #available(iOS 11.0, *) {
+            navigationController.navigationBar.prefersLargeTitles = true
+        }
+        let controller = AssetsAlbumViewController(pickerConfig: self.pickerConfig)
+        controller.delegate = self
+        navigationController.viewControllers = [controller]
+        
+        self.navigationController?.present(navigationController, animated: animated, completion: nil)
+    }
+    
     func title(forAlbum album: PHAssetCollection?) -> String {
         var titleString: String!
         if let albumTitle = album?.localizedTitle {
@@ -484,15 +494,7 @@ extension AssetsPhotoViewController {
     }
     
     @objc func pressedTitle(gesture: UITapGestureRecognizer) {
-        guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
-        let navigationController = UINavigationController()
-        if #available(iOS 11.0, *) {
-            navigationController.navigationBar.prefersLargeTitles = true
-        }
-        let controller = AssetsAlbumViewController(pickerConfig: self.pickerConfig)
-        controller.delegate = self
-        navigationController.viewControllers = [controller]
-        present(navigationController, animated: true, completion: nil)
+        presentAlbumController()
     }
 }
 

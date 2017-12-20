@@ -128,7 +128,7 @@ extension AssetsAlbumViewController {
     
     func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
-        //        navigationItem.rightBarButtonItem = searchButtonItem
+//        navigationItem.rightBarButtonItem = searchButtonItem
     }
     
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
