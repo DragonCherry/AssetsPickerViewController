@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Device
 import TinyLog
 
 open class AssetsPhotoLayout: UICollectionViewFlowLayout {
@@ -38,33 +39,40 @@ open class AssetsPhotoLayout: UICollectionViewFlowLayout {
 
 extension AssetsPhotoLayout {
     
-    open func translateOffset(forChangingSize size: CGSize, currentOffset: CGPoint) -> CGPoint? {
-        guard let collectionView = self.collectionView else {
-            return nil
-        }
-        let isPortrait = size.height > size.width
-        let contentHeight = expectedContentHeight(isPortrait: isPortrait)
-        let currentRatio = offsetRatio(collectionView: collectionView, offset: currentOffset, contentSize: collectionView.contentSize, isPortrait: isPortrait)
-        
-        let futureOffsetY = (contentHeight - size.height) * currentRatio
-        return CGPoint(x: 0, y: futureOffsetY)
-    }
-    
-    open func expectedContentHeight(isPortrait: Bool) -> CGFloat {
+    open func expectedContentHeight(forViewSize size: CGSize, isPortrait: Bool) -> CGFloat {
         var rows = AssetsManager.shared.assetArray.count / (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
         let remainder = AssetsManager.shared.assetArray.count % (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
         rows += remainder > 0 ? 1 : 0
         
-        let cellSize = isPortrait ? pickerConfig.assetPortraitCellSize : pickerConfig.assetLandscapeCellSize
+        let cellSize = isPortrait ? pickerConfig.assetPortraitCellSize(forViewSize: UIScreen.main.portraitContentSize) : pickerConfig.assetLandscapeCellSize(forViewSize: UIScreen.main.landscapeContentSize)
         let lineSpace = isPortrait ? pickerConfig.assetPortraitLineSpace : pickerConfig.assetLandscapeLineSpace
         let contentHeight = CGFloat(rows) * cellSize.height + (CGFloat(max(rows - 1, 0)) * lineSpace)
+        let bottomHeight = cellSize.height * 2/3 + Device.safeAreaInsets(isPortrait: isPortrait).bottom
         
-        return contentHeight
+        return contentHeight + bottomHeight
     }
     
     private func offsetRatio(collectionView: UICollectionView, offset: CGPoint, contentSize: CGSize, isPortrait: Bool) -> CGFloat {
-        let inset: CGFloat = 0
-        let ratio = (offset.y + inset) / (contentSize.height - collectionView.bounds.height + inset)
-        return ratio
+        return (offset.y > 0 ? offset.y : 0) / ((contentSize.height + Device.safeAreaInsets(isPortrait: isPortrait).bottom) - collectionView.bounds.height)
+    }
+    
+    open func translateOffset(forChangingSize size: CGSize, currentOffset: CGPoint) -> CGPoint? {
+        guard let collectionView = self.collectionView else {
+            return nil
+        }
+        let isPortraitFuture = size.height > size.width
+        let isPortraitCurrent = collectionView.bounds.size.height > collectionView.bounds.size.width
+        let contentHeight = expectedContentHeight(forViewSize: size, isPortrait: isPortraitFuture)
+        let currentRatio = offsetRatio(collectionView: collectionView, offset: currentOffset, contentSize: collectionView.contentSize, isPortrait: isPortraitCurrent)
+        logi("currentRatio = \(currentRatio)")
+        var futureOffsetY = (contentHeight - size.height) * currentRatio
+        
+        if currentOffset.y < 0 {
+            let insetRatio = (-currentOffset.y) / Device.safeAreaInsets(isPortrait: isPortraitCurrent).top
+            let insetDiff = Device.safeAreaInsets(isPortrait: isPortraitFuture).top * insetRatio
+            futureOffsetY -= insetDiff
+        }
+        
+        return CGPoint(x: 0, y: futureOffsetY)
     }
 }

@@ -91,19 +91,22 @@ open class AssetsPickerConfig {
     open var assetPortraitColumnCount: Int = UI_USER_INTERFACE_IDIOM() == .pad ? 5 : 4
     open var assetPortraitInteritemSpace: CGFloat = 1
     open var assetPortraitLineSpace: CGFloat = 1
-    lazy var assetPortraitCellSize: CGSize = {
+    
+    func assetPortraitCellSize(forViewSize size: CGSize) -> CGSize {
         let count = CGFloat(self.assetPortraitColumnCount)
-        let edge = (UIScreen.main.portraitSize.width - (count - 1) * self.assetPortraitInteritemSpace) / count
+        let edge = (size.width - (count - 1) * self.assetPortraitInteritemSpace) / count
         return CGSize(width: edge, height: edge)
-    }()
+    }
+    
     open var assetLandscapeColumnCount: Int = 7
     open var assetLandscapeInteritemSpace: CGFloat = 1.5
     open var assetLandscapeLineSpace: CGFloat = 1.5
-    lazy var assetLandscapeCellSize: CGSize = {
+    
+    func assetLandscapeCellSize(forViewSize size: CGSize) -> CGSize {
         let count = CGFloat(self.assetLandscapeColumnCount)
-        let edge = (UIScreen.main.landscapeSize.width - (count - 1) * self.assetLandscapeInteritemSpace) / count
+        let edge = (size.width - (count - 1) * self.assetLandscapeInteritemSpace) / count
         return CGSize(width: edge, height: edge)
-    }()
+    }
     
     public init() {}
     
