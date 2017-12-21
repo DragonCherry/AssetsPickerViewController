@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AssetsPickerViewController'
-  s.version          = '2.3.0'
+  s.version          = '2.3.1'
   s.summary          = 'Picker controller that supports multiple photos and videos written in Swift.'
 
 # This description is used to generate tags and improve search results.
@@ -19,7 +19,6 @@ Pod::Spec.new do |s|
 
   s.description      = <<-DESC
 Select multiple photos and videos.
-Can take photo or video during selection.
 Fully customizable UI.
                        DESC
 

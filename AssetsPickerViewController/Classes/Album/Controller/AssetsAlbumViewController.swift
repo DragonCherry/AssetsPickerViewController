@@ -86,15 +86,22 @@ open class AssetsAlbumViewController: UIViewController {
         view.setNeedsUpdateConstraints()
         
         AssetsManager.shared.subscribe(subscriber: self)
-        AssetsManager.shared.fetchAlbums { (_) in
-            self.collectionView.reloadData()
-        }
     }
     
     open override func viewDidLoad() {
         super.viewDidLoad()
         setupCommon()
         setupBarButtonItems()
+        
+        AssetsManager.shared.authorize(completion: { [weak self] isAuthorized in
+            if isAuthorized {
+                AssetsManager.shared.fetchAlbums { (_) in
+                    self?.collectionView.reloadData()
+                }
+            } else {
+                self?.dismiss(animated: true, completion: nil)
+            }
+        })
     }
     
     open override func updateViewConstraints() {
