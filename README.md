@@ -18,6 +18,10 @@ Any advice, suggestions, and pull requests for new feature will be greatly appre
 
 ## Screenshots
 
+Overview
+
+![assetspickerviewcontroller_2 3 0](https://user-images.githubusercontent.com/20486591/34245057-9c94f62e-e66b-11e7-92ed-f695c16051d5.gif)
+
 iOS friendly UI for Album & Asset
 
 ![albums_portrait](https://cloud.githubusercontent.com/assets/20486591/26525542/43036a42-4395-11e7-98f0-5bf3f40f923d.PNG)
