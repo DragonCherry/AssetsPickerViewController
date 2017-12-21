@@ -16,11 +16,12 @@ If you found any bugs - even in develop branch, do not hesitate raise an issue f
 Any advice, suggestions, and pull requests for new feature will be greatly appreciated.
 
 
+## Try it in simulator here
+
+https://appetize.io/app/vn6xgr71q2bfeyh6nvq3e2dpk8
+
+
 ## Screenshots
-
-Overview
-
-![assetspickerviewcontroller_2 3 0](https://user-images.githubusercontent.com/20486591/34245057-9c94f62e-e66b-11e7-92ed-f695c16051d5.gif)
 
 iOS friendly UI for Album & Asset
 
