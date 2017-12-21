@@ -16,7 +16,7 @@ If you found any bugs - even in develop branch, do not hesitate raise an issue f
 Any advice, suggestions, and pull requests for new feature will be greatly appreciated.
 
 
-## Try it in simulator here
+## Just try it in web simulator, don't waste your time
 
 https://appetize.io/app/vn6xgr71q2bfeyh6nvq3e2dpk8
 
