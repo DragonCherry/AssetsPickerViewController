@@ -254,7 +254,7 @@ pickerConfig.assetFetchOptions = [
 
 ## Requirements & Dependency
 
-Xcode8, Swift 3, iOS 9.0
+Xcode9, Swift 4, iOS 9.0
 
 Uses [PureLayout](https://github.com/PureLayout/PureLayout) for creating UI inside library. Thanks to PureLayout development team for doing such a beautiful job.
 
@@ -264,15 +264,11 @@ Uses [PureLayout](https://github.com/PureLayout/PureLayout) for creating UI insi
 AssetsPickerViewController is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
-For Swift 3,
-```ruby
-pod 'AssetsPickerViewController', :git => 'https://github.com/DragonCherry/AssetsPickerViewController', :branch => 'swift3'
-```
-
-For Swift 4,
 ```ruby
 pod 'AssetsPickerViewController', '~> 2.0'
 ```
+
+Swift 3 is not supported anymore.
 
 ## Author
 
