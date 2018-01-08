@@ -26,6 +26,9 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     open var asset: PHAsset? {
         didSet {
             // customizable
+            if let asset = asset {
+                panoramaIconView.isHidden = asset.mediaSubtypes != .photoPanorama
+            }
         }
     }
     
@@ -71,6 +74,12 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
         return label
     }()
     
+    private let panoramaIconView: PanoramaIconView = {
+        let view = PanoramaIconView.newAutoLayout()
+        view.isHidden = true
+        return view
+    }()
+    
     private let overlay: AssetsPhotoCellOverlay = {
         let overlay = AssetsPhotoCellOverlay.newAutoLayout()
         overlay.isHidden = true
@@ -92,6 +101,7 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
         contentView.configureForAutoLayout()
         contentView.addSubview(imageView)
         contentView.addSubview(durationLabel)
+        contentView.addSubview(panoramaIconView)
         contentView.addSubview(overlay)
     }
     
@@ -106,6 +116,10 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
             durationLabel.autoPinEdge(.leading, to: .leading, of: contentView, withOffset: 8)
             durationLabel.autoPinEdge(.trailing, to: .trailing, of: contentView, withOffset: -8)
             durationLabel.autoPinEdge(.bottom, to: .bottom, of: contentView)
+            
+            panoramaIconView.autoSetDimensions(to: CGSize(width: 14, height: 7))
+            panoramaIconView.autoPinEdge(.trailing, to: .trailing, of: contentView, withOffset: -6.5)
+            panoramaIconView.autoPinEdge(.bottom, to: .bottom, of: contentView, withOffset: -10)
             
             overlay.autoPinEdgesToSuperviewEdges()
             
