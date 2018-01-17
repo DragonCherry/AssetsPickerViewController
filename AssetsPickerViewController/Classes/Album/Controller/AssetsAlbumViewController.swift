@@ -257,7 +257,7 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if collectionView.numberOfSections > 1 && AssetsManager.shared.numberOfAlbums(inSection: 1) > 0 && section == 1 {
+        if (collectionView.numberOfSections > 1 && AssetsManager.shared.numberOfAlbums(inSection: 1) > 0 && section == 1) || AssetsManager.shared.albumType(forSection: section) == .moment {
             if collectionView.bounds.width > collectionView.bounds.height {
                 return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetLandscapeCellSize(forViewSize: collectionView.bounds.size).width * 2/3)
             } else {
@@ -295,26 +295,30 @@ extension AssetsAlbumViewController: AssetsManagerDelegate {
     
     public func assetsManager(manager: AssetsManager, insertedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         logi("insertedAlbums at indexPaths: \(indexPaths)")
-        collectionView.insertItems(at: indexPaths)
+        if manager.albumType(forSection: indexPaths[0].section) != .moment {
+            collectionView.insertItems(at: indexPaths)
+        }
     }
     
     public func assetsManager(manager: AssetsManager, removedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         logi("removedAlbums at indexPaths: \(indexPaths)")
-        collectionView.deleteItems(at: indexPaths)
+        if manager.albumType(forSection: indexPaths[0].section) != .moment {
+            collectionView.deleteItems(at: indexPaths)
+        }
     }
     
     public func assetsManager(manager: AssetsManager, updatedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath]) {
         logi("updatedAlbums at indexPaths: \(indexPaths)")
-        collectionView.reloadItems(at: indexPaths)
+        collectionView.reloadItems(at: manager.albumType(forSection: indexPaths[0].section) == .moment ? [IndexPath(row: 0, section: PHAssetCollectionType.moment.rawValue - 1)] : indexPaths)
     }
     
     public func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath) {
         logi("reloadedAlbum at indexPath: \(indexPath)")
-        collectionView.reloadItems(at: [indexPath])
+        collectionView.reloadItems(at: manager.albumType(forSection: indexPath.section) == .moment ? [IndexPath(row: 0, section: PHAssetCollectionType.moment.rawValue - 1)] : [indexPath])
     }
     
-    public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
-    public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
+    public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath], inNewSection newSection: Bool) {}
+    public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath], completeSection: Bool) {}
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
 }
 
