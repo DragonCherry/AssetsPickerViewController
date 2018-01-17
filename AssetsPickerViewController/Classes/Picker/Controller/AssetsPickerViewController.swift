@@ -18,7 +18,7 @@ import Photos
     @objc optional func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PHAsset, at indexPath: IndexPath) -> Bool
     @objc optional func assetsPicker(controller: AssetsPickerViewController, didSelect asset: PHAsset, at indexPath: IndexPath)
     @objc optional func assetsPicker(controller: AssetsPickerViewController, shouldDeselect asset: PHAsset, at indexPath: IndexPath) -> Bool
-    @objc optional func assetsPicker(controller: AssetsPickerViewController, didDeselect asset: PHAsset, at indexPath: IndexPath)
+        @objc optional func assetsPicker(controller: AssetsPickerViewController, didDeselect asset: PHAsset, at indexPath: IndexPath)
     @objc optional func assetsPicker(controller: AssetsPickerViewController, didDismissByCancelling byCancel: Bool)
 }
 
@@ -62,8 +62,6 @@ open class AssetsPickerViewController: UINavigationController {
     }
     
     func commonInit() {
-        TinyLog.isShowInfoLog = isShowLog
-        TinyLog.isShowErrorLog = isShowLog
         AssetsManager.shared.registerObserver()
         viewControllers = [photoViewController]
     }
