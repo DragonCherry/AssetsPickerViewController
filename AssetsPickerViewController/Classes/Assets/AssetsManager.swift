@@ -21,8 +21,8 @@ public protocol AssetsManagerDelegate: class {
     func assetsManager(manager: AssetsManager, updatedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath])
     
     func assetsManager(manager: AssetsManager, reloadedAlbum album: PHAssetCollection, at indexPath: IndexPath)
-    func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath])
-    func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath])
+    func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath], inNewSection newSection: Bool)
+    func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath], completeSection: Bool)
     func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath])
 }
 
@@ -50,7 +50,7 @@ open class AssetsManager: NSObject {
     var fetchedAlbumsArray = [[PHAssetCollection]]()
     /// stores sorted array by applying user defined comparator, it's in decreasing order by count by default, and it might same as fetchedAlbumsArray if AssetsPickerConfig has  albumFetchOptions without albumComparator
     var sortedAlbumsArray = [[PHAssetCollection]]()
-    internal(set) open var assetArray = [PHAsset]()
+    internal(set) open var assetArray = [[PHAsset]]()
     
     fileprivate(set) open var defaultAlbum: PHAssetCollection?
     fileprivate(set) open var cameraRollAlbum: PHAssetCollection!
@@ -181,12 +181,46 @@ extension AssetsManager {
         return sortedAlbumsArray.count
     }
     
-    open func numberOfAlbums(inSection: Int) -> Int {
-        return sortedAlbumsArray[inSection].count
+    open func numberOfAlbums(inSection section: Int) -> Int {
+        if albumType(forSection: section) == .moment {
+            return 1
+        } else {
+            return sortedAlbumsArray[section].count
+        }
     }
     
     open func numberOfAssets(at indexPath: IndexPath) -> Int {
-        return Int(fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier]?.count ?? 0)
+        if albumType(forSection: indexPath.section) == .moment {
+            let albums = sortedAlbumsArray[indexPath.section]
+            var totalMomentsAssets = 0
+            for album in albums {
+                totalMomentsAssets += Int((fetchMap[album.localIdentifier]?.count)!)
+            }
+            return totalMomentsAssets
+        }
+        return Int((fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier]?.count)!)
+    }
+ 
+    open func getAssets() -> [[PHAsset]] {
+        var assets: [[PHAsset]] = []
+        for album in sortedAlbumsArray {
+            for subAlbum in album {
+                if let fetchResult = fetchMap[subAlbum.localIdentifier] {
+                    let indexSet = IndexSet(0..<fetchResult.count)
+                    assets.append(contentsOf: [fetchResult.objects(at: indexSet)])
+                }
+            }
+        }
+        return assets
+    }
+    
+    open func getAssetIndexPath(for asset: PHAsset) -> IndexPath? {
+        for (i, album) in assetArray.enumerated() {
+            if let albumIndex = album.index(of: asset) {
+                return IndexPath(row: albumIndex, section: i)
+            }
+        }
+        return nil
     }
     
     open func indexPath(forAlbum target: PHAssetCollection, inAlbumsArray albumsArray: [[PHAssetCollection]]) -> IndexPath? {
@@ -199,11 +233,15 @@ extension AssetsManager {
     }
     
     open func title(at indexPath: IndexPath) -> String? {
+        if albumType(forSection: indexPath.section) == .moment {
+            return "Moments"
+        }
         return sortedAlbumsArray[indexPath.section][indexPath.row].localizedTitle
     }
     
     open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
-        if let fetchResult = fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier] {
+        let row = indexPath.section != albumSection(forType: .moment) ? indexPath.row : sortedAlbumsArray[indexPath.section].count - 1
+        if let fetchResult = fetchMap[sortedAlbumsArray[indexPath.section][row].localIdentifier] {
             if let asset = fetchResult.lastObject {
                 imageManager.requestImage(
                     for: asset,
@@ -228,9 +266,9 @@ extension AssetsManager {
     }
     
     @discardableResult
-    open func image(at index: Int, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?, Bool) -> Void)) -> PHImageRequestID {
+    open func image(at indexPath: IndexPath, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?, Bool) -> Void)) -> PHImageRequestID {
         return imageManager.requestImage(
-            for: assetArray[index],
+            for: assetArray[indexPath.section][indexPath.row],
             targetSize: size,
             contentMode: .aspectFill,
             options: nil,
@@ -260,21 +298,21 @@ extension AssetsManager {
     open func albumSection(forType type: PHAssetCollectionType) -> Int {
         switch type {
         case .smartAlbum:
-            return 0
-        case .album:
             return 1
-        case .moment:
+        case .album:
             return 2
+        case .moment:
+            return 0
         }
     }
     
     open func albumType(forSection section: Int) -> PHAssetCollectionType {
         switch section {
-        case 0:
-            return .smartAlbum
         case 1:
-            return .album
+            return .smartAlbum
         case 2:
+            return .album
+        case 0:
             return .moment
         default:
             loge("Section number error: \(section)")
@@ -283,10 +321,18 @@ extension AssetsManager {
     }
     
     open func count(ofType type: PHAssetMediaType) -> Int {
+        var count = 0
         if let album = self.selectedAlbum, let fetchResult = fetchMap[album.localIdentifier] {
-            return fetchResult.countOfAssets(with: type)
+            if album.assetCollectionType == .moment {
+                for momentsAlbum in sortedAlbumsArray[albumSection(forType: .moment)] {
+                    if let fetchResult = fetchMap[momentsAlbum.localIdentifier] {
+                        count += fetchResult.countOfAssets(with: type)
+                    }
+                }
+            } else {
+                count = fetchResult.countOfAssets(with: type)
+            }
         } else {
-            var count = 0
             for albums in sortedAlbumsArray {
                 for album in albums {
                     if let fetchResult = fetchMap[album.localIdentifier], album.assetCollectionSubtype != .smartAlbumRecentlyAdded {
@@ -294,8 +340,8 @@ extension AssetsManager {
                     }
                 }
             }
-            return count
         }
+        return count
     }
     
     open func isExist(asset: PHAsset) -> Bool {
@@ -309,13 +355,20 @@ extension AssetsManager {
             return false
         }
         self.selectedAlbum = newAlbum
-        if let fetchResult = fetchMap[newAlbum.localIdentifier] {
-            let indexSet = IndexSet(0..<fetchResult.count)
-            assetArray = fetchResult.objects(at: indexSet)
-            return true
-        } else {
-            return false
+        
+        let newAlbums = newAlbum.assetCollectionType != .moment ? [newAlbum] : sortedAlbumsArray[albumSection(forType: .moment)]
+        
+        assetArray = []
+        for album in newAlbums {
+            if let fetchResult = fetchMap[album.localIdentifier] {
+                let indexSet = IndexSet(0..<fetchResult.count)
+                assetArray.append(fetchResult.objects(at: indexSet))
+            } else {
+                return false
+            }
         }
+        
+        return true
     }
 }
 
@@ -369,7 +422,11 @@ extension AssetsManager {
                 return filtered
             } else {
                 // default: by count
-                return filtered.sorted(by: { Int((self.fetchMap[$0.localIdentifier]?.count) ?? 0) > Int((self.fetchMap[$1.localIdentifier]?.count) ?? 0) })
+                if albumType != .moment {
+                    return filtered.sorted(by: { Int((self.fetchMap[$0.localIdentifier]?.count) ?? 0) > Int((self.fetchMap[$1.localIdentifier]?.count) ?? 0) })
+                } else {
+                    return filtered.sorted(by: { (self.fetchMap[$0.localIdentifier]?[0].creationDate)! < (self.fetchMap[$1.localIdentifier]?[0].creationDate)! })
+                }
             }
         }
     }
@@ -438,6 +495,15 @@ extension AssetsManager {
         }
         
         if !isFetchedAlbums {
+            if pickerConfig.albumIsShowMomentAlbums {
+                let momentEntry = fetchAlbums(forAlbumType: .moment)
+                fetchedAlbumsArray.append(momentEntry.fetchedAlbums)
+                sortedAlbumsArray.append(momentEntry.sortedAlbums)
+                albumsFetchArray.append(momentEntry.fetchResult)
+            } else {
+                fetchedAlbumsArray.append([])
+                sortedAlbumsArray.append([])
+            }
             
             let smartAlbumEntry = fetchAlbums(forAlbumType: .smartAlbum)
             fetchedAlbumsArray.append(smartAlbumEntry.fetchedAlbums)
@@ -449,19 +515,13 @@ extension AssetsManager {
             sortedAlbumsArray.append(albumEntry.sortedAlbums)
             albumsFetchArray.append(albumEntry.fetchResult)
             
-            if pickerConfig.albumIsShowMomentAlbums {
-                let momentEntry = fetchAlbums(forAlbumType: .moment)
-                fetchedAlbumsArray.append(momentEntry.fetchedAlbums)
-                sortedAlbumsArray.append(momentEntry.sortedAlbums)
-                albumsFetchArray.append(momentEntry.fetchResult)
-            }
             isFetchedAlbums = true
         }
         // notify
         completion?(sortedAlbumsArray)
     }
     
-    open func fetchAssets(isRefetch: Bool = false, completion: (([PHAsset]) -> Void)? = nil) {
+    open func fetchAssets(isRefetch: Bool = false, completion: (([[PHAsset]]) -> Void)? = nil) {
         
         fetchAlbums(isRefetch: isRefetch)
         
@@ -485,10 +545,20 @@ extension AssetsManager {
             // fetch assets
             self.fetchAlbum(album: album)
             
-            // set default album
+            // set default album type
             if album.assetCollectionSubtype == self.pickerConfig.albumDefaultType {
                 self.defaultAlbum = album
             }
+            
+            // override default album with album title if set
+            if let albumDefaultTitle = self.pickerConfig.albumDefaultTitle {
+                if album.assetCollectionType == .moment && albumDefaultTitle == "Moments" {
+                    self.defaultAlbum = album
+                } else if album.localizedTitle == albumDefaultTitle {
+                    self.defaultAlbum = album
+                }
+            }
+            
             // save alternative album
             if album.assetCollectionSubtype == .smartAlbumUserLibrary {
                 self.cameraRollAlbum = album
