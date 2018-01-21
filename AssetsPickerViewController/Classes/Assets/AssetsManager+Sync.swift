@@ -16,6 +16,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
         
         // updated index set
         var updatedIndexSets = [IndexSet]()
+        let momentsAlbumSelected = self.selectedAlbum?.assetCollectionType == .moment
         
         // notify changes of albums
         for (section, albumsFetchResult) in albumsFetchArray.enumerated() {
@@ -36,15 +37,38 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             if let removedIndexes = albumsChangeDetail.removedIndexes?.reversed() {
                 for removedIndex in removedIndexes.enumerated() {
                     remove(indexPath: IndexPath(row: removedIndex.element, section: section))
+                    if momentsAlbumSelected {
+                        var removedAssets = [PHAsset]()
+                        let previousAssetArrayCount = assetArray.count
+                        for index in (0 ..< assetArray[removedIndex.element].count).reversed() {
+                            removedAssets.insert(assetArray[removedIndex.offset].remove(at: index), at: 0)
+                        }
+                        assetArray.remove(at: removedIndex.offset)
+                        
+                        // stop caching for removed assets
+                        stopCache(assets: removedAssets, size: pickerConfig.assetCacheSize)
+                        notifySubscribers({ $0.assetsManager(manager: self, removedAssets: removedAssets, at: [IndexPath(row: removedIndex.element, section: removedIndex.offset)], completeSection: previousAssetArrayCount != self.assetArray.count) }, condition: removedAssets.count > 0)
+                    }
                 }
             }
             // sync inserted albums
             if let insertedIndexes = albumsChangeDetail.insertedIndexes {
                 for insertedIndex in insertedIndexes.enumerated() {
                     let insertedAlbum = albumsChangeDetail.fetchResultAfterChanges.object(at: insertedIndex.element)
-                    fetchAlbum(album: insertedAlbum)
                     fetchedAlbumsArray[section].insert(insertedAlbum, at: insertedIndex.element)
-                    updatedIndexSet.insert(insertedIndex.element)
+                    let fetchResult = fetchAlbum(album: insertedAlbum)
+                    if momentsAlbumSelected {
+                        let insertedAssets = fetchResult.objects(at: IndexSet(0..<fetchResult.count))
+                        let previousAssetArrayCount = assetArray.count
+                        assetArray.insert(insertedAssets, at: insertedIndex.offset)
+                        
+                        // start caching for inserted assets
+                        cache(assets: insertedAssets, size: pickerConfig.assetCacheSize)
+                        notifySubscribers({ $0.assetsManager(manager: self, insertedAssets: insertedAssets, at: [IndexPath(row: insertedIndex.element, section: insertedIndex.offset)], inNewSection: previousAssetArrayCount != self.assetArray.count) }, condition: insertedAssets.count > 0)
+
+                    } else {
+                        updatedIndexSet.insert(insertedIndex.element)
+                    }
                 }
             }
             // sync updated albums
@@ -56,6 +80,9 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 }
             }
         }
+        
+        
+        
         return updatedIndexSets
     }
     
@@ -101,11 +128,11 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     let removedIndexes = removedIndexesSet.asArray().sorted(by: { $0.row < $1.row })
                     var removedAssets = [PHAsset]()
                     for removedIndex in removedIndexes.reversed() {
-                        removedAssets.insert(assetArray.remove(at: removedIndex.row), at: 0)
+                        removedAssets.insert(assetArray[removedIndex.section].remove(at: removedIndex.row), at: 0)
                     }
                     // stop caching for removed assets
                     stopCache(assets: removedAssets, size: pickerConfig.assetCacheSize)
-                    notifySubscribers({ $0.assetsManager(manager: self, removedAssets: removedAssets, at: removedIndexes) }, condition: removedAssets.count > 0)
+                    notifySubscribers({ $0.assetsManager(manager: self, removedAssets: removedAssets, at: removedIndexes, completeSection: false) }, condition: removedAssets.count > 0)
                 }
                 // sync inserted assets
                 if let insertedIndexesSet = assetsChangeDetails.insertedIndexes {
@@ -114,11 +141,11 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     for insertedIndex in insertedIndexes {
                         let insertedAsset = assetsChangeDetails.fetchResultAfterChanges.object(at: insertedIndex.row)
                         insertedAssets.append(insertedAsset)
-                        assetArray.insert(insertedAsset, at: insertedIndex.row)
+                        assetArray[insertedIndex.section].insert(insertedAsset, at: insertedIndex.row)
                     }
                     // start caching for inserted assets
                     cache(assets: insertedAssets, size: pickerConfig.assetCacheSize)
-                    notifySubscribers({ $0.assetsManager(manager: self, insertedAssets: insertedAssets, at: insertedIndexes) }, condition: insertedAssets.count > 0)
+                    notifySubscribers({ $0.assetsManager(manager: self, insertedAssets: insertedAssets, at: insertedIndexes, inNewSection: false) }, condition: insertedAssets.count > 0)
                 }
                 // sync updated assets
                 if let updatedIndexes = assetsChangeDetails.changedIndexes?.asArray() {
@@ -183,6 +210,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     sortedUpdatedAlbums.append(updatedAlbum)
                 }
             }
+
             notifySubscribers({ $0.assetsManager(manager: self, updatedAlbums: sortedUpdatedAlbums, at: sortedUpdatedIndexPaths) }, condition: sortedUpdatedAlbums.count > 0)
         }
     }
