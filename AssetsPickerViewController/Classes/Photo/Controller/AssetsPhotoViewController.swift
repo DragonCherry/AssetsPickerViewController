@@ -154,11 +154,13 @@ open class AssetsPhotoViewController: UIViewController {
     override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !didSetInitialPosition {
-            let count = AssetsManager.shared.assetArray.count
-            if count > 0 {
-                if self.collectionView.collectionViewLayout.collectionViewContentSize.height > 0 {
-                    let lastRow = self.collectionView.numberOfItems(inSection: 0) - 1
-                    self.collectionView.scrollToItem(at: IndexPath(row: lastRow, section: 0), at: .bottom, animated: false)
+            if pickerConfig.assetsIsScrollToBottom {
+                let count = AssetsManager.shared.assetArray.count
+                if count > 0 {
+                    if self.collectionView.collectionViewLayout.collectionViewContentSize.height > 0 {
+                        let lastRow = self.collectionView.numberOfItems(inSection: 0) - 1
+                        self.collectionView.scrollToItem(at: IndexPath(row: lastRow, section: 0), at: .bottom, animated: false)
+                    }
                 }
             }
             didSetInitialPosition = true

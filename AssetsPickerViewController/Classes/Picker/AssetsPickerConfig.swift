@@ -74,6 +74,7 @@ open class AssetsPickerConfig {
     // MARK: Asset
     open var selectedAssets: [PHAsset]?
     open var assetsMinimumSelectionCount: Int = 1
+    open var assetsIsScrollToBottom: Bool = true
     
     // MARK: Fetch
     open var assetFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
