@@ -156,11 +156,13 @@ open class AssetsPhotoViewController: UIViewController {
     override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !didSetInitialPosition {
-            let count = AssetsManager.shared.assetArray.count
-            if count > 0 && self.collectionView.collectionViewLayout.collectionViewContentSize.height > 0 {
-                let lastSectionIndex = count - 1
-                let lastSectionRowIndex = AssetsManager.shared.assetArray[lastSectionIndex].count - 1
-                self.collectionView.scrollToItem(at: IndexPath(row: lastSectionRowIndex, section: lastSectionIndex), at: .bottom, animated: false)
+            if pickerConfig.assetsIsScrollToBottom {
+                let count = AssetsManager.shared.assetArray.count
+                if count > 0 && self.collectionView.collectionViewLayout.collectionViewContentSize.height > 0 {
+                    let lastSectionIndex = count - 1
+                    let lastSectionRowIndex = AssetsManager.shared.assetArray[lastSectionIndex].count - 1
+                    self.collectionView.scrollToItem(at: IndexPath(row: lastSectionRowIndex, section: lastSectionIndex), at: .bottom, animated: false)
+                }
             }
             didSetInitialPosition = true
         }
@@ -234,8 +236,12 @@ open class AssetsPhotoViewController: UIViewController {
         }
     }
     
-    open func isMomentsAlbum() -> Bool {
-        return self.title(forAlbum: AssetsManager.shared.selectedAlbum).hasPrefix("Moments")
+    open var isMomentsAlbum: Bool {
+        if pickerConfig.albumIsShowMomentAlbums {
+            return (AssetsManager.shared.selectedAlbum?.assetCollectionType == .moment) ?? false
+        } else {
+            return false
+        }
     }
     
     deinit {
@@ -273,7 +279,7 @@ extension AssetsPhotoViewController {
                         guard let `self` = self else { return }
                         // initialize preselected assets
                         self.selectedArray.forEach({ [weak self] (asset) in
-                            if let pathToSelect = AssetsManager.shared.getAssetIndexPath(for: asset) {
+                            if let pathToSelect = AssetsManager.shared.indexPath(for: asset) {
                                 self?.collectionView.selectItem(at: pathToSelect, animated: false, scrollPosition: UICollectionViewScrollPosition(rawValue: 0))
                             }
                         })
@@ -357,7 +363,7 @@ extension AssetsPhotoViewController {
             collectionView.reloadData()
             
             for asset in selectedArray {
-                if let index = AssetsManager.shared.getAssetIndexPath(for: asset) {
+                if let index = AssetsManager.shared.indexPath(for: asset) {
                     logi("reselecting: \(index)")
                     collectionView.selectItem(at: index, animated: false, scrollPosition: .init(rawValue: 0))
                 }
@@ -465,7 +471,8 @@ extension AssetsPhotoViewController {
         guard let headerView = collectionView.visibleSupplementaryViews(ofKind: UICollectionElementKindSectionHeader).last as? AssetsPhotoHeaderView else {
             return
         }
-        //        headerView.set(imageCount: AssetsManager.shared.count(ofType: .image), videoCount: AssetsManager.shared.count(ofType: .video))
+        // TODO: update header text
+        headerView.set(location: "hahaha", subLocation: ["subloc sdfafa"], date: nil)
     }
     
     func updateFooter() {
@@ -721,7 +728,7 @@ extension AssetsPhotoViewController: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if self.isMomentsAlbum() {
+        if isMomentsAlbum {
             if collectionView.bounds.width > collectionView.bounds.height {
                 return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetLandscapeCellSize(forViewSize: collectionView.bounds.size).width * 2/3)
             } else {

@@ -25,7 +25,7 @@ import Photos
 // MARK: - AssetsPickerViewController
 open class AssetsPickerViewController: UINavigationController {
     
-    open var pickerDelegate: AssetsPickerViewControllerDelegate?
+    @objc open weak var pickerDelegate: AssetsPickerViewControllerDelegate?
     open var selectedAssets: [PHAsset] {
         return photoViewController.selectedAssets
     }

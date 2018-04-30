@@ -140,11 +140,15 @@ extension AssetsAlbumViewController {
     
     func updateLayout(layout: UICollectionViewLayout?, isPortrait: Bool) {
         if let flowLayout = layout as? UICollectionViewFlowLayout {
-            flowLayout.itemSize = isPortrait ? pickerConfig.albumPortraitCellSize : pickerConfig.albumLandscapeCellSize
+            flowLayout.itemSize = itemSize(isPortrait: isPortrait)
             flowLayout.minimumLineSpacing = pickerConfig.albumDefaultSpace
             flowLayout.minimumInteritemSpacing = pickerConfig.albumItemSpace(isPortrait: isPortrait)
             logi("flowLayout: itemSize=\(flowLayout.itemSize), minimumInteritemSpacing=\(flowLayout.minimumInteritemSpacing)")
         }
+    }
+    
+    func itemSize(isPortrait: Bool) -> CGSize {
+        return isPortrait ? pickerConfig.albumPortraitCellSize : pickerConfig.albumLandscapeCellSize
     }
 }
 
@@ -248,6 +252,10 @@ extension AssetsAlbumViewController: UICollectionViewDataSourcePrefetching {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     
+//    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        if
+//    }
+    
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return pickerConfig.albumLineSpace
     }
@@ -257,14 +265,16 @@ extension AssetsAlbumViewController: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if (collectionView.numberOfSections > 2 && AssetsManager.shared.numberOfAlbums(inSection: AssetsManager.shared.albumSection(forType: .album)) > 0) && section == AssetsManager.shared.albumSection(forType: .album) {
+        let manager = AssetsManager.shared
+        if manager.numberOfAlbums(inSection: section) > 0 {
             if collectionView.bounds.width > collectionView.bounds.height {
                 return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetLandscapeCellSize(forViewSize: collectionView.bounds.size).width * 2/3)
             } else {
                 return CGSize(width: collectionView.bounds.width, height: pickerConfig.assetPortraitCellSize(forViewSize: collectionView.bounds.size).width * 2/3)
             }
+        } else {
+            return .zero
         }
-        return .zero
     }
 }
 

@@ -27,7 +27,7 @@ open class AssetsPickerConfig {
     ]?
     
     /// Not yet fully implemeted, do not set this true until it's completed.
-    open var albumIsShowMomentAlbums: Bool = false
+    open var albumIsShowMomentAlbums: Bool = true
     
     // MARK: Fetch
     open var albumFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
@@ -76,6 +76,7 @@ open class AssetsPickerConfig {
     // MARK: Asset
     open var selectedAssets: [PHAsset]?
     open var assetsMinimumSelectionCount: Int = 1
+    open var assetsIsScrollToBottom: Bool = true
     
     // MARK: Fetch
     open var assetFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
