@@ -156,6 +156,16 @@ func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PH
 }
 ```
 
+To enable single image select mode, deselect all items when the limit has reached,
+```swift
+func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PHAsset, at indexPath: IndexPath) -> Bool {   
+    if controller.selectedAssets.count > 0 {
+        controller.photoViewController.deselectAll()
+    }
+    return true
+}
+```
+
 ### Appearence
 
 To apply custom album cell,
