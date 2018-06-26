@@ -187,6 +187,18 @@ open class AssetsPhotoViewController: UIViewController {
         super.updateViewConstraints()
     }
     
+    open func deselectAll() {
+        guard let indexPaths = collectionView.indexPathsForSelectedItems else { return }
+        
+        indexPaths.forEach({ [weak self] (indexPath) in
+            let asset = AssetsManager.shared.assetArray[indexPath.row]
+            self?.deselect(asset: asset, at: indexPath)
+            self?.delegate?.assetsPicker?(controller: picker, didDeselect: asset, at: indexPath)
+        })
+        updateNavigationStatus()
+        collectionView.reloadItems(at: indexPaths)
+    }
+    
     @available(iOS 11.0, *)
     override open func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
