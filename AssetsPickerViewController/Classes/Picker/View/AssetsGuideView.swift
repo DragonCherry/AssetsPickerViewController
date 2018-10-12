@@ -13,8 +13,8 @@ open class AssetsGuideView: UIView {
     
     private var didSetupConstraints: Bool = false
     var lineSpace: CGFloat = 10
-    var titleStyle: UIFontTextStyle = .title1
-    var bodyStyle: UIFontTextStyle = .body
+    var titleStyle: UIFont.TextStyle = .title1
+    var bodyStyle: UIFont.TextStyle = .body
     
     fileprivate lazy var messageLabel: UILabel = {
         let label = UILabel.newAutoLayout()
@@ -54,9 +54,9 @@ open class AssetsGuideView: UIView {
         titleParagraphStyle.paragraphSpacing = lineSpace
         titleParagraphStyle.alignment = .center
         let attributedTitle = NSMutableAttributedString(string: "\(title)\n", attributes: [
-            NSAttributedStringKey.font: UIFont.systemFont(forStyle: titleStyle),
-            NSAttributedStringKey.foregroundColor: UIColor(rgbHex: 0x999999),
-            NSAttributedStringKey.paragraphStyle: titleParagraphStyle
+            NSAttributedString.Key.font: UIFont.systemFont(forStyle: titleStyle),
+            NSAttributedString.Key.foregroundColor: UIColor(rgbHex: 0x999999),
+            NSAttributedString.Key.paragraphStyle: titleParagraphStyle
             ])
         
         let bodyParagraphStyle = NSMutableParagraphStyle()
@@ -65,9 +65,9 @@ open class AssetsGuideView: UIView {
         bodyParagraphStyle.headIndent = 20
         bodyParagraphStyle.tailIndent = -20
         let attributedBody = NSMutableAttributedString(string: message, attributes: [
-            NSAttributedStringKey.font: UIFont.systemFont(forStyle: bodyStyle),
-            NSAttributedStringKey.foregroundColor: UIColor(rgbHex: 0x999999),
-            NSAttributedStringKey.paragraphStyle: bodyParagraphStyle
+            NSAttributedString.Key.font: UIFont.systemFont(forStyle: bodyStyle),
+            NSAttributedString.Key.foregroundColor: UIColor(rgbHex: 0x999999),
+            NSAttributedString.Key.paragraphStyle: bodyParagraphStyle
             ])
         
         attributedString.append(attributedTitle)
