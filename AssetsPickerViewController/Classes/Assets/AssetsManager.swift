@@ -29,7 +29,7 @@ public protocol AssetsManagerDelegate: class {
 // MARK: - AssetsManager
 open class AssetsManager: NSObject {
     
-    open static let shared = AssetsManager()
+    public static let shared = AssetsManager()
     
     open var pickerConfig = AssetsPickerConfig() {
         didSet {

@@ -45,7 +45,7 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
         didSet { overlay.isHidden = !isSelected }
     }
     
-    open let imageView: UIImageView = {
+    public let imageView: UIImageView = {
         let view = UIImageView.newAutoLayout()
         view.backgroundColor = UIColor(rgbHex: 0xF0F0F0)
         view.contentMode = .scaleAspectFill

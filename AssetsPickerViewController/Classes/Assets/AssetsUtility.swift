@@ -11,7 +11,7 @@ import Photos
 
 open class AssetsUtility {
     
-    open static func fetchOption(isIncludeImage: Bool = true, isIncludeVideo: Bool = true) -> PHFetchOptions {
+    public static func fetchOption(isIncludeImage: Bool = true, isIncludeVideo: Bool = true) -> PHFetchOptions {
         let options = PHFetchOptions()
         if isIncludeImage && isIncludeVideo {
             options.predicate = NSPredicate(format: "mediaType = %d OR mediaType = %d", PHAssetMediaType.image.rawValue, PHAssetMediaType.video.rawValue)
@@ -23,7 +23,7 @@ open class AssetsUtility {
         return options
     }
     
-    open static func sortedAssets(_ assets: [PHAsset], recentFirst: Bool = true) -> [PHAsset] {
+    public static func sortedAssets(_ assets: [PHAsset], recentFirst: Bool = true) -> [PHAsset] {
         
         let sortedAssets = assets.sorted { (asset0, asset1) -> Bool in
             let order: ComparisonResult = recentFirst ? .orderedDescending : .orderedAscending
