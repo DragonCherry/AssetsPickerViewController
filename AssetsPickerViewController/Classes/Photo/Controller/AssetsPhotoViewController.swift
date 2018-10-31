@@ -16,7 +16,7 @@ import Device
 open class AssetsPhotoViewController: UIViewController {
     
     // MARK: Properties
-    fileprivate var pickerConfig: AssetsPickerConfig!
+    var pickerConfig: AssetsPickerConfig!
     fileprivate var previewing: UIViewControllerPreviewing?
     
     fileprivate let cellReuseIdentifier: String = UUID().uuidString
@@ -32,13 +32,8 @@ open class AssetsPhotoViewController: UIViewController {
         let buttonItem = UIBarButtonItem(title: String(key: "Done"), style: .plain, target: self, action: #selector(pressedDone(button:)))
         return buttonItem
     }()
-    fileprivate let emptyView: AssetsEmptyView = {
-        return AssetsEmptyView.newAutoLayout()
-    }()
-    fileprivate let noPermissionView: AssetsNoPermissionView = {
-        return AssetsNoPermissionView.newAutoLayout()
-    }()
-    
+    fileprivate let emptyView: AssetsEmptyView = AssetsEmptyView.newAutoLayout()
+    fileprivate let noPermissionView: AssetsNoPermissionView = AssetsNoPermissionView.newAutoLayout()
     fileprivate var delegate: AssetsPickerViewControllerDelegate? {
         return (navigationController as? AssetsPickerViewController)?.pickerDelegate
     }
@@ -96,11 +91,6 @@ open class AssetsPhotoViewController: UIViewController {
     
     override public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-    
-    init(pickerConfig: AssetsPickerConfig) {
-        self.init()
-        self.pickerConfig = pickerConfig
     }
     
     override open func loadView() {

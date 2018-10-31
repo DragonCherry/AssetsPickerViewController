@@ -130,7 +130,8 @@ class CustomAssetCellController: CommonExampleController {
         pickerConfig.assetPortraitColumnCount = 3
         pickerConfig.assetLandscapeColumnCount = 5
         
-        let picker = AssetsPickerViewController(pickerConfig: pickerConfig)
+        let picker = AssetsPickerViewController()
+        picker.pickerConfig = pickerConfig
         picker.pickerDelegate = self
         
         present(picker, animated: true, completion: nil)

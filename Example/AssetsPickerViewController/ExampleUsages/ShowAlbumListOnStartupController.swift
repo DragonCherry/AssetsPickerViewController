@@ -17,7 +17,8 @@ class ShowAlbumListOnStartupController: CommonExampleController {
         
         let pickerConfig = AssetsPickerConfig()
         
-        let picker = AssetsPickerViewController(pickerConfig: pickerConfig)
+        let picker = AssetsPickerViewController()
+        picker.pickerConfig = pickerConfig
         picker.pickerDelegate = self
         
         let albumVC = AssetsAlbumViewController(pickerConfig: pickerConfig)
