@@ -31,7 +31,14 @@ open class AssetsPickerViewController: UINavigationController {
     }
     
     open var isShowLog: Bool = false
-    public var pickerConfig: AssetsPickerConfig!
+    public var pickerConfig: AssetsPickerConfig! {
+        didSet {
+            if let config = self.pickerConfig?.prepare() {
+                AssetsManager.shared.pickerConfig = config
+                photoViewController?.pickerConfig = config
+            }
+        }
+    }
     
     public private(set) var photoViewController: AssetsPhotoViewController!
     
@@ -50,13 +57,7 @@ open class AssetsPickerViewController: UINavigationController {
     }
     
     func commonInit() {
-        
-        var config: AssetsPickerConfig!
-        if let pickerConfig = self.pickerConfig {
-            config = pickerConfig.prepare()
-        } else {
-            config = AssetsPickerConfig().prepare()
-        }
+        let config = AssetsPickerConfig().prepare()
         self.pickerConfig = config
         AssetsManager.shared.pickerConfig = config
         let controller = AssetsPhotoViewController()
