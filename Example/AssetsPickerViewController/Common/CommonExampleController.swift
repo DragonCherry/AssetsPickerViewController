@@ -56,7 +56,7 @@ class CommonExampleController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: kCellReuseIdentifier) else {
-            return UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: kCellReuseIdentifier)
+            return UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: kCellReuseIdentifier)
         }
         return cell
     }
