@@ -29,7 +29,8 @@ class AlbumOrderBlockController: CommonExampleController {
             }
         }
         
-        let picker = AssetsPickerViewController(pickerConfig: pickerConfig)
+        let picker = AssetsPickerViewController()
+        picker.pickerConfig = pickerConfig
         picker.pickerDelegate = self
         present(picker, animated: true, completion: nil)
     }

@@ -109,7 +109,8 @@ class CustomAlbumCellController: CommonExampleController {
         pickerConfig.albumPortraitColumnCount = 1
         pickerConfig.albumLandscapeColumnCount = 1
         
-        let picker = AssetsPickerViewController(pickerConfig: pickerConfig)
+        let picker = AssetsPickerViewController()
+        picker.pickerConfig = pickerConfig
         picker.pickerDelegate = self
         
         present(picker, animated: true, completion: nil)

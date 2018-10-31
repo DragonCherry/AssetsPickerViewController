@@ -31,19 +31,9 @@ open class AssetsPickerViewController: UINavigationController {
     }
     
     open var isShowLog: Bool = false
-    private var pickerConfig: AssetsPickerConfig!
+    public var pickerConfig: AssetsPickerConfig!
     
-    open lazy var photoViewController: AssetsPhotoViewController = {
-        var config: AssetsPickerConfig!
-        if let pickerConfig = self.pickerConfig {
-            config = pickerConfig.prepare()
-        } else {
-            config = AssetsPickerConfig().prepare()
-        }
-        self.pickerConfig = config
-        AssetsManager.shared.pickerConfig = config
-        return AssetsPhotoViewController(pickerConfig: config)
-    }()
+    public private(set) var photoViewController: AssetsPhotoViewController!
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -55,13 +45,24 @@ open class AssetsPickerViewController: UINavigationController {
         commonInit()
     }
     
-    public init(pickerConfig: AssetsPickerConfig? = nil) {
-        self.pickerConfig = pickerConfig
-        super.init(nibName: nil, bundle: nil)
-        commonInit()
+    public convenience init() {
+        self.init(nibName: nil, bundle: nil)
     }
     
     func commonInit() {
+        
+        var config: AssetsPickerConfig!
+        if let pickerConfig = self.pickerConfig {
+            config = pickerConfig.prepare()
+        } else {
+            config = AssetsPickerConfig().prepare()
+        }
+        self.pickerConfig = config
+        AssetsManager.shared.pickerConfig = config
+        let controller = AssetsPhotoViewController()
+        controller.pickerConfig = config
+        self.photoViewController = controller
+        
         TinyLog.isShowInfoLog = isShowLog
         TinyLog.isShowErrorLog = isShowLog
         AssetsManager.shared.registerObserver()

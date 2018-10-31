@@ -23,7 +23,8 @@ class AlbumFilterOptionController: CommonExampleController {
             .smartAlbum: options                                                                    // apply to smart albums only
         ]
         
-        let picker = AssetsPickerViewController(pickerConfig: pickerConfig)
+        let picker = AssetsPickerViewController()
+        picker.pickerConfig = pickerConfig
         picker.pickerDelegate = self
         present(picker, animated: true, completion: nil)
     }
