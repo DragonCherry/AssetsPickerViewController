@@ -204,7 +204,7 @@ extension AssetsManager {
     
     open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
         if let fetchResult = fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier] {
-            if let asset = fetchResult.lastObject {
+            if let asset = pickerConfig.assetsIsScrollToBottom == true ? fetchResult.lastObject : fetchResult.firstObject {
                 imageManager.requestImage(
                     for: asset,
                     targetSize: size,
