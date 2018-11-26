@@ -20,6 +20,10 @@ public protocol AssetsAlbumViewControllerDelegate {
 // MARK: - AssetsAlbumViewController
 open class AssetsAlbumViewController: UIViewController {
     
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
+        return self.pickerConfig?.statusBarStyle ?? .default
+    }
+    
     open var delegate: AssetsAlbumViewControllerDelegate?
     
     var pickerConfig: AssetsPickerConfig!
