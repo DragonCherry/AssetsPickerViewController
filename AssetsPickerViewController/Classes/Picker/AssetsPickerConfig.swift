@@ -12,6 +12,8 @@ import Photos
 open class AssetsPickerConfig {
     
     // MARK: - Album Config
+    
+    open var statusBarStyle: UIStatusBarStyle = .default
 
     /// Set selected album at initial load.
     open var albumDefaultType: PHAssetCollectionSubtype = .smartAlbumUserLibrary

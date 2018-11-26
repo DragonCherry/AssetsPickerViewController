@@ -15,6 +15,10 @@ import Device
 // MARK: - AssetsPhotoViewController
 open class AssetsPhotoViewController: UIViewController {
     
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
+        return self.pickerConfig?.statusBarStyle ?? .default
+    }
+    
     // MARK: Properties
     var pickerConfig: AssetsPickerConfig!
     fileprivate var previewing: UIViewControllerPreviewing?
