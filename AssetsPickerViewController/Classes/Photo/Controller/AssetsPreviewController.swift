@@ -101,14 +101,14 @@ open class AssetsPreviewController: UIViewController {
     }
     
     let imageView: UIImageView = {
-        let view = UIImageView.newAutoLayout()
+        let view = UIImageView()
         view.clipsToBounds = false
         view.contentMode = .scaleAspectFill
         return view
     }()
     @available(iOS 9.1, *)
     lazy var livePhotoView: PHLivePhotoView = {
-        let view = PHLivePhotoView.newAutoLayout()
+        let view = PHLivePhotoView()
         view.delegate = self
         return view
     }()
@@ -126,6 +126,15 @@ open class AssetsPreviewController: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        
+        imageView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        if #available(iOS 9.1, *) {
+            livePhotoView.snp.makeConstraints { (make) in
+                make.edges.equalToSuperview()
+            }
+        }
     }
     
     override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -133,17 +142,6 @@ open class AssetsPreviewController: UIViewController {
         if let asset = self.asset {
             updatePreferredContentSize(forAsset: asset, isPortrait: size.height > size.width)
         }
-    }
-    
-    override open func updateViewConstraints() {
-        if !didSetupConstraints {
-            imageView.autoPinEdgesToSuperviewEdges()
-            if #available(iOS 9.1, *) {
-                livePhotoView.autoPinEdgesToSuperviewEdges()
-            }
-            didSetupConstraints = true
-        }
-        super.updateViewConstraints()
     }
     
     override open func viewDidLayoutSubviews() {

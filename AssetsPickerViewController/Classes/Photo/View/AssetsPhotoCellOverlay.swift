@@ -15,10 +15,9 @@ open class AssetsPhotoCellOverlay: UIView {
     }
     
     // MARK: - Views
-    private var didSetupConstraints: Bool = false
     
     let countLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel()
         label.textAlignment = .center
         label.textColor = UIColor.white
         label.adjustsFontSizeToFitWidth = true
@@ -28,7 +27,7 @@ open class AssetsPhotoCellOverlay: UIView {
     }()
     
     let checkmark: SSCheckMark = {
-        let view = SSCheckMark.newAutoLayout()
+        let view = SSCheckMark()
         return view
     }()
     
@@ -47,20 +46,14 @@ open class AssetsPhotoCellOverlay: UIView {
         dim(animated: false, color: .white, alpha: 0.25)
         addSubview(countLabel)
         addSubview(checkmark)
-    }
-    
-    open override func updateConstraints() {
-        if !didSetupConstraints {
-            
-            countLabel.autoPinEdgesToSuperviewEdges()
-            
-            checkmark.autoSetDimension(.width, toSize: 30)
-            checkmark.autoSetDimension(.height, toSize: 30)
-            checkmark.autoPinEdge(.trailing, to: .trailing, of: self, withOffset: -1)
-            checkmark.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -1)
-            
-            didSetupConstraints = true
+        
+        countLabel.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
         }
-        super.updateConstraints()
+        checkmark.snp.makeConstraints { (make) in
+            make.size.equalTo(CGSize(width: 30, height: 30))
+            make.bottom.equalToSuperview().inset(1)
+            make.trailing.equalToSuperview().inset(1)
+        }
     }
 }

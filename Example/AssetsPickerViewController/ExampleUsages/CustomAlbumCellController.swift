@@ -10,7 +10,6 @@ import UIKit
 import Photos
 import AssetsPickerViewController
 import TinyLog
-import PureLayout
 import Dimmer
 
 private let imageSize = CGSize(width: 80, height: 80)
@@ -33,7 +32,7 @@ class CustomAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     }
     
     var imageView: UIImageView = {
-        let view = UIImageView.newAutoLayout()
+        let view = UIImageView()
         view.clipsToBounds = true
         view.contentMode = .scaleAspectFill
         view.backgroundColor = UIColor(rgbHex: 0xF0F0F0)
@@ -61,10 +60,9 @@ class CustomAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     }
     
     // MARK: - At your service
-    private var didSetupConstraints: Bool = false
     
     var titleLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel()
         label.clipsToBounds = true
         return label
     }()
@@ -81,17 +79,17 @@ class CustomAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     private func commonInit() {
         contentView.addSubview(imageView)
         contentView.addSubview(titleLabel)
-    }
-    
-    override func updateConstraints() {
-        if !didSetupConstraints {
-            imageView.autoSetDimensions(to: imageSize)
-            imageView.autoPinEdge(.leading, to: .leading, of: contentView)
-            titleLabel.autoPinEdge(.leading, to: .trailing, of: imageView, withOffset: 10)
-            titleLabel.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .leading)
-            didSetupConstraints = true
+        
+        imageView.snp.makeConstraints { (make) in
+            make.size.equalTo(imageSize)
+            make.leading.equalToSuperview()
         }
-        super.updateConstraints()
+        titleLabel.snp.makeConstraints { (make) in
+            make.leading.equalTo(imageView.snp.trailing).inset(10)
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.trailing.equalToSuperview()
+        }
     }
 }
 

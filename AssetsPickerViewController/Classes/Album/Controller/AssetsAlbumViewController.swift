@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import TinyLog
-import PureLayout
 
 // MARK: - AssetsAlbumViewControllerDelegate
 public protocol AssetsAlbumViewControllerDelegate {
@@ -54,7 +53,6 @@ open class AssetsAlbumViewController: UIViewController {
         let defaultSpace = self.pickerConfig.albumDefaultSpace
         let itemSpace = self.pickerConfig.albumItemSpace(isPortrait: isPortrait)
         let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
-        view.configureForAutoLayout()
         view.register(self.pickerConfig.albumCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsAlbumHeaderView.classForCoder(), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.headerReuseIdentifier)
         view.contentInset = UIEdgeInsets(top: defaultSpace, left: itemSpace, bottom: defaultSpace, right: itemSpace)
@@ -97,6 +95,10 @@ open class AssetsAlbumViewController: UIViewController {
         setupCommon()
         setupBarButtonItems()
         
+        collectionView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        
         AssetsManager.shared.authorize(completion: { [weak self] isAuthorized in
             if isAuthorized {
                 AssetsManager.shared.fetchAlbums { (_) in
@@ -106,15 +108,6 @@ open class AssetsAlbumViewController: UIViewController {
                 self?.dismiss(animated: true, completion: nil)
             }
         })
-    }
-    
-    open override func updateViewConstraints() {
-        super.updateViewConstraints()
-        
-        if !didSetupConstraints {
-            collectionView.autoPinEdgesToSuperviewEdges()
-            didSetupConstraints = true
-        }
     }
     
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
