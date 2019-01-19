@@ -262,6 +262,46 @@ pickerConfig.assetFetchOptions = [
 ]
 ```
 
+### Custom Localization Support
+
+To set your own custom strings just use the static `customStringConfig` property of  `AssetsPickerConfig` which is of type `AssetsPickerCustomStringConfig`.
+
+Overriding every string
+```swift
+AssetsPickerConfig.customStringConfig = [
+    .cancel: "Cancel",
+    .done: "Done",
+    .titleAlbums: "Albums",
+    .titleSectionMyAlbums: "My Albums",
+    .footerPhotos: "%@ Photos",
+    .footerVideos: "%@ Videos",
+    .footerItems: "%@ Photos, %@ Videos",
+    .titleSelectedPhoto: "%@ Photo Selected",
+    .titleSelectedPhotos: "%@ Photos Selected",
+    .titleSelectedVideo: "%@ Video Selected",
+    .titleSelectedVideos: "%@ Videos Selected",
+    .titleSelectedItems: "%@ Items Selected",
+    .titleNoItems: "No Photos or Videos",
+    .messageNoItems: "You can take photos and videos using the camera, or sync photos and videos onto your %@ using iTunes.",
+    .messageNoItemsCamera: "You can sync photos and videos onto your %@ using iTunes.",
+    .titleNoPermission: "This app does not have access to your photos or videos.",
+    .messageNoPermission: "You can enable access in Privacy Settings.",
+]
+```
+
+Overriding specific strings
+```swift
+AssetsPickerConfig.customStringConfig = [
+    .titleNoItems: "No Photos or Videos",
+    .messageNoItems: "You can take photos and videos using the camera, or sync photos and videos onto your %@ using iTunes.",
+    .messageNoItemsCamera: "You can sync photos and videos onto your %@ using iTunes.",
+    .titleNoPermission: "This app does not have access to your photos or videos.",
+    .messageNoPermission: "You can enable access in Privacy Settings.",
+]
+```
+
+Take note: If you don't set the strings correctly these can cause problems.
+
 ## Requirements & Dependency
 
 Xcode9, Swift 4, iOS 9.0

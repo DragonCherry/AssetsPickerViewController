@@ -11,9 +11,15 @@ import Foundation
 extension String {
     
     init(key: String) {
-        self = Bundle.assetsPickerBundle.localizedString(forKey: key, value: key, table: "AssetsPickerViewController")
+        guard
+            let customConfig = AssetsPickerConfig.customStringConfig,
+            let localizedKey = AssetsPickerLocalizedStringKey(rawValue: key)
+            let string = customConfig[localizedKey] else {
+                self = Bundle.assetsPickerBundle.localizedString(forKey: key, value: key, table:  "AssetsPickerViewController")
+        }
+        self = string
     }
-    
+
     init(duration: TimeInterval) {
         let hour = Int(duration / 3600)
         let min = Int((duration / 60).truncatingRemainder(dividingBy: 60))
@@ -24,3 +30,4 @@ extension String {
         self = durationString
     }
 }
+

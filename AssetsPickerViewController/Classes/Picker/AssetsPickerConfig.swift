@@ -10,6 +10,10 @@ import UIKit
 import Photos
 
 open class AssetsPickerConfig {
+
+    // MARK: - Localized Strings Config
+
+    open static var customStringConfig: AssetsPickerCustomStringConfig? = nil
     
     // MARK: - Album Config
     
