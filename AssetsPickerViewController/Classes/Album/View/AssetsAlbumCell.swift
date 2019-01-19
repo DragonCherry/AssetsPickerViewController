@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import Dimmer
-import PureLayout
 
 public protocol AssetsAlbumCellProtocol {
     var album: PHAssetCollection? { get set }
@@ -39,7 +38,7 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     }
     
     public let imageView: UIImageView = {
-        let view = UIImageView.newAutoLayout()
+        let view = UIImageView()
         view.backgroundColor = UIColor(rgbHex: 0xF0F0F0)
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
@@ -61,20 +60,19 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     
     // MARK: - Views
     fileprivate let titleLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel()
         label.textColor = .black
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
     
     fileprivate let countLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel()
         label.textColor = UIColor(rgbHex: 0x8C8C91)
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
-    
-    private var didSetupConstraints: Bool = false
+
     
     // MARK: - Lifecycle
     public required init?(coder aDecoder: NSCoder) {
@@ -88,32 +86,30 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     }
     
     private func commonInit() {
-        contentView.configureForAutoLayout()
+        
         contentView.addSubview(imageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(countLabel)
-    }
-    
-    open override func updateConstraints() {
-        if !didSetupConstraints {
-            
-            contentView.autoPinEdgesToSuperviewEdges()
-            
-            imageView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
-            imageView.autoMatch(.height, to: .width, of: contentView)
-            
-            titleLabel.autoPinEdge(.top, to: .bottom, of: imageView, withOffset: 8)
-            titleLabel.autoPinEdge(toSuperviewEdge: .leading)
-            titleLabel.autoPinEdge(toSuperviewEdge: .trailing)
-            titleLabel.autoSetDimension(.height, toSize: titleLabel.font.pointSize + 2)
-            
-            countLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 2)
-            countLabel.autoPinEdge(toSuperviewEdge: .leading)
-            countLabel.autoPinEdge(toSuperviewEdge: .trailing)
-            countLabel.autoSetDimension(.height, toSize: countLabel.font.pointSize + 2)
-            
-            didSetupConstraints = true
+        
+        imageView.snp.makeConstraints { (make) in
+            make.height.equalTo(imageView.snp.width)
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
         }
-        super.updateConstraints()
+        
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(imageView.snp.bottom).offset(8)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(titleLabel.font.pointSize + 2)
+        }
+
+        countLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(titleLabel.snp.bottom).offset(2)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(countLabel.font.pointSize + 2)
+        }
     }
 }

@@ -11,10 +11,8 @@ import SwiftARGB
 
 open class AssetsAlbumHeaderView: UICollectionReusableView {
     
-    private var didSetupConstraints: Bool = false
-    
     internal lazy var titleLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel()
         label.textColor = UIColor(rgbHex: 0x8C8C91)
         label.font = UIFont.systemFont(forStyle: .title3)
         label.text = String(key: "Title_Section_MyAlbums")
@@ -33,13 +31,8 @@ open class AssetsAlbumHeaderView: UICollectionReusableView {
     
     private func commonInit() {
         addSubview(titleLabel)
-    }
-    
-    open override func updateConstraints() {
-        if !didSetupConstraints {
-            titleLabel.autoPinEdgesToSuperviewEdges()
-            didSetupConstraints = true
+        titleLabel.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
         }
-        super.updateConstraints()
     }
 }

@@ -10,21 +10,20 @@ import UIKit
 import Photos
 import AssetsPickerViewController
 import TinyLog
-import PureLayout
 
 class CustomAssetCellOverlay: UIView {
     
     private let countSize = CGSize(width: 40, height: 40)
-    private var didSetupConstraints: Bool = false
+    
     lazy var circleView: UIView = {
-        let view = UIView.newAutoLayout()
+        let view = UIView()
         view.backgroundColor = .black
         view.layer.cornerRadius = self.countSize.width / 2
         view.alpha = 0.4
         return view
     }()
     let countLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel()
         let font = UIFont.preferredFont(forTextStyle: .headline)
         label.font = UIFont.systemFont(ofSize: font.pointSize, weight: UIFont.Weight.bold)
         label.textAlignment = .center
@@ -46,17 +45,16 @@ class CustomAssetCellOverlay: UIView {
         dim(animated: false, color: .white, alpha: 0.25)
         addSubview(circleView)
         addSubview(countLabel)
-    }
-    
-    override func updateConstraints() {
-        if !didSetupConstraints {
-            circleView.autoSetDimensions(to: countSize)
-            circleView.autoCenterInSuperview()
-            countLabel.autoSetDimensions(to: countSize)
-            countLabel.autoCenterInSuperview()
-            didSetupConstraints = true
+        
+        circleView.snp.makeConstraints { (make) in
+            make.size.equalTo(countSize)
+            make.center.equalToSuperview()
         }
-        super.updateConstraints()
+        
+        countLabel.snp.makeConstraints { (make) in
+            make.size.equalTo(countSize)
+            make.center.equalToSuperview()
+        }
     }
 }
 
@@ -76,7 +74,7 @@ class CustomAssetCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     var imageView: UIImageView = {
-        let view = UIImageView.newAutoLayout()
+        let view = UIImageView()
         view.clipsToBounds = true
         view.contentMode = .scaleAspectFill
         view.backgroundColor = UIColor(rgbHex: 0xF0F0F0)
@@ -92,9 +90,12 @@ class CustomAssetCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     // MARK: - At your service
-    private var didSetupConstraints: Bool = false
     
-    let overlay = { return CustomAssetCellOverlay.newAutoLayout() }()
+    let overlay: CustomAssetCellOverlay = {
+        let view = CustomAssetCellOverlay()
+        view.isHidden = true
+        return view
+    }()
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -108,16 +109,13 @@ class CustomAssetCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     private func commonInit() {
         contentView.addSubview(imageView)
         contentView.addSubview(overlay)
-        overlay.isHidden = true
-    }
-    
-    override func updateConstraints() {
-        if !didSetupConstraints {
-            imageView.autoPinEdgesToSuperviewEdges()
-            overlay.autoPinEdgesToSuperviewEdges()
-            didSetupConstraints = true
+        
+        imageView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
         }
-        super.updateConstraints()
+        overlay.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
     }
 }
 

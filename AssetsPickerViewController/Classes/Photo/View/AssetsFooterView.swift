@@ -7,14 +7,11 @@
 //
 
 import UIKit
-import PureLayout
 
 open class AssetsPhotoFooterView: UICollectionReusableView {
     
-    private var didSetupConstraints: Bool = false
-    
     private let countLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel()
         label.textAlignment = .center
         label.font = UIFont.systemFont(forStyle: .subheadline, weight: .semibold)
         label.textColor = .darkText
@@ -33,14 +30,9 @@ open class AssetsPhotoFooterView: UICollectionReusableView {
     
     private func commonInit() {
         addSubview(countLabel)
-    }
-    
-    open override func updateConstraints() {
-        if !didSetupConstraints {
-            countLabel.autoPinEdgesToSuperviewEdges()
-            didSetupConstraints = true
+        countLabel.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
         }
-        super.updateConstraints()
     }
     
     open func set(imageCount: Int, videoCount: Int) {

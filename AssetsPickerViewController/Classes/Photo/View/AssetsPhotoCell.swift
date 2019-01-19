@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import Dimmer
-import PureLayout
 
 public protocol AssetsPhotoCellProtocol {
     var asset: PHAsset? { get set }
@@ -46,7 +45,7 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     public let imageView: UIImageView = {
-        let view = UIImageView.newAutoLayout()
+        let view = UIImageView()
         view.backgroundColor = UIColor(rgbHex: 0xF0F0F0)
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
@@ -64,10 +63,8 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     // MARK: - Views
-    private var didSetupConstraints: Bool = false
-    
     private let durationLabel: UILabel = {
-        let label = UILabel.newAutoLayout()
+        let label = UILabel()
         label.textColor = .white
         label.textAlignment = .right
         label.font = UIFont.systemFont(forStyle: .caption1)
@@ -75,13 +72,13 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }()
     
     private let panoramaIconView: PanoramaIconView = {
-        let view = PanoramaIconView.newAutoLayout()
+        let view = PanoramaIconView()
         view.isHidden = true
         return view
     }()
     
     private let overlay: AssetsPhotoCellOverlay = {
-        let overlay = AssetsPhotoCellOverlay.newAutoLayout()
+        let overlay = AssetsPhotoCellOverlay()
         overlay.isHidden = true
         return overlay
     }()
@@ -98,34 +95,31 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     private func commonInit() {
-        contentView.configureForAutoLayout()
         contentView.addSubview(imageView)
         contentView.addSubview(durationLabel)
         contentView.addSubview(panoramaIconView)
         contentView.addSubview(overlay)
-    }
-    
-    open override func updateConstraints() {
-        if !didSetupConstraints {
-            
-            contentView.autoPinEdgesToSuperviewEdges()
-            
-            imageView.autoPinEdgesToSuperviewEdges()
-            
-            durationLabel.autoSetDimension(.height, toSize: durationLabel.font.pointSize + 10)
-            durationLabel.autoPinEdge(.leading, to: .leading, of: contentView, withOffset: 8)
-            durationLabel.autoPinEdge(.trailing, to: .trailing, of: contentView, withOffset: -8)
-            durationLabel.autoPinEdge(.bottom, to: .bottom, of: contentView)
-            
-            panoramaIconView.autoSetDimensions(to: CGSize(width: 14, height: 7))
-            panoramaIconView.autoPinEdge(.trailing, to: .trailing, of: contentView, withOffset: -6.5)
-            panoramaIconView.autoPinEdge(.bottom, to: .bottom, of: contentView, withOffset: -10)
-            
-            overlay.autoPinEdgesToSuperviewEdges()
-            
-            didSetupConstraints = true
+        
+        imageView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
         }
-        super.updateConstraints()
+        
+        durationLabel.snp.makeConstraints { (make) in
+            make.height.equalTo(durationLabel.font.pointSize + 10)
+            make.leading.equalToSuperview().offset(8)
+            make.trailing.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview()
+        }
+        
+        panoramaIconView.snp.makeConstraints { (make) in
+            make.size.equalTo(CGSize(width: 14, height: 7))
+            make.trailing.equalToSuperview().inset(6.5)
+            make.bottom.equalToSuperview().inset(10)
+        }
+        
+        overlay.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
     }
     
     open override func layoutSubviews() {
