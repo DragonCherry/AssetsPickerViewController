@@ -8,10 +8,10 @@
 
 import Foundation
 
-open typealias AssetsPickerCustomStringConfig = [AssetsPickerLocalizedStringKey: String]
+public typealias AssetsPickerCustomStringConfig = [AssetsPickerLocalizedStringKey: String]
 
 // These are the available string keys on AssetsPickerViewController.strings
-open enum AssetsPickerLocalizedStringKey: String {
+public enum AssetsPickerLocalizedStringKey: String {
     case cancel = "Cancel"
     case done = "Done"
     case titleAlbums = "Title_Albums"

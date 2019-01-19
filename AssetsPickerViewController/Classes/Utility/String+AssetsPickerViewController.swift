@@ -13,9 +13,10 @@ extension String {
     init(key: String) {
         guard
             let customConfig = AssetsPickerConfig.customStringConfig,
-            let localizedKey = AssetsPickerLocalizedStringKey(rawValue: key)
+            let localizedKey = AssetsPickerLocalizedStringKey(rawValue: key),
             let string = customConfig[localizedKey] else {
                 self = Bundle.assetsPickerBundle.localizedString(forKey: key, value: key, table:  "AssetsPickerViewController")
+                return
         }
         self = string
     }
