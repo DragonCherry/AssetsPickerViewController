@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AssetsPickerViewController'
-  s.version          = '2.5.6'
+  s.version          = '2.5.7'
   s.summary          = 'Picker controller that supports multiple photos and videos written in Swift.'
 
 # This description is used to generate tags and improve search results.
@@ -27,7 +27,7 @@ Fully customizable UI.
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'DragonCherry' => 'dragoncherry@naver.com' }
   s.source           = { :git => 'https://github.com/DragonCherry/AssetsPickerViewController.git', :tag => s.version.to_s }
-  s.social_media_url = 'https://www.linkedin.com/in/jeongyong/'
+  s.social_media_url = 'https://www.linkedin.com/in/jeongyong'
 
   s.ios.deployment_target = '9.0'
 
