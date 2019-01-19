@@ -13,8 +13,6 @@ import TinyLog
 
 open class AssetsPreviewController: UIViewController {
     
-    private var didSetupConstraints = false
-    
     fileprivate var player: AVPlayer?
     fileprivate var playerLayer: AVPlayerLayer?
     

@@ -20,7 +20,7 @@ public protocol AssetsAlbumViewControllerDelegate {
 open class AssetsAlbumViewController: UIViewController {
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
-        return self.pickerConfig?.statusBarStyle ?? .default
+        return AssetsPickerConfig.statusBarStyle
     }
     
     open var delegate: AssetsAlbumViewControllerDelegate?
@@ -39,8 +39,6 @@ open class AssetsAlbumViewController: UIViewController {
         let buttonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(pressedSearch(button:)))
         return buttonItem
     }()
-    
-    var didSetupConstraints = false
     
     lazy var collectionView: UICollectionView = {
         

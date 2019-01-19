@@ -10,8 +10,7 @@ import Foundation
 import SwiftARGB
 
 open class AssetsGuideView: UIView {
-    
-    private var didSetupConstraints: Bool = false
+
     var lineSpace: CGFloat = 10
     var titleStyle: UIFont.TextStyle = .title1
     var bodyStyle: UIFont.TextStyle = .body

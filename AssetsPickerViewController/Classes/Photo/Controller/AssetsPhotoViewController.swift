@@ -17,7 +17,7 @@ import SnapKit
 open class AssetsPhotoViewController: UIViewController {
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
-        return self.pickerConfig?.statusBarStyle ?? .default
+        return AssetsPickerConfig.statusBarStyle
     }
     
     // MARK: Properties
@@ -55,7 +55,6 @@ open class AssetsPhotoViewController: UIViewController {
     fileprivate var selectedArray = [PHAsset]()
     fileprivate var selectedMap = [String: PHAsset]()
     
-    fileprivate var didSetupConstraints = false
     fileprivate var didSetInitialPosition: Bool = false
     
     fileprivate var isPortrait: Bool = true

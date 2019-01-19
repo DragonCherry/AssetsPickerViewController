@@ -90,7 +90,6 @@ class CustomAssetCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     // MARK: - At your service
-    private var didSetupConstraints: Bool = false
     
     let overlay: CustomAssetCellOverlay = {
         let view = CustomAssetCellOverlay()

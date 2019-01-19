@@ -72,8 +72,7 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
-    
-    private var didSetupConstraints: Bool = false
+
     
     // MARK: - Lifecycle
     public required init?(coder aDecoder: NSCoder) {

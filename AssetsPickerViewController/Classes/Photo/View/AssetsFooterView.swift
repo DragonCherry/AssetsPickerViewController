@@ -10,8 +10,6 @@ import UIKit
 
 open class AssetsPhotoFooterView: UICollectionReusableView {
     
-    private var didSetupConstraints: Bool = false
-    
     private let countLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center

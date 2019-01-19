@@ -11,8 +11,6 @@ import SwiftARGB
 
 open class AssetsAlbumHeaderView: UICollectionReusableView {
     
-    private var didSetupConstraints: Bool = false
-    
     internal lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(rgbHex: 0x8C8C91)

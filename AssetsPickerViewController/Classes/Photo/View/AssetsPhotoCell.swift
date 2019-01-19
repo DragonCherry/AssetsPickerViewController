@@ -63,8 +63,6 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     // MARK: - Views
-    private var didSetupConstraints: Bool = false
-    
     private let durationLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
