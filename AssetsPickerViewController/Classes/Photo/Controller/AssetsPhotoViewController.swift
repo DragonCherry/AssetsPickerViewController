@@ -30,11 +30,15 @@ open class AssetsPhotoViewController: UIViewController {
     fileprivate var requestIdMap = [IndexPath: PHImageRequestID]()
     
     fileprivate lazy var cancelButtonItem: UIBarButtonItem = {
-        let buttonItem = UIBarButtonItem(title: String(key: "Cancel"), style: .plain, target: self, action: #selector(pressedCancel(button:)))
+        let buttonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
+                                         target: self,
+                                         action: #selector(pressedCancel(button:)))
         return buttonItem
     }()
     fileprivate lazy var doneButtonItem: UIBarButtonItem = {
-        let buttonItem = UIBarButtonItem(title: String(key: "Done"), style: .plain, target: self, action: #selector(pressedDone(button:)))
+        let buttonItem = UIBarButtonItem.init(barButtonSystemItem: .done,
+                                              target: self,
+                                              action: #selector(pressedDone(button:)))
         return buttonItem
     }()
     fileprivate let emptyView: AssetsEmptyView = {
