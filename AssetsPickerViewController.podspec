@@ -39,7 +39,7 @@ Fully customizable UI.
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-  s.dependency 'SnapKit'
+  s.dependency 'SnapKit', '4.2.0'
   s.dependency 'Dimmer'
   s.dependency 'FadeView'
   s.dependency 'TinyLog'

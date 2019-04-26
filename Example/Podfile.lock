@@ -1,9 +1,9 @@
 PODS:
-  - AssetsPickerViewController (2.5.5):
+  - AssetsPickerViewController (2.5.7):
     - Device
     - Dimmer
     - FadeView
-    - SnapKit
+    - SnapKit (= 4.2.0)
     - SwiftARGB
     - TinyLog
   - Device (3.1.2)
@@ -35,7 +35,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AssetsPickerViewController: 4b38a05bf8af113c21d151028b2bc896f9fa0ad0
+  AssetsPickerViewController: 6284c9b0649f56e91eab58e1365521e091b3c637
   Device: 62242076214c30fb5760174b3601cefafa70a481
   Dimmer: 55721e2f218f965474b8319d4457ed76e5e59ef0
   FadeView: 80197da2fbee5382b178127e8c5f988a35eef018
@@ -44,6 +44,6 @@ SPEC CHECKSUMS:
   TinyLog: 073a9abfd44a944886d5d07aa49cbba5ef192335
   UIViewKVO: 091f9e020d69e73c4bf5e5ef61cde7bff1c24bbf
 
-PODFILE CHECKSUM: 7fd02be6c6728ec4eb6910019f6cf194e5ea58cd
+PODFILE CHECKSUM: ed535a80c7e9986ea173935163bbd69a1c717311
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.0
