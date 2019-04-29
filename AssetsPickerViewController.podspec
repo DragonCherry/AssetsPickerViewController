@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AssetsPickerViewController'
-  s.version          = '2.5.7'
+  s.version          = '2.6.0'
   s.summary          = 'Picker controller that supports multiple photos and videos written in Swift.'
 
 # This description is used to generate tags and improve search results.
