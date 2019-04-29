@@ -1,5 +1,5 @@
 PODS:
-  - AssetsPickerViewController (2.6.0):
+  - AssetsPickerViewController (2.6.2):
     - Device
     - SnapKit
   - Device (3.1.2)
@@ -18,7 +18,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AssetsPickerViewController: 4d5c7fa66d0e876fa2c008741c0ef4724abbdc35
+  AssetsPickerViewController: ed908abbff9ff818c031b5c54cffa2f8efb93155
   Device: 62242076214c30fb5760174b3601cefafa70a481
   SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
 
