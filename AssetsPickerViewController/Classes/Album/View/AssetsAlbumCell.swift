@@ -8,7 +8,6 @@
 
 import UIKit
 import Photos
-import Dimmer
 
 public protocol AssetsAlbumCellProtocol {
     var album: PHAssetCollection? { get set }

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import TinyLog
 
 extension Bundle {
     

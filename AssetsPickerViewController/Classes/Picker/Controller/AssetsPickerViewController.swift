@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import TinyLog
 import Photos
 
 // MARK: - AssetsPickerViewControllerDelegate

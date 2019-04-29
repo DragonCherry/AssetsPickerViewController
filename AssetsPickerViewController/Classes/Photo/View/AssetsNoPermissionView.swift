@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftARGB
 
 open class AssetsNoPermissionView: AssetsGuideView {
    

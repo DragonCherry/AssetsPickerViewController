@@ -9,8 +9,6 @@
 import UIKit
 import Photos
 import AssetsPickerViewController
-import TinyLog
-import Dimmer
 
 private let imageSize = CGSize(width: 80, height: 80)
 
@@ -24,7 +22,7 @@ class CustomAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                contentView.dim(animated: false, direction: .solid, color: .gray, alpha: 0.3)
+                contentView.dim(animated: false, color: .gray, alpha: 0.3)
             } else {
                 contentView.undim()
             }

@@ -8,7 +8,6 @@
 
 import UIKit
 import Device
-import TinyLog
 
 open class AssetsPhotoLayout: UICollectionViewFlowLayout {
     

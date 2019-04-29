@@ -8,7 +8,6 @@
 
 import UIKit
 import Photos
-import TinyLog
 
 // MARK: - AssetsManagerDelegate
 public protocol AssetsManagerDelegate: class {
@@ -103,7 +102,7 @@ extension AssetsManager {
     }
     
     open func unsubscribe(subscriber: AssetsManagerDelegate) {
-        if let index = subscribers.index(where: { subscriber === $0 }) {
+        if let index = subscribers.firstIndex(where: { subscriber === $0 }) {
             subscribers.remove(at: index)
         }
     }
@@ -191,7 +190,7 @@ extension AssetsManager {
     
     open func indexPath(forAlbum target: PHAssetCollection, inAlbumsArray albumsArray: [[PHAssetCollection]]) -> IndexPath? {
         let section = albumSection(forType: target.assetCollectionType)
-        if let row = albumsArray[section].index(of: target) {
+        if let row = albumsArray[section].firstIndex(of: target) {
             return IndexPath(row: row, section: section)
         } else {
             return nil
@@ -340,7 +339,7 @@ extension AssetsManager {
             fetchedAlbumsArray[indexPath.section].remove(at: indexPath.row)
         } else if let albumToRemove = album {
             for (section, fetchedAlbums) in fetchedAlbumsArray.enumerated() {
-                if let row = fetchedAlbums.index(of: albumToRemove) {
+                if let row = fetchedAlbums.firstIndex(of: albumToRemove) {
                     fetchedAlbumsArray[section].remove(at: row)
                 }
             }
@@ -404,7 +403,7 @@ extension AssetsManager {
         if let lastBeforeChange = changeDetails.fetchResultBeforeChanges.lastObject {
             if let lastAfterChange = changeDetails.fetchResultAfterChanges.lastObject {
                 if lastBeforeChange.localIdentifier == lastAfterChange.localIdentifier {
-                    if let _ = changeDetails.changedObjects.index(of: lastAfterChange) {
+                    if let _ = changeDetails.changedObjects.firstIndex(of: lastAfterChange) {
                         isChanged = true
                     }
                 } else {
