@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import PhotosUI
-import TinyLog
 
 open class AssetsPreviewController: UIViewController {
     

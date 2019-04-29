@@ -8,7 +8,6 @@
 
 import UIKit
 import Photos
-import TinyLog
 
 // MARK: - AssetsManagerDelegate
 public protocol AssetsManagerDelegate: class {

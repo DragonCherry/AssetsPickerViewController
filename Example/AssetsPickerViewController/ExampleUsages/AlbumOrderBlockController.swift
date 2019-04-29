@@ -26,6 +26,8 @@ class AlbumOrderBlockController: CommonExampleController {
                 return leftEntry.result.count < rightEntry.result.count     // ascending order by asset count
             case .moment:
                 return true
+            @unknown default:
+                fatalError()
             }
         }
         

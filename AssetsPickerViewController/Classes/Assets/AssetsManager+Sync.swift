@@ -7,7 +7,6 @@
 //
 
 import Photos
-import TinyLog
 
 // MARK: - PHPhotoLibraryChangeObserver & Sync
 extension AssetsManager: PHPhotoLibraryChangeObserver {

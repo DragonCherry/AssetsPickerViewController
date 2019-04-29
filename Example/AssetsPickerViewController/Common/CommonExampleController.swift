@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import AssetsPickerViewController
-import TinyLog
 
 class CommonExampleController: UITableViewController {
     

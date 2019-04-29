@@ -8,7 +8,6 @@
 
 import UIKit
 import Photos
-import TinyLog
 
 // MARK: - AssetsAlbumViewControllerDelegate
 public protocol AssetsAlbumViewControllerDelegate {

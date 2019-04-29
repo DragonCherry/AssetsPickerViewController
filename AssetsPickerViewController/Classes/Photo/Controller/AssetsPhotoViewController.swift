@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import PhotosUI
-import TinyLog
 import Device
 import SnapKit
 
