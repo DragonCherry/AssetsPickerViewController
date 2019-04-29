@@ -264,6 +264,8 @@ extension AssetsManager {
             return 1
         case .moment:
             return 2
+        @unknown default:
+            fatalError()
         }
     }
     
