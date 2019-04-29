@@ -277,8 +277,22 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
+				id,
+				fr,
+				de,
+				"zh-Hans",
+				"zh-Hant",
+				"es-MX",
+				ru,
+				tr,
+				ar,
+				it,
+				ko,
+				es,
+				ja,
 			);
 			mainGroup = 607FACC71AFB9204008FA782;
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
