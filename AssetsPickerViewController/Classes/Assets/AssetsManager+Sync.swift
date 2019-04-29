@@ -77,7 +77,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 
                 // check thumbnail
                 if isThumbnailChanged(changeDetails: assetsChangeDetails) || isCountChanged(changeDetails: assetsChangeDetails) {
-                    if let updatedRow = fetchedAlbumsArray[section].index(of: album) {
+                    if let updatedRow = fetchedAlbumsArray[section].firstIndex(of: album) {
                         updatedIndexSet.insert(updatedRow)
                     }
                 }
