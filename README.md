@@ -306,7 +306,7 @@ Take note: If you don't set the strings correctly these can cause problems.
 
 Xcode9, Swift 4, iOS 9.0
 
-Uses [PureLayout](https://github.com/PureLayout/PureLayout) for creating UI inside library. Thanks to PureLayout development team for doing such a beautiful job.
+Uses [SnapKit](https://github.com/SnapKit/SnapKit) for creating UI inside library. Thanks to SnapKit development team for doing such a beautiful job.
 
 
 ## Installation
