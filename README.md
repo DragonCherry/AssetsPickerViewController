@@ -304,7 +304,7 @@ Take note: If you don't set the strings correctly these can cause problems.
 
 ## Requirements & Dependency
 
-Xcode9, Swift 4, iOS 9.0
+Xcode10.2, Swift 5, iOS 10.0
 
 Uses [SnapKit](https://github.com/SnapKit/SnapKit) for creating UI inside library. Thanks to SnapKit development team for doing such a beautiful job.
 
@@ -318,7 +318,7 @@ it, simply add the following line to your Podfile:
 pod 'AssetsPickerViewController', '~> 2.0'
 ```
 
-Swift 3 is not supported anymore.
+Swift 4 is not supported anymore.
 
 ## Author
 
