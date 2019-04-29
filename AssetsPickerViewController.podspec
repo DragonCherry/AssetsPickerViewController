@@ -29,7 +29,7 @@ Fully customizable UI.
   s.source           = { :git => 'https://github.com/DragonCherry/AssetsPickerViewController.git', :tag => s.version.to_s }
   s.social_media_url = 'https://www.linkedin.com/in/jeongyong'
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
 
   s.source_files = 'AssetsPickerViewController/Classes/**/*'
   
@@ -39,7 +39,7 @@ Fully customizable UI.
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-  s.dependency 'SnapKit'
+  s.dependency 'SnapKit', '4.2.0'
   s.dependency 'Dimmer'
   s.dependency 'FadeView'
   s.dependency 'TinyLog'
