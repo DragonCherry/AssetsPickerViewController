@@ -81,7 +81,7 @@ open class AssetsAlbumViewController: UIViewController {
     open override func loadView() {
         super.loadView()
         view = UIView()
-        view.backgroundColor = .white
+		view.backgroundColor = .systemBackground
         
         view.addSubview(collectionView)
         view.setNeedsUpdateConstraints()
