@@ -237,7 +237,7 @@ open class AssetsPhotoViewController: UIViewController {
 extension AssetsPhotoViewController {
     
     func setupCommon() {
-        view.backgroundColor = .white
+		view.backgroundColor = .systemBackground
     }
     
     func setupBarButtonItems() {

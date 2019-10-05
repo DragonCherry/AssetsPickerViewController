@@ -113,7 +113,7 @@ open class AssetsPreviewController: UIViewController {
     override open func loadView() {
         super.loadView()
         view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         view.addSubview(imageView)
         if #available(iOS 9.1, *) {
             view.addSubview(livePhotoView)

@@ -126,7 +126,7 @@ open class AssetsAlbumViewController: UIViewController {
 extension AssetsAlbumViewController {
     func setupCommon() {
         title = String(key: "Title_Albums")
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
     }
     
     func setupBarButtonItems() {
