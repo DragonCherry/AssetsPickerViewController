@@ -11,7 +11,7 @@ extension UIColor {
     
     static var ap_label: UIColor {
         if #available(iOS 13.0, *) {
-            return .white
+            return .label
         } else {
             return .black
         }
