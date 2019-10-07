@@ -11,7 +11,7 @@ extension UIColor {
     
     static var ap_label: UIColor {
         if #available(iOS 13.0, *) {
-            return .systemBackground
+            return .white
         } else {
             return .black
         }
@@ -30,6 +30,14 @@ extension UIColor {
             return .systemBackground
         } else {
             return .white
+        }
+    }
+    
+    static var ap_cellBackground: UIColor {
+        if #available(iOS 13.0, *) {
+            return .secondarySystemBackground
+        } else {
+            return UIColor(rgbHex: 0xF0F0F0)
         }
     }
 }
