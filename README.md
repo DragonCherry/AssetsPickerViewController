@@ -91,6 +91,8 @@ Customizable Album & Asset Layout
 
 - set selected assets before present picker controller
 
+- supports dark mode from iOS 13
+
 
 ## Features To-do
 
@@ -307,6 +309,8 @@ Take note: If you don't set the strings correctly these can cause problems.
 Xcode10.2, Swift 5, iOS 10.0
 
 Uses [SnapKit](https://github.com/SnapKit/SnapKit) for creating UI inside library. Thanks to SnapKit development team for doing such a beautiful job.
+
+if your app's deployment target is greater than or equal to 11.0, you can use up-to-date version of SnapKit, otherwise you have to fix SnapKit's version to 5.0.0
 
 
 ## Installation
