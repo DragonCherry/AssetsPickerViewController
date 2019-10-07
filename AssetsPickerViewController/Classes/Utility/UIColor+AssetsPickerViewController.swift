@@ -1,0 +1,35 @@
+//
+//  UIColor+AssetsPickerViewController.swift
+//  AssetsPickerViewController
+//
+//  Created by JY on 07/10/2019.
+//
+
+import Foundation
+
+extension UIColor {
+    
+    static var ap_label: UIColor {
+        if #available(iOS 13.0, *) {
+            return .systemBackground
+        } else {
+            return .black
+        }
+    }
+    
+    static var ap_secondaryLabel: UIColor {
+        if #available(iOS 13.0, *) {
+            return .secondaryLabel
+        } else {
+            return UIColor(rgbHex: 0x8C8C91)
+        }
+    }
+    
+    static var ap_background: UIColor {
+        if #available(iOS 13.0, *) {
+            return .systemBackground
+        } else {
+            return .white
+        }
+    }
+}
