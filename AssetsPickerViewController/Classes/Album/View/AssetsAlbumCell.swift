@@ -60,14 +60,14 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     // MARK: - Views
     fileprivate let titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .label
+        label.textColor = .ap_label
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()
     
     fileprivate let countLabel: UILabel = {
         let label = UILabel()
-		label.textColor = .secondaryLabel
+		label.textColor = .ap_secondaryLabel
         label.font = UIFont.systemFont(forStyle: .subheadline)
         return label
     }()

@@ -106,7 +106,7 @@ open class AssetsPhotoViewController: UIViewController {
     override open func loadView() {
         super.loadView()
         view = UIView()
-		view.backgroundColor = .systemBackground
+		view.backgroundColor = .ap_background
         view.addSubview(collectionView)
         view.addSubview(emptyView)
         view.addSubview(noPermissionView)
@@ -237,7 +237,7 @@ open class AssetsPhotoViewController: UIViewController {
 extension AssetsPhotoViewController {
     
     func setupCommon() {
-		view.backgroundColor = .systemBackground
+		view.backgroundColor = .ap_background
     }
     
     func setupBarButtonItems() {

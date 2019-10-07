@@ -32,7 +32,6 @@ open class AssetsGuideView: UIView {
     }
     
     func commonInit() {
-        backgroundColor = .systemBackground
         addSubview(messageLabel)
         messageLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview()
@@ -51,7 +50,7 @@ open class AssetsGuideView: UIView {
         titleParagraphStyle.alignment = .center
         let attributedTitle = NSMutableAttributedString(string: "\(title)\n", attributes: [
             NSAttributedString.Key.font: UIFont.systemFont(forStyle: titleStyle),
-			NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel,
+			NSAttributedString.Key.foregroundColor: UIColor.ap_secondaryLabel,
             NSAttributedString.Key.paragraphStyle: titleParagraphStyle
             ])
         
@@ -62,7 +61,7 @@ open class AssetsGuideView: UIView {
         bodyParagraphStyle.tailIndent = -20
         let attributedBody = NSMutableAttributedString(string: message, attributes: [
             NSAttributedString.Key.font: UIFont.systemFont(forStyle: bodyStyle),
-			NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel,
+			NSAttributedString.Key.foregroundColor: UIColor.ap_secondaryLabel,
             NSAttributedString.Key.paragraphStyle: bodyParagraphStyle
             ])
         

@@ -12,7 +12,7 @@ open class AssetsAlbumHeaderView: UICollectionReusableView {
     
     internal lazy var titleLabel: UILabel = {
         let label = UILabel()
-		label.textColor = .secondaryLabel
+		label.textColor = .ap_secondaryLabel
         label.font = UIFont.systemFont(forStyle: .title3)
         label.text = String(key: "Title_Section_MyAlbums")
         return label
