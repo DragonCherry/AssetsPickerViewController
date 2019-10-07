@@ -223,6 +223,23 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
             }
         }
     }
+    
+    public func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+        guard let albumCell = collectionView.cellForItem(at: indexPath) as? AssetsAlbumCellProtocol else {
+            logw("Failed to cast UICollectionViewCell.")
+            return false
+        }
+        albumCell.imageView.dim(animated: false, color: .white, alpha: 0.5)
+        return true
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        guard let albumCell = collectionView.cellForItem(at: indexPath) as? AssetsAlbumCellProtocol else {
+            logw("Failed to cast UICollectionViewCell.")
+            return
+        }
+        albumCell.imageView.undim()
+    }
 }
 
 extension AssetsAlbumViewController: UICollectionViewDataSourcePrefetching {
