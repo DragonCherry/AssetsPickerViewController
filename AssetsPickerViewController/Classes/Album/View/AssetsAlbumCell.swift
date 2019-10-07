@@ -26,16 +26,6 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
         }
     }
     
-    open override var isSelected: Bool {
-        didSet {
-            if isSelected {
-                imageView.dim(animated: false)
-            } else {
-                imageView.undim(animated: false)
-            }
-        }
-    }
-    
     public let imageView: UIImageView = {
         let view = UIImageView()
         view.backgroundColor = .ap_cellBackground
