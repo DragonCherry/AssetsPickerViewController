@@ -26,7 +26,8 @@ https://appetize.io/app/752b6azuj3d3varvmu1hkwuuqm
 iOS friendly UI for Album & Asset
 
 ![albums_portrait](https://cloud.githubusercontent.com/assets/20486591/26525542/43036a42-4395-11e7-98f0-5bf3f40f923d.PNG)
-![photos_portrait](https://cloud.githubusercontent.com/assets/20486591/26525538/42b1d6dc-4395-11e7-9c16-b9abdb2e9247.PNG)
+![photos_portrait](https://user-images.githubusercontent.com/20486591/66302122-50d12b00-e933-11e9-8594-cf3d9e36d582.png)
+![photos_portrait](https://user-images.githubusercontent.com/20486591/66302136-56c70c00-e933-11e9-910f-9e97cb882d31.png)
 
 
 iPad Support
