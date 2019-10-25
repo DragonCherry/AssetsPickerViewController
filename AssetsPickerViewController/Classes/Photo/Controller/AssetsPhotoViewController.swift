@@ -476,15 +476,11 @@ extension AssetsPhotoViewController {
     }
     
     func presentAlbumController(animated: Bool = true) {
-        guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
-        let navigationController = UINavigationController()
-        if #available(iOS 11.0, *) {
-            navigationController.navigationBar.prefersLargeTitles = true
-        }
+        guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }        
         let controller = AssetsAlbumViewController(pickerConfig: self.pickerConfig)
         controller.delegate = self
-        navigationController.viewControllers = [controller]
-        
+
+        let navigationController = UINavigationController(rootViewController: controller)
         self.navigationController?.present(navigationController, animated: animated, completion: nil)
     }
     

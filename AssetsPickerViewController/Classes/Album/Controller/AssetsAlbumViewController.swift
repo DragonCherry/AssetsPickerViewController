@@ -94,6 +94,10 @@ open class AssetsAlbumViewController: UIViewController {
         setupCommon()
         setupBarButtonItems()
         
+        if #available(iOS 11.0, *) {
+            navigationController?.navigationBar.prefersLargeTitles = true
+        }
+
         collectionView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
