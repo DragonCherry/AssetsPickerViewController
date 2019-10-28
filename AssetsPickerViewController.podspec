@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AssetsPickerViewController'
-  s.version          = '2.7.3'
+  s.version          = '2.7.4'
   s.summary          = 'Picker controller that supports multiple photos and videos written in Swift.'
 
 # This description is used to generate tags and improve search results.
@@ -36,6 +36,7 @@ Fully customizable UI.
   s.resource_bundles = {
     'AssetsPickerViewController' => ['AssetsPickerViewController/Assets/*.*']
   }
+  s.swift_version = '4.2'
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
