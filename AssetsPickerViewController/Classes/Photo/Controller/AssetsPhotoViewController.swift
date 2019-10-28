@@ -322,14 +322,19 @@ extension AssetsPhotoViewController {
 extension AssetsPhotoViewController {
     
     func updateEmptyView(count: Int) {
-        if emptyView.isHidden {
-            if count == 0 {
-                emptyView.isHidden = false
+        let hasPermission = PHPhotoLibrary.authorizationStatus() == .authorized
+        if hasPermission {
+            if emptyView.isHidden {
+                if count == 0 {
+                    emptyView.isHidden = false
+                }
+            } else {
+                if count > 0 {
+                    emptyView.isHidden = true
+                }
             }
         } else {
-            if count > 0 {
-                emptyView.isHidden = true
-            }
+            emptyView.isHidden = true
         }
         logi("emptyView.isHidden: \(emptyView.isHidden), count: \(count)")
     }
