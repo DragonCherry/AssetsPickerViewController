@@ -85,7 +85,7 @@ private func log(_ msg: Any? = nil, _ prefix: String = "⚫", _ file: String = #
     #if SIMULATOR
     let isUseConsoleLog: Bool = true
     #else
-    #if QA
+    #if DEBUG
     let isUseConsoleLog: Bool = true
     #else
     let isUseConsoleLog: Bool = false
