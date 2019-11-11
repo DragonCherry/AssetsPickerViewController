@@ -544,7 +544,13 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
 
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if let delegate = self.delegate {
-            return delegate.assetsPicker?(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
+            let shouldSelect = delegate.assetsPicker?(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
+            if shouldSelect, selectedArray.count >= pickerConfig.assetsMaximumSelectionCount, let firstSelectedAsset = selectedArray.first, let indexToDeselect = AssetsManager.shared.assetArray.firstIndex(of: firstSelectedAsset) {
+                let indexPathToDeselect = IndexPath(row: indexToDeselect, section: 0)
+                deselect(asset: firstSelectedAsset, at: indexPathToDeselect)
+                collectionView.deselectItem(at: indexPathToDeselect, animated: true)
+            }
+            return shouldSelect
         } else {
             return true
         }

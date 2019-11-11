@@ -12,6 +12,7 @@ class BasicUsageController: CommonExampleController {
     
     override func pressedPick(_ sender: Any) {
         let picker = AssetsPickerViewController()
+        picker.isShowLog = false
         picker.pickerDelegate = self
         present(picker, animated: true, completion: nil)
     }

@@ -29,7 +29,12 @@ open class AssetsPickerViewController: UINavigationController {
         return photoViewController.selectedAssets
     }
     
-    open var isShowLog: Bool = false
+    open var isShowLog: Bool = false {
+        didSet {
+            TinyLog.isShowInfoLog = isShowLog
+            TinyLog.isShowErrorLog = isShowLog
+        }
+    }
     public var pickerConfig: AssetsPickerConfig! {
         didSet {
             if let config = self.pickerConfig?.prepare() {
@@ -63,8 +68,6 @@ open class AssetsPickerViewController: UINavigationController {
         controller.pickerConfig = config
         self.photoViewController = controller
         
-        TinyLog.isShowInfoLog = isShowLog
-        TinyLog.isShowErrorLog = isShowLog
         AssetsManager.shared.registerObserver()
         viewControllers = [photoViewController]
     }

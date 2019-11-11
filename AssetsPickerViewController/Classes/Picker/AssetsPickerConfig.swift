@@ -82,6 +82,7 @@ open class AssetsPickerConfig {
     // MARK: Asset
     open var selectedAssets: [PHAsset]?
     open var assetsMinimumSelectionCount: Int = 1
+    open var assetsMaximumSelectionCount: Int = Int.max
     open var assetsIsScrollToBottom: Bool = true
     
     // MARK: Fetch
