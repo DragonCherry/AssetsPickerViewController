@@ -56,6 +56,7 @@ open class AssetsManager: NSObject {
     fileprivate(set) open var selectedAlbum: PHAssetCollection?
     
     fileprivate var isFetchedAlbums: Bool = false
+    fileprivate var workerQueue: DispatchQueue = DispatchQueue.init(label: "com.gezihuzi.loader", qos: .userInteractive)
     
     private override init() {
         super.init()
@@ -320,6 +321,25 @@ extension AssetsManager {
             return true
         } else {
             return false
+        }
+    }
+    
+    open func select(album newAlbum: PHAssetCollection, complection: @escaping (Bool) -> Void) {
+        if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
+            logi("Selected same album.")
+            complection(false)
+        }
+        self.selectedAlbum = newAlbum
+        if let fetchResult = fetchMap[newAlbum.localIdentifier] {
+            workerQueue.async { [weak self] in
+                let indexSet = IndexSet(0..<fetchResult.count)
+                self?.assetArray = fetchResult.objects(at: indexSet)
+                DispatchQueue.main.async {
+                    complection(true)
+                }
+            }
+        } else {
+            complection(false)
         }
     }
 }

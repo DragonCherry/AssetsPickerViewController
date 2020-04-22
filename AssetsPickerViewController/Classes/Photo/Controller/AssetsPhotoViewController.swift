@@ -367,29 +367,34 @@ extension AssetsPhotoViewController {
     }
     
     func select(album: PHAssetCollection) {
-        if AssetsManager.shared.select(album: album) {
-            // set title with selected count if exists
-            if selectedArray.count > 0 {
-                updateNavigationStatus()
-            } else {
-                title = title(forAlbum: album)
-            }
-            collectionView.reloadData()
-            
-            for asset in selectedArray {
-                if let index = AssetsManager.shared.assetArray.firstIndex(of: asset) {
-                    logi("reselecting: \(index)")
-                    collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
+        AssetsManager.shared.select(album: album, complection: { [weak self] (result) in
+            if result {
+                guard let strongSelf = self else {
+                    return
                 }
-            }
-            if AssetsManager.shared.assetArray.count > 0 {
-                if pickerConfig.assetsIsScrollToBottom == true {
-                    collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.assetArray.count - 1, section: 0), at: .bottom, animated: false)
+                // set title with selected count if exists
+                if strongSelf.selectedArray.count > 0 {
+                    strongSelf.updateNavigationStatus()
                 } else {
-                    collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
+                    strongSelf.title = strongSelf.title(forAlbum: album)
+                }
+                strongSelf.collectionView.reloadData()
+                
+                for asset in strongSelf.selectedArray {
+                    if let index = AssetsManager.shared.assetArray.firstIndex(of: asset) {
+                        logi("reselecting: \(index)")
+                        strongSelf.collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .init(rawValue: 0))
+                    }
+                }
+                if AssetsManager.shared.assetArray.count > 0 {
+                    if strongSelf.pickerConfig.assetsIsScrollToBottom == true {
+                        strongSelf.collectionView.scrollToItem(at: IndexPath(row: AssetsManager.shared.assetArray.count - 1, section: 0), at: .bottom, animated: false)
+                    } else {
+                        strongSelf.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
+                    }
                 }
             }
-        }
+        })
     }
     
     func select(asset: PHAsset, at indexPath: IndexPath) {
