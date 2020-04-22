@@ -412,8 +412,6 @@ extension AssetsPhotoViewController {
         loadingActivityIndicatorView.startAnimating()
         AssetsManager.shared.selectAsync(album: album, complection: { [weak self] (result) in
             guard let `self` = self else { return }
-            self.loadingPlaceholderView.isHidden = true
-            self.loadingActivityIndicatorView.stopAnimating()
             if result {
                 
                 // set title with selected count if exists
@@ -438,6 +436,8 @@ extension AssetsPhotoViewController {
                     }
                 }
             }
+            self.loadingPlaceholderView.isHidden = true
+            self.loadingActivityIndicatorView.stopAnimating()
         })
     }
     

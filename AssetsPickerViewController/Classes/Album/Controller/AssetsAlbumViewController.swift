@@ -67,6 +67,18 @@ open class AssetsAlbumViewController: UIViewController {
         return view
     }()
     
+    fileprivate lazy var loadingActivityIndicatorView: UIActivityIndicatorView = {
+        
+        if #available(iOS 13.0, *) {
+            let indicator = UIActivityIndicatorView(style: .large)
+            return indicator
+        } else {
+            let indicator = UIActivityIndicatorView()
+            return indicator
+        }
+    }()
+    fileprivate lazy var loadingPlaceholderView: UIView = UIView()
+    
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -84,6 +96,8 @@ open class AssetsAlbumViewController: UIViewController {
 		view.backgroundColor = .ap_background
         
         view.addSubview(collectionView)
+        view.addSubview(loadingPlaceholderView)
+        view.addSubview(loadingActivityIndicatorView)
         view.setNeedsUpdateConstraints()
         
         AssetsManager.shared.subscribe(subscriber: self)
@@ -102,10 +116,24 @@ open class AssetsAlbumViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         
+        loadingPlaceholderView.isHidden = true
+        loadingPlaceholderView.backgroundColor = .white
+        loadingPlaceholderView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        
+        loadingActivityIndicatorView.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+        }
+        
         AssetsManager.shared.authorize(completion: { [weak self] isAuthorized in
             if isAuthorized {
+                self?.loadingPlaceholderView.isHidden = false
+                self?.loadingActivityIndicatorView.startAnimating()
                 AssetsManager.shared.fetchAlbums { (_) in
                     self?.collectionView.reloadData()
+                    self?.loadingPlaceholderView.isHidden = true
+                    self?.loadingActivityIndicatorView.stopAnimating()
                 }
             } else {
                 self?.dismiss(animated: true, completion: nil)
