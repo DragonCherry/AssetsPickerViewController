@@ -324,7 +324,7 @@ extension AssetsManager {
         }
     }
     
-    open func select(album newAlbum: PHAssetCollection, complection: @escaping (Bool) -> Void) {
+    open func selectAsync(album newAlbum: PHAssetCollection, complection: @escaping (Bool) -> Void) {
         if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
             logi("Selected same album.")
             complection(false)
@@ -495,9 +495,13 @@ extension AssetsManager {
         }
         
         // set default album
-        select(album: defaultAlbum ?? cameraRollAlbum)
-        
-        completion?(assetArray)
+        selectAsync(album: defaultAlbum ?? cameraRollAlbum) { [weak self] (result) in
+            guard let strongSelf = self else {
+                completion?([])
+                return
+            }
+            completion?(strongSelf.assetArray)
+        }
     }
     
     func fetchAlbums(forAlbumType type: PHAssetCollectionType) -> (fetchedAlbums: [PHAssetCollection], sortedAlbums: [PHAssetCollection], fetchResult: PHFetchResult<PHAssetCollection>) {

@@ -367,7 +367,7 @@ extension AssetsPhotoViewController {
     }
     
     func select(album: PHAssetCollection) {
-        AssetsManager.shared.select(album: album, complection: { [weak self] (result) in
+        AssetsManager.shared.selectAsync(album: album, complection: { [weak self] (result) in
             if result {
                 guard let strongSelf = self else {
                     return
