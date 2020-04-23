@@ -169,6 +169,11 @@ func assetsPicker(controller: AssetsPickerViewController, shouldSelect asset: PH
 }
 ```
 
+To automatically deselect oldest selected asset for limited selection count,
+```swift
+pickerConfig.assetsMaximumSelectionCount = 5
+```
+
 ### Appearence
 
 To apply custom album cell,
