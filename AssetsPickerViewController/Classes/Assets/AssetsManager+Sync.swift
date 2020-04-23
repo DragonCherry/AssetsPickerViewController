@@ -134,7 +134,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             }
             
             guard section < sortedAlbumsArray.count && section < fetchedAlbumsArray.count else { return }
-            
+
             // update final changes in albums
             var oldSortedAlbums = sortedAlbumsArray[section]
             let newSortedAlbums = sortedAlbums(fromAlbums: fetchedAlbumsArray[section])
