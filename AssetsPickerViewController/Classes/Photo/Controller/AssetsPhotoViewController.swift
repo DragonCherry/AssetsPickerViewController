@@ -329,9 +329,13 @@ extension AssetsPhotoViewController {
                     })
                 } else {
                     self.collectionView.reloadData()
-                    let item = self.collectionView(self.collectionView, numberOfItemsInSection: 0) - 1
-                    let lastItemIndex = NSIndexPath(item: item, section: 0)
-                    self.collectionView.scrollToItem(at: lastItemIndex as IndexPath, at: .top, animated: false)
+                    if self.pickerConfig.assetsIsScrollToBottom {
+                        let item = self.collectionView(self.collectionView, numberOfItemsInSection: 0) - 1
+                        let lastItemIndex = NSIndexPath(item: item, section: 0)
+                        self.collectionView.scrollToItem(at: lastItemIndex as IndexPath, at: .bottom, animated: false)
+                    } else {
+                        self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
+                    }
                 }
                 self.loadingPlaceholderView.isHidden = true
                 self.loadingActivityIndicatorView.stopAnimating()
