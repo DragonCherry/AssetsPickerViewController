@@ -70,8 +70,13 @@ open class AssetsAlbumViewController: UIViewController {
     fileprivate lazy var loadingActivityIndicatorView: UIActivityIndicatorView = {
         
         if #available(iOS 13.0, *) {
-            let indicator = UIActivityIndicatorView(style: .large)
-            return indicator
+            if UITraitCollection.current.userInterfaceStyle == .dark {
+                let indicator = UIActivityIndicatorView(style: .whiteLarge)
+                return indicator
+            } else {
+                let indicator = UIActivityIndicatorView(style: .large)
+                return indicator
+            }
         } else {
             let indicator = UIActivityIndicatorView()
             return indicator
@@ -117,7 +122,11 @@ open class AssetsAlbumViewController: UIViewController {
         }
         
         loadingPlaceholderView.isHidden = true
-        loadingPlaceholderView.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            loadingPlaceholderView.backgroundColor = .systemBackground
+        } else {
+            loadingPlaceholderView.backgroundColor = .white
+        }
         loadingPlaceholderView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
