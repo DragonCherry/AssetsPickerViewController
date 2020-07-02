@@ -324,6 +324,20 @@ extension AssetsManager {
         }
     }
     
+    open func selectDefaultAlbum() {
+        self.selectedAlbum = nil
+        let allAlbums = sortedAlbumsArray.flatMap { $0 }.map { $0 }
+        if let defaultAlbum = self.defaultAlbum, allAlbums.contains(defaultAlbum) {
+            select(album: defaultAlbum)
+        } else if let cameraRollAlbum = self.cameraRollAlbum, allAlbums.contains(cameraRollAlbum) {
+            select(album: cameraRollAlbum)
+        } else if let firstAlbum = allAlbums.first {
+            select(album: firstAlbum)
+        } else {
+            logw("Cannot find fallback album!")
+        }
+    }
+    
     open func selectAsync(album newAlbum: PHAssetCollection, complection: @escaping (Bool) -> Void) {
         if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
             logi("Selected same album.")
