@@ -321,30 +321,24 @@ extension AssetsPhotoViewController {
                 
                 self.updateEmptyView(count: photos.count)
                 self.title = self.title(forAlbum: manager.selectedAlbum)
+                self.collectionView.reloadData()
                 
                 if self.selectedArray.count > 0 {
-                    self.collectionView.performBatchUpdates({ [weak self] in
-                        self?.collectionView.reloadData()
-                        }, completion: { [weak self] (finished) in
-                            guard let `self` = self else { return }
-                            // initialize preselected assets
-                            self.selectedArray.forEach({ [weak self] (asset) in
-                                if let row = photos.firstIndex(of: asset) {
-                                    let indexPathToSelect = IndexPath(row: row, section: 0)
-                                    self?.collectionView.selectItem(at: indexPathToSelect, animated: false, scrollPosition: UICollectionView.ScrollPosition(rawValue: 0))
-                                }
-                            })
-                            self.updateSelectionCount()
+                    // initialize preselected assets
+                    self.selectedArray.forEach({ [weak self] (asset) in
+                        if let row = photos.firstIndex(of: asset) {
+                            let indexPathToSelect = IndexPath(row: row, section: 0)
+                            self?.collectionView.selectItem(at: indexPathToSelect, animated: false, scrollPosition: UICollectionView.ScrollPosition(rawValue: 0))
+                        }
                     })
+                    self.updateSelectionCount()
+                }
+                if self.pickerConfig.assetsIsScrollToBottom {
+                    let item = self.collectionView(self.collectionView, numberOfItemsInSection: 0) - 1
+                    let lastItemIndex = NSIndexPath(item: item, section: 0)
+                    self.collectionView.scrollToItem(at: lastItemIndex as IndexPath, at: .bottom, animated: false)
                 } else {
-                    self.collectionView.reloadData()
-                    if self.pickerConfig.assetsIsScrollToBottom {
-                        let item = self.collectionView(self.collectionView, numberOfItemsInSection: 0) - 1
-                        let lastItemIndex = NSIndexPath(item: item, section: 0)
-                        self.collectionView.scrollToItem(at: lastItemIndex as IndexPath, at: .bottom, animated: false)
-                    } else {
-                        self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
-                    }
+                    self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
                 }
                 self.loadingPlaceholderView.isHidden = true
                 self.loadingActivityIndicatorView.stopAnimating()
@@ -597,7 +591,7 @@ extension AssetsPhotoViewController: UIGestureRecognizerDelegate {
 // MARK: - UIScrollViewDelegate
 extension AssetsPhotoViewController: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        logi("contentOffset: \(scrollView.contentOffset)")
+        //logi("contentOffset: \(scrollView.contentOffset)")
     }
 }
 
