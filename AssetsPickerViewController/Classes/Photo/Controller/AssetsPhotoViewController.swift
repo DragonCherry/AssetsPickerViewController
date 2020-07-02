@@ -837,7 +837,8 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("updatedAssets at: \(indexPaths)")
-        collectionView.reloadItems(at: indexPaths)
+        let indexPathsToReload = collectionView.indexPathsForVisibleItems.filter { indexPaths.contains($0) }
+        collectionView.reloadItems(at: indexPathsToReload)
         updateNavigationStatus()
         updateFooter()
     }
