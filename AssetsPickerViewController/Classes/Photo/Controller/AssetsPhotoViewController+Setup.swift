@@ -12,12 +12,13 @@ extension AssetsPhotoViewController {
     
     func setupCommon() {
         view.backgroundColor = .ap_background
+        cameraPicker.delegate = self
     }
     
     func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
 
-        navigationItem.rightBarButtonItems = [doneButtonItem/*, takeButtonItem*/]
+        navigationItem.rightBarButtonItems = [doneButtonItem, takeButtonItem]
         doneButtonItem.isEnabled = false
     }
     
@@ -70,30 +71,13 @@ extension AssetsPhotoViewController {
         manager.subscribe(subscriber: self)
         manager.fetchAlbums { _ in
             manager.fetchAssets() { [weak self] photos in
-                
                 guard let `self` = self else { return }
-                
                 self.updateEmptyView(count: photos.count)
-                self.title = self.title(forAlbum: manager.selectedAlbum)
+                self.updateNavigationStatus()
                 self.collectionView.reloadData()
-                
-                if self.selectedArray.count > 0 {
-                    // initialize preselected assets
-                    self.selectedArray.forEach({ [weak self] (asset) in
-                        if let row = photos.firstIndex(of: asset) {
-                            let indexPathToSelect = IndexPath(row: row, section: 0)
-                            self?.collectionView.selectItem(at: indexPathToSelect, animated: false, scrollPosition: UICollectionView.ScrollPosition(rawValue: 0))
-                        }
-                    })
-                    self.updateSelectionCount()
-                }
-                if self.pickerConfig.assetsIsScrollToBottom {
-                    let item = self.collectionView(self.collectionView, numberOfItemsInSection: 0) - 1
-                    let lastItemIndex = NSIndexPath(item: item, section: 0)
-                    self.collectionView.scrollToItem(at: lastItemIndex as IndexPath, at: .bottom, animated: false)
-                } else {
-                    self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
-                }
+                self.updateSelectedCells()
+                self.scrollToLastItemIfNeeded()
+                // hide loading
                 self.loadingPlaceholderView.isHidden = true
                 self.loadingActivityIndicatorView.stopAnimating()
             }

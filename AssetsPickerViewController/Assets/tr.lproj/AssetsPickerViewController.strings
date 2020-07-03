@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "Vazgeç";
 "Done" = "Bitti";
+"Photo" = "Fotoğraf";
+"Video" = "Vidyo";
 
 /* Albums */
 "Title_Albums" = "Albümler";

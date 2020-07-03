@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "Cancelar";
 "Done" = "Hecho";
+"Photo" = "foto";
+"Video" = "vídeo";
 
 /* Albums */
 "Title_Albums" = "Álbumes";

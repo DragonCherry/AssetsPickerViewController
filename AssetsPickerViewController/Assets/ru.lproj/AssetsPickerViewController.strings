@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "Отмена";
 "Done" = "Готово";
+"Photo" = "фотография";
+"Video" = "видео";
 
 /* Albums */
 "Title_Albums" = "Альбомы";

@@ -99,7 +99,7 @@ open class AssetsAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.height.equalTo(countLabel.font.pointSize + 2)
-            make.bottom.equalTo(snp.bottom).offset(8)
+            //make.bottom.equalTo(snp.bottom).offset(8)
         }
     }
 }

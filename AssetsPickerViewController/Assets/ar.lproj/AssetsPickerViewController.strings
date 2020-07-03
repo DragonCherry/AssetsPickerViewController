@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "إلغاء";
 "Done" = "تم";
+"Photo" = "صور";
+"Video" = "فيديو";
 
 /* Albums */
 "Title_Albums" = "ألبومات";

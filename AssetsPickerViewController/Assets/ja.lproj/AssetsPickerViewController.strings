@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "キャンセル";
 "Done" = "完了";
+"Photo" = "写真";
+"Video" = "動画";
 
 /* Albums */
 "Title_Albums" = "アルバム";

@@ -338,10 +338,10 @@ extension AssetsManager {
         }
     }
     
-    open func selectAsync(album newAlbum: PHAssetCollection, complection: @escaping (Bool) -> Void) {
+    open func selectAsync(album newAlbum: PHAssetCollection, completion: @escaping (Bool) -> Void) {
         if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
             logi("Selected same album.")
-            complection(false)
+            completion(false)
         }
         self.selectedAlbum = newAlbum
         if let fetchResult = fetchMap[newAlbum.localIdentifier] {
@@ -349,11 +349,11 @@ extension AssetsManager {
                 let indexSet = IndexSet(0..<fetchResult.count)
                 self?.assetArray = fetchResult.objects(at: indexSet)
                 DispatchQueue.main.async {
-                    complection(true)
+                    completion(true)
                 }
             }
         } else {
-            complection(false)
+            completion(false)
         }
     }
 }

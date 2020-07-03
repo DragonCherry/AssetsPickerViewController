@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "取消";
 "Done" = "完成";
+"Photo" = "照片";
+"Video" = "影片";
 
 /* Albums */
 "Title_Albums" = "相册";

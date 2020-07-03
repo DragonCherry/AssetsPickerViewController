@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "취소";
 "Done" = "완료";
+"Photo" = "사진";
+"Video" = "비디오";
 
 /* Albums */
 "Title_Albums" = "앨범";

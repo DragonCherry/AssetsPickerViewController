@@ -22,6 +22,8 @@ open class AssetsPhotoViewController: UIViewController {
     // MARK: Properties
     var pickerConfig: AssetsPickerConfig!
     var previewing: UIViewControllerPreviewing?
+    let cameraPicker = AssetsPickerManager()
+    var newlySavedIdentifier: String?
     
     let cellReuseIdentifier: String = UUID().uuidString
     let footerReuseIdentifier: String = UUID().uuidString
@@ -77,11 +79,12 @@ open class AssetsPhotoViewController: UIViewController {
         
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.allowsMultipleSelection = true
+        view.allowsSelection = true
         view.alwaysBounceVertical = true
         view.register(self.pickerConfig.assetCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsPhotoFooterView.classForCoder(), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerReuseIdentifier)
         view.contentInset = UIEdgeInsets(top: 1, left: 0, bottom: 0, right: 0)
-        view.backgroundColor = UIColor.clear
+        view.backgroundColor = .clear
         view.dataSource = self
         view.delegate = self
         view.remembersLastFocusedIndexPath = true

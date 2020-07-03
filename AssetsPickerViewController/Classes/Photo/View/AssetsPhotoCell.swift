@@ -79,6 +79,7 @@ open class AssetsPhotoCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     private let overlay: AssetsPhotoCellOverlay = {
         let overlay = AssetsPhotoCellOverlay()
         overlay.isHidden = true
+        overlay.isUserInteractionEnabled = false
         return overlay
     }()
     

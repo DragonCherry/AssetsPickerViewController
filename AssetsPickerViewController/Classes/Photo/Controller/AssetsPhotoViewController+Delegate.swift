@@ -19,10 +19,7 @@ extension AssetsPhotoViewController {
     }
     
     @objc func pressedCamera(button: UIBarButtonItem) {
-//        navigationController?.dismiss(animated: true, completion: {
-//            self.delegate?.assetsPicker?(controller: self.picker, didDismissByCancelling: false)
-//        })
-//        delegate?.assetsPicker(controller: picker, selected: selectedArray)
+        cameraPicker.requestTake(parent: self)
     }
     
     @objc func pressedDone(button: UIBarButtonItem) {
@@ -73,7 +70,8 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let asset = AssetsManager.shared.assetArray[indexPath.row]
-        select(asset: asset, at: indexPath)
+        select(at: indexPath)
+        updateCount(at: indexPath)
         updateNavigationStatus()
         delegate?.assetsPicker?(controller: picker, didSelect: asset, at: indexPath)
     }
@@ -91,6 +89,11 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
         deselect(asset: asset, at: indexPath)
         updateNavigationStatus()
         delegate?.assetsPicker?(controller: picker, didDeselect: asset, at: indexPath)
+    }
+    
+    @available(iOS 13.0, *)
+    public func collectionView(_ collectionView: UICollectionView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+        return true
     }
 }
 
@@ -130,9 +133,14 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         
         if let selectedAsset = selectedMap[asset.localIdentifier] {
             // update cell UI as selected
+            photoCell.isSelected = true
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
             if let targetIndex = selectedArray.firstIndex(of: selectedAsset) {
                 photoCell.count = targetIndex + 1
             }
+        } else {
+            photoCell.isSelected = false
+            collectionView.deselectItem(at: indexPath, animated: false)
         }
         
         cancelFetching(at: indexPath)
@@ -215,7 +223,7 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
 // MARK - UIViewControllerPreviewingDelegate
 @available(iOS 9.0, *)
 extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
-    @available(iOS 9.0, *)
+    
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         logi("\(location)")
         guard let pressingIndexPath = collectionView.indexPathForItem(at: location) else { return nil }
@@ -226,7 +234,6 @@ extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
         return previewController
     }
     
-    @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         logi("viewControllerToCommit: \(type(of: viewControllerToCommit))")
     }

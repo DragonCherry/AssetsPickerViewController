@@ -46,7 +46,26 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("insertedAssets at: \(indexPaths)")
+        
+        var indexPathToSelect: IndexPath?
+        
+        if let newlySavedIdentifier = self.newlySavedIdentifier {
+            self.newlySavedIdentifier = nil
+            
+            if let savedAssetEntry = AssetsManager.shared.assetArray.enumerated().first(where: { $0.element.localIdentifier == newlySavedIdentifier }) {
+                let ip = IndexPath(row: savedAssetEntry.offset, section: 0)
+                select(at: ip)
+                collectionView.selectItem(at: ip, animated: false, scrollPosition: .init())
+                indexPathToSelect = ip
+            }
+        }
+        
         collectionView.insertItems(at: indexPaths)
+        if let indexPathToSelect = indexPathToSelect {
+            UIView.setAnimationsEnabled(false)
+            collectionView.reloadItems(at: [indexPathToSelect])
+            UIView.setAnimationsEnabled(true)
+        }
         updateFooter()
     }
     
@@ -70,5 +89,11 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         collectionView.reloadItems(at: indexPathsToReload)
         updateNavigationStatus()
         updateFooter()
+    }
+}
+
+extension AssetsPhotoViewController: AssetsPickerManagerDelegate {
+    func assetsPickerManagerSavedAsset(identifier: String) {
+        self.newlySavedIdentifier = identifier
     }
 }
