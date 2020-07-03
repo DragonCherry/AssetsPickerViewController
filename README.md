@@ -94,10 +94,11 @@ Customizable Album & Asset Layout
 
 - supports dark mode from iOS 13
 
+- takes and auto-selectes photo or video took inside picker
 
 ## Features To-do
 
-- single select mode with crop
+- multiple selection by dragging cells
 
 
 ## Basic Usage
