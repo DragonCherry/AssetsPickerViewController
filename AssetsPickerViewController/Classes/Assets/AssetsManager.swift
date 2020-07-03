@@ -202,12 +202,13 @@ extension AssetsManager {
         return sortedAlbumsArray[indexPath.section][indexPath.row].localizedTitle
     }
     
-    open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
-        if let fetchResult = fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier] {
-            if let asset = pickerConfig.assetsIsScrollToBottom == true ? fetchResult.lastObject : fetchResult.firstObject {
+    open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) -> PHImageRequestID? {
+        let album = sortedAlbumsArray[indexPath.section][indexPath.row]
+        if let fetchResult = fetchMap[album.localIdentifier] {
+            if let asset = pickerConfig.assetsIsScrollToBottom ? fetchResult.lastObject : fetchResult.firstObject {
                 let options = PHImageRequestOptions()
                 options.isNetworkAccessAllowed = true
-                imageManager.requestImage(
+                return imageManager.requestImage(
                     for: asset,
                     targetSize: size,
                     contentMode: .aspectFill,
@@ -227,6 +228,7 @@ extension AssetsManager {
         } else {
             completion(nil)
         }
+        return nil
     }
     
     @discardableResult
@@ -338,10 +340,10 @@ extension AssetsManager {
         }
     }
     
-    open func selectAsync(album newAlbum: PHAssetCollection, complection: @escaping (Bool) -> Void) {
+    open func selectAsync(album newAlbum: PHAssetCollection, completion: @escaping (Bool) -> Void) {
         if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
             logi("Selected same album.")
-            complection(false)
+            completion(false)
         }
         self.selectedAlbum = newAlbum
         if let fetchResult = fetchMap[newAlbum.localIdentifier] {
@@ -349,11 +351,11 @@ extension AssetsManager {
                 let indexSet = IndexSet(0..<fetchResult.count)
                 self?.assetArray = fetchResult.objects(at: indexSet)
                 DispatchQueue.main.async {
-                    complection(true)
+                    completion(true)
                 }
             }
         } else {
-            complection(false)
+            completion(false)
         }
     }
 }

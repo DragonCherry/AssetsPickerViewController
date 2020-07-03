@@ -26,7 +26,7 @@ open class AssetsPickerViewController: UINavigationController {
     
     @objc open weak var pickerDelegate: AssetsPickerViewControllerDelegate?
     open var selectedAssets: [PHAsset] {
-        return photoViewController.selectedAssets
+        return photoViewController.selectedArray
     }
     
     open var isShowLog: Bool = false {

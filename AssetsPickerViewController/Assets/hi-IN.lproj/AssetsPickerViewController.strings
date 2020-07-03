@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "रद्द करें";
 "Done" = "पूर्ण हुआ";
+"Photo" = "चित्र";
+"Video" = "वीडियो";
 
 /* Albums */
 "Title_Albums" = "एल्बम";

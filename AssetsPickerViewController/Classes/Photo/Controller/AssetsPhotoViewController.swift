@@ -13,7 +13,7 @@ import Device
 import SnapKit
 
 // MARK: - AssetsPhotoViewController
-open class AssetsPhotoViewController: UIViewController {
+open class AssetsPhotoViewController: UIViewController, ManageFetching {
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         return AssetsPickerConfig.statusBarStyle
@@ -22,11 +22,13 @@ open class AssetsPhotoViewController: UIViewController {
     // MARK: Properties
     var pickerConfig: AssetsPickerConfig!
     var previewing: UIViewControllerPreviewing?
+    let cameraPicker = AssetsPickerManager()
+    var newlySavedIdentifier: String?
     
     let cellReuseIdentifier: String = UUID().uuidString
     let footerReuseIdentifier: String = UUID().uuidString
     
-    var requestIdMap = [IndexPath: PHImageRequestID]()
+    var requestMap = [IndexPath: PHImageRequestID]()
     
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
@@ -76,12 +78,13 @@ open class AssetsPhotoViewController: UIViewController {
         layout.scrollDirection = .vertical
         
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.allowsMultipleSelection = true
+        view.allowsMultipleSelection = false
+        view.allowsSelection = false
         view.alwaysBounceVertical = true
         view.register(self.pickerConfig.assetCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsPhotoFooterView.classForCoder(), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerReuseIdentifier)
         view.contentInset = UIEdgeInsets(top: 1, left: 0, bottom: 0, right: 0)
-        view.backgroundColor = UIColor.clear
+        view.backgroundColor = .clear
         view.dataSource = self
         view.delegate = self
         view.remembersLastFocusedIndexPath = true
@@ -110,10 +113,6 @@ open class AssetsPhotoViewController: UIViewController {
         }
     }()
     lazy var loadingPlaceholderView: UIView = UIView()
-    
-    var selectedAssets: [PHAsset] {
-        return selectedArray
-    }
     
     // MARK: Lifecycle Methods
     required public init?(coder aDecoder: NSCoder) {
@@ -194,13 +193,16 @@ open class AssetsPhotoViewController: UIViewController {
     }
     
     open func deselectAll() {
-        guard let indexPaths = collectionView.indexPathsForSelectedItems else { return }
-        
-        indexPaths.forEach({ [weak self] (indexPath) in
-            let asset = AssetsManager.shared.assetArray[indexPath.row]
-            self?.deselect(asset: asset, at: indexPath)
-            self?.delegate?.assetsPicker?(controller: picker, didDeselect: asset, at: indexPath)
-        })
+        var indexPaths = [IndexPath]()
+        for selectedAsset in selectedArray {
+            if let row = AssetsManager.shared.assetArray.firstIndex(of: selectedAsset) {
+                let indexPath = IndexPath(row: row, section: 0)
+                deselectCell(at: indexPath)
+                delegate?.assetsPicker?(controller: picker, didDeselect: selectedAsset, at: indexPath)
+                indexPaths.append(indexPath)
+            }
+        }
+        updateSelectionCount()
         updateNavigationStatus()
         collectionView.reloadItems(at: indexPaths)
     }
@@ -257,33 +259,3 @@ open class AssetsPhotoViewController: UIViewController {
         logd("Released \(type(of: self))")
     }
 }
-
-// MARK: - Image Fetch Utility
-extension AssetsPhotoViewController {
-    
-    func cancelFetching(at indexPath: IndexPath) {
-        if let requestId = requestIdMap[indexPath] {
-            requestIdMap.removeValue(forKey: indexPath)
-            AssetsManager.shared.cancelRequest(requestId: requestId)
-        }
-    }
-    
-    func registerFetching(requestId: PHImageRequestID, at indexPath: IndexPath) {
-        requestIdMap[indexPath] = requestId
-    }
-    
-    func removeFetching(indexPath: IndexPath) {
-        if let _ = requestIdMap[indexPath] {
-            requestIdMap.removeValue(forKey: indexPath)
-        }
-    }
-    
-    func isFetching(indexPath: IndexPath) -> Bool {
-        if let _ = requestIdMap[indexPath] {
-            return true
-        } else {
-            return false
-        }
-    }
-}
-

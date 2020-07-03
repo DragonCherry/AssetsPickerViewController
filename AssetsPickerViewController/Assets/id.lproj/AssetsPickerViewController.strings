@@ -2,6 +2,8 @@
 /* Common */
 "Cancel" = "Batal";
 "Done" = "Selesai";
+"Photo" = "Foto";
+"Video" = "Video";
 
 /* Albums */
 "Title_Albums" = "Albums";

@@ -46,7 +46,30 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("insertedAssets at: \(indexPaths)")
+        
+        var indexPathToSelect: IndexPath?
+        
+        if let newlySavedIdentifier = self.newlySavedIdentifier {
+            self.newlySavedIdentifier = nil
+            guard pickerConfig.assetIsAutoSelectAssetFromCamera else { return }
+            guard let savedAssetEntry = AssetsManager.shared.assetArray.enumerated().first(where: { $0.element.localIdentifier == newlySavedIdentifier }) else { return }
+            let ip = IndexPath(row: savedAssetEntry.offset, section: 0)
+            indexPathToSelect = ip
+            if selectedArray.count < pickerConfig.assetsMaximumSelectionCount {
+                select(at: ip)
+            } else {
+                if pickerConfig.assetIsForcedSelectAssetFromCamera {
+                    deselectOldestIfNeeded()
+                    select(at: ip)
+                }
+            }
+        }
+        
         collectionView.insertItems(at: indexPaths)
+        if let indexPathToSelect = indexPathToSelect {
+            collectionView.scrollToItem(at: indexPathToSelect, at: .bottom, animated: false)
+        }
+        updateNavigationStatus()
         updateFooter()
     }
     
@@ -70,5 +93,11 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         collectionView.reloadItems(at: indexPathsToReload)
         updateNavigationStatus()
         updateFooter()
+    }
+}
+
+extension AssetsPhotoViewController: AssetsPickerManagerDelegate {
+    func assetsPickerManagerSavedAsset(identifier: String) {
+        self.newlySavedIdentifier = identifier
     }
 }

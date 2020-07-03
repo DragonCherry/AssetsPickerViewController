@@ -178,7 +178,7 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
             var sortedUpdatedAlbums = [PHAssetCollection]()
             
             for updatedIndex in updatedIndexes {
-                let updatedAlbum = fetchedAlbumsArray[section][updatedIndex.row]
+                let updatedAlbum = oldSortedAlbums[updatedIndex.row]
                 if let sortedIndexPath = indexPath(forAlbum: updatedAlbum, inAlbumsArray: sortedAlbumsArray) {
                     sortedUpdatedIndexPaths.append(sortedIndexPath)
                     sortedUpdatedAlbums.append(updatedAlbum)
