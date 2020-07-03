@@ -17,8 +17,11 @@ extension AssetsPhotoViewController {
     
     func setupBarButtonItems() {
         navigationItem.leftBarButtonItem = cancelButtonItem
-
-        navigationItem.rightBarButtonItems = [doneButtonItem, takeButtonItem]
+        if pickerConfig.assetIsShowCameraButton {
+            navigationItem.rightBarButtonItems = [doneButtonItem, takeButtonItem]
+        } else {
+            navigationItem.rightBarButtonItems = [doneButtonItem]
+        }
         doneButtonItem.isEnabled = false
     }
     
@@ -75,7 +78,6 @@ extension AssetsPhotoViewController {
                 self.updateEmptyView(count: photos.count)
                 self.updateNavigationStatus()
                 self.collectionView.reloadData()
-                self.updateSelectedCells()
                 self.scrollToLastItemIfNeeded()
                 // hide loading
                 self.loadingPlaceholderView.isHidden = true

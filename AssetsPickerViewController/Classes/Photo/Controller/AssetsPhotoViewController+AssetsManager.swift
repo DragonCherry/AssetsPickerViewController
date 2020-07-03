@@ -51,21 +51,25 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
         
         if let newlySavedIdentifier = self.newlySavedIdentifier {
             self.newlySavedIdentifier = nil
-            
-            if let savedAssetEntry = AssetsManager.shared.assetArray.enumerated().first(where: { $0.element.localIdentifier == newlySavedIdentifier }) {
-                let ip = IndexPath(row: savedAssetEntry.offset, section: 0)
+            guard pickerConfig.assetIsAutoSelectAssetFromCamera else { return }
+            guard let savedAssetEntry = AssetsManager.shared.assetArray.enumerated().first(where: { $0.element.localIdentifier == newlySavedIdentifier }) else { return }
+            let ip = IndexPath(row: savedAssetEntry.offset, section: 0)
+            indexPathToSelect = ip
+            if selectedArray.count < pickerConfig.assetsMaximumSelectionCount {
                 select(at: ip)
-                collectionView.selectItem(at: ip, animated: false, scrollPosition: .init())
-                indexPathToSelect = ip
+            } else {
+                if pickerConfig.assetIsForcedSelectAssetFromCamera {
+                    deselectOldestIfNeeded()
+                    select(at: ip)
+                }
             }
         }
         
         collectionView.insertItems(at: indexPaths)
         if let indexPathToSelect = indexPathToSelect {
-            UIView.setAnimationsEnabled(false)
-            collectionView.reloadItems(at: [indexPathToSelect])
-            UIView.setAnimationsEnabled(true)
+            collectionView.scrollToItem(at: indexPathToSelect, at: .bottom, animated: false)
         }
+        updateNavigationStatus()
         updateFooter()
     }
     

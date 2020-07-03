@@ -65,7 +65,9 @@ class CustomAssetCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     var isVideo: Bool = false {
-        didSet {}
+        didSet {
+            durationLabel.isHidden = !isVideo
+        }
     }
     
     override var isSelected: Bool {
@@ -85,7 +87,15 @@ class CustomAssetCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     }
     
     var duration: TimeInterval = 0 {
-        didSet {}
+        didSet {
+            let hour = Int(duration / 3600)
+            let min = Int((duration / 60).truncatingRemainder(dividingBy: 60))
+            let sec = Int(duration.truncatingRemainder(dividingBy: 60))
+            var durationString = hour > 0 ? "\(hour)" : ""
+            durationString.append(min > 0 ? "\(min):" : "0:")
+            durationString.append(String(format: "%02d", sec))
+            durationLabel.text = durationString
+        }
     }
     
     // MARK: - At your service
@@ -94,6 +104,14 @@ class CustomAssetCell: UICollectionViewCell, AssetsPhotoCellProtocol {
         let view = CustomAssetCellOverlay()
         view.isHidden = true
         return view
+    }()
+    
+    private let durationLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.textAlignment = .right
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        return label
     }()
     
     required init?(coder aDecoder: NSCoder) {
@@ -108,12 +126,20 @@ class CustomAssetCell: UICollectionViewCell, AssetsPhotoCellProtocol {
     private func commonInit() {
         contentView.addSubview(imageView)
         contentView.addSubview(overlay)
+        contentView.addSubview(durationLabel)
         
         imageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
         overlay.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+        }
+        
+        durationLabel.snp.makeConstraints { (make) in
+            make.height.equalTo(durationLabel.font.pointSize + 10)
+            make.leading.equalToSuperview().offset(8)
+            make.trailing.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview()
         }
     }
 }
@@ -126,7 +152,7 @@ class CustomAssetCellController: CommonExampleController {
         pickerConfig.assetCellType = CustomAssetCell.classForCoder()
         pickerConfig.assetPortraitColumnCount = 3
         pickerConfig.assetLandscapeColumnCount = 5
-        
+        pickerConfig.assetsMaximumSelectionCount = 10
         let picker = AssetsPickerViewController()
         picker.pickerConfig = pickerConfig
         picker.pickerDelegate = self

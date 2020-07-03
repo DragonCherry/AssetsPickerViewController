@@ -85,6 +85,13 @@ open class AssetsPickerConfig {
     open var assetsMaximumSelectionCount: Int = Int.max
     open var assetsIsScrollToBottom: Bool = true
     
+    // MARK: Camera
+    open var assetIsShowCameraButton: Bool = true
+    /// select asset took from camera automatically
+    open var assetIsAutoSelectAssetFromCamera: Bool = true
+    /// forced to select asset took from camera by deselecting first item automatically if selection count exceeds assetsMaximumSelectionCount
+    open var assetIsForcedSelectAssetFromCamera: Bool = true
+    
     // MARK: Fetch
     open var assetFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
     

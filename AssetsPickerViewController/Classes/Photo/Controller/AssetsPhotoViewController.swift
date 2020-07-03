@@ -78,8 +78,8 @@ open class AssetsPhotoViewController: UIViewController {
         layout.scrollDirection = .vertical
         
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.allowsMultipleSelection = true
-        view.allowsSelection = true
+        view.allowsMultipleSelection = false
+        view.allowsSelection = false
         view.alwaysBounceVertical = true
         view.register(self.pickerConfig.assetCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsPhotoFooterView.classForCoder(), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerReuseIdentifier)
@@ -113,10 +113,6 @@ open class AssetsPhotoViewController: UIViewController {
         }
     }()
     lazy var loadingPlaceholderView: UIView = UIView()
-    
-    var selectedAssets: [PHAsset] {
-        return selectedArray
-    }
     
     // MARK: Lifecycle Methods
     required public init?(coder aDecoder: NSCoder) {
@@ -197,13 +193,16 @@ open class AssetsPhotoViewController: UIViewController {
     }
     
     open func deselectAll() {
-        guard let indexPaths = collectionView.indexPathsForSelectedItems else { return }
-        
-        indexPaths.forEach({ [weak self] (indexPath) in
-            let asset = AssetsManager.shared.assetArray[indexPath.row]
-            self?.deselect(asset: asset, at: indexPath)
-            self?.delegate?.assetsPicker?(controller: picker, didDeselect: asset, at: indexPath)
-        })
+        var indexPaths = [IndexPath]()
+        for selectedAsset in selectedArray {
+            if let row = AssetsManager.shared.assetArray.firstIndex(of: selectedAsset) {
+                let indexPath = IndexPath(row: row, section: 0)
+                deselectCell(at: indexPath)
+                delegate?.assetsPicker?(controller: picker, didDeselect: selectedAsset, at: indexPath)
+                indexPaths.append(indexPath)
+            }
+        }
+        updateSelectionCount()
         updateNavigationStatus()
         collectionView.reloadItems(at: indexPaths)
     }
@@ -260,33 +259,3 @@ open class AssetsPhotoViewController: UIViewController {
         logd("Released \(type(of: self))")
     }
 }
-
-// MARK: - Image Fetch Utility
-extension AssetsPhotoViewController {
-    
-    func cancelFetching(at indexPath: IndexPath) {
-        if let requestId = requestIdMap[indexPath] {
-            requestIdMap.removeValue(forKey: indexPath)
-            AssetsManager.shared.cancelRequest(requestId: requestId)
-        }
-    }
-    
-    func registerFetching(requestId: PHImageRequestID, at indexPath: IndexPath) {
-        requestIdMap[indexPath] = requestId
-    }
-    
-    func removeFetching(indexPath: IndexPath) {
-        if let _ = requestIdMap[indexPath] {
-            requestIdMap.removeValue(forKey: indexPath)
-        }
-    }
-    
-    func isFetching(indexPath: IndexPath) -> Bool {
-        if let _ = requestIdMap[indexPath] {
-            return true
-        } else {
-            return false
-        }
-    }
-}
-

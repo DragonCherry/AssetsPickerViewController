@@ -44,31 +44,26 @@ extension AssetsPhotoViewController {
         flowLayout.minimumInteritemSpacing = self.isPortrait ? pickerConfig.assetPortraitInteritemSpace : pickerConfig.assetLandscapeInteritemSpace
     }
     
-    func setSelectedAssets(assets: [PHAsset]) {
-        selectedArray.removeAll()
-        selectedMap.removeAll()
-        
-        _ = assets.filter { AssetsManager.shared.isExist(asset: $0) }
-            .map { [weak self] asset in
-                guard let `self` = self else { return }
-                self.selectedArray.append(asset)
-                self.selectedMap.updateValue(asset, forKey: asset.localIdentifier)
-        }
+    func selectCell(at indexPath: IndexPath) {
+        guard var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else { return }
+        photoCell.isSelected = true
+//        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
+//        checkInconsistencyForSelection()
     }
     
-    func updateSelectedCells() {
-        guard selectedArray.isEmpty else { return }
-        
-        // initialize preselected assets
-        selectedArray.forEach({ [weak self] (asset) in
-            if let row = AssetsManager.shared.assetArray.firstIndex(of: asset) {
-                let indexPathToSelect = IndexPath(row: row, section: 0)
-                self?.select(at: indexPathToSelect)
-//                self?.collectionView.selectItem(at: indexPathToSelect, animated: false, scrollPosition: .init())
-//                self?.collectionView.collectionViewLayout.invalidateLayout()
-            }
-        })
-        updateSelectionCount()
+    func deselectCell(at indexPath: IndexPath) {
+        guard var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else { return }
+        photoCell.isSelected = false
+//        collectionView.deselectItem(at: indexPath, animated: false)
+//        checkInconsistencyForSelection()
+    }
+    
+    func deselectOldestIfNeeded() {
+        if selectedArray.count >= pickerConfig.assetsMaximumSelectionCount, let firstSelectedAsset = selectedArray.first, let indexToDeselect = AssetsManager.shared.assetArray.firstIndex(of: firstSelectedAsset) {
+            let indexPathToDeselect = IndexPath(row: indexToDeselect, section: 0)
+            deselect(at: indexPathToDeselect)
+            deselectCell(at: indexPathToDeselect)
+        }
     }
     
     func select(album: PHAssetCollection) {
@@ -80,23 +75,12 @@ extension AssetsPhotoViewController {
             self.updateNavigationStatus()
             self.collectionView.performBatchUpdates({ [weak self] in
                 self?.collectionView.reloadData()
-                self?.updateSelectedCells()
             }) { [weak self] (_) in
                 self?.scrollToLastItemIfNeeded()
                 self?.loadingPlaceholderView.isHidden = true
                 self?.loadingActivityIndicatorView.stopAnimating()
             }
         })
-    }
-    
-    func select(at indexPath: IndexPath) {
-        let manager = AssetsManager.shared
-        guard indexPath.row < manager.assetArray.count else { return }
-        let asset = manager.assetArray[indexPath.row]
-        if let _ = selectedMap[asset.localIdentifier] {} else {
-            selectedArray.append(asset)
-            selectedMap[asset.localIdentifier] = asset
-        }
     }
     
     func updateCount(at indexPath: IndexPath) {
@@ -108,20 +92,6 @@ extension AssetsPhotoViewController {
         photoCell.count = selectedArray.count
     }
     
-    func deselect(asset: PHAsset, at indexPath: IndexPath) {
-        guard let targetAsset = selectedMap[asset.localIdentifier] else {
-            logw("Invalid status.")
-            return
-        }
-        guard let targetIndex = selectedArray.firstIndex(of: targetAsset) else {
-            logw("Invalid status.")
-            return
-        }
-        selectedArray.remove(at: targetIndex)
-        selectedMap.removeValue(forKey: targetAsset.localIdentifier)
-        
-        updateSelectionCount()
-    }
     
     func scrollToLastItemIfNeeded() {
         let assets = AssetsManager.shared.assetArray
@@ -135,12 +105,13 @@ extension AssetsPhotoViewController {
     
     func updateSelectionCount() {
         let visibleIndexPaths = collectionView.indexPathsForVisibleItems
+        let assets = AssetsManager.shared.assetArray
         for visibleIndexPath in visibleIndexPaths {
-            guard AssetsManager.shared.assetArray.count > visibleIndexPath.row else {
-                logw("Referred wrong index\(visibleIndexPath.row) while asset count is \(AssetsManager.shared.assetArray.count).")
+            guard assets.count > visibleIndexPath.row else {
+                loge("Referred wrong index\(visibleIndexPath.row) while asset count is \(assets.count).")
                 break
             }
-            if let selectedAsset = selectedMap[AssetsManager.shared.assetArray[visibleIndexPath.row].localIdentifier], var photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCellProtocol {
+            if let selectedAsset = selectedMap[assets[visibleIndexPath.row].localIdentifier], var photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCellProtocol {
                 if let selectedIndex = selectedArray.firstIndex(of: selectedAsset) {
                     photoCell.count = selectedIndex + 1
                 }
