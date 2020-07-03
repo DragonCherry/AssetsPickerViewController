@@ -63,7 +63,7 @@ open class AssetsPhotoViewController: UIViewController {
     
     var selectedArray = [PHAsset]()
     var selectedMap = [String: PHAsset]()
-    
+    var isDragSelectionEnabled: Bool = false
     var didSetInitialPosition: Bool = false
     
     var isPortrait: Bool = true
@@ -257,5 +257,14 @@ open class AssetsPhotoViewController: UIViewController {
     
     deinit {
         logd("Released \(type(of: self))")
+    }
+}
+
+extension UICollectionView {
+    var fullyVisibleCells: [UICollectionViewCell] {
+        return self.visibleCells.filter { cell in
+            let cellRect = self.convert(cell.frame, to: self.superview)
+            return self.frame.contains(cellRect)
+        }
     }
 }

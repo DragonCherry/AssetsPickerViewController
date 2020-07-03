@@ -46,30 +46,7 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("insertedAssets at: \(indexPaths)")
-        
-        var indexPathToSelect: IndexPath?
-        
-        if let newlySavedIdentifier = self.newlySavedIdentifier {
-            self.newlySavedIdentifier = nil
-            guard pickerConfig.assetIsAutoSelectAssetFromCamera else { return }
-            guard let savedAssetEntry = AssetsManager.shared.assetArray.enumerated().first(where: { $0.element.localIdentifier == newlySavedIdentifier }) else { return }
-            let ip = IndexPath(row: savedAssetEntry.offset, section: 0)
-            indexPathToSelect = ip
-            if selectedArray.count < pickerConfig.assetsMaximumSelectionCount {
-                select(at: ip)
-            } else {
-                if pickerConfig.assetIsForcedSelectAssetFromCamera {
-                    deselectOldestIfNeeded()
-                    select(at: ip)
-                }
-            }
-        }
-        
         collectionView.insertItems(at: indexPaths)
-        if let indexPathToSelect = indexPathToSelect {
-            collectionView.scrollToItem(at: indexPathToSelect, at: .bottom, animated: false)
-        }
-        updateNavigationStatus()
         updateFooter()
     }
     
@@ -90,14 +67,68 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {
         logi("updatedAssets at: \(indexPaths)")
         let indexPathsToReload = collectionView.indexPathsForVisibleItems.filter { indexPaths.contains($0) }
-        collectionView.reloadItems(at: indexPathsToReload)
-        updateNavigationStatus()
-        updateFooter()
+        
+        collectionView.isUserInteractionEnabled = false
+        selectNewlyAddedAssetIfNeeded { [weak self] (newlyaddedIndexPath) in
+            if let indexPathToReload = indexPathsToReload.first, indexPathsToReload.count == 1, newlyaddedIndexPath == indexPathToReload {
+                logd("Ignore newly added asset.")
+            } else {
+                self?.collectionView.reloadItems(at: indexPathsToReload)
+            }
+            self?.updateNavigationStatus()
+            self?.updateFooter()
+            self?.collectionView.isUserInteractionEnabled = true
+        }
     }
 }
 
 extension AssetsPhotoViewController: AssetsPickerManagerDelegate {
     func assetsPickerManagerSavedAsset(identifier: String) {
         self.newlySavedIdentifier = identifier
+    }
+}
+
+extension AssetsPhotoViewController {
+    func selectNewlyAddedAssetIfNeeded(completion: @escaping ((IndexPath?) -> Void)) {
+        var indexPathToSelect: IndexPath?
+        
+        if let newlySavedIdentifier = self.newlySavedIdentifier {
+            self.newlySavedIdentifier = nil
+            guard pickerConfig.assetIsAutoSelectAssetFromCamera else {
+                completion(nil)
+                return
+            }
+            guard let savedAssetEntry = AssetsManager.shared.assetArray.enumerated().first(where: { $0.element.localIdentifier == newlySavedIdentifier }) else {
+                completion(nil)
+                return
+            }
+            let ip = IndexPath(row: savedAssetEntry.offset, section: 0)
+            indexPathToSelect = ip
+            if selectedArray.count < pickerConfig.assetsMaximumSelectionCount {
+                select(at: ip)
+            } else {
+                if pickerConfig.assetIsForcedSelectAssetFromCamera {
+                    select(at: ip)
+                    deselectOldestIfNeeded(isForced: true)
+                    updateSelectionCount()
+                }
+            }
+        }
+        if let indexPathToSelect = indexPathToSelect {
+            DispatchQueue.main.asyncAfter(deadline: .now()) { [weak self] in
+                guard let `self` = self else { return }
+                self.selectCell(at: indexPathToSelect)
+                if let addedCell = self.collectionView.cellForItem(at: indexPathToSelect) {
+                    if !self.collectionView.fullyVisibleCells.contains(addedCell) {
+                        self.collectionView.scrollToItem(at: indexPathToSelect, at: .bottom, animated: false)
+                    }
+                } else {
+                    self.collectionView.scrollToItem(at: indexPathToSelect, at: .bottom, animated: false)
+                }
+                completion(indexPathToSelect)
+            }
+        } else {
+            completion(nil)
+        }
     }
 }

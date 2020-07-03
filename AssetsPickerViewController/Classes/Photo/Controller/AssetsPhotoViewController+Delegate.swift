@@ -69,6 +69,7 @@ extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
     
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         logi("\(location)")
+        guard !isDragSelectionEnabled else { return nil }
         guard let pressingIndexPath = collectionView.indexPathForItem(at: location) else { return nil }
         guard let pressingCell = collectionView.cellForItem(at: pressingIndexPath) else { return nil }
         previewingContext.sourceRect = pressingCell.frame

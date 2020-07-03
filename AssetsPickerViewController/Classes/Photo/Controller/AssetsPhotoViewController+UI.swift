@@ -47,20 +47,20 @@ extension AssetsPhotoViewController {
     func selectCell(at indexPath: IndexPath) {
         collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
         guard var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else { return }
-        photoCell.isSelected = true
+        photoCell.count = selectedArray.count
     }
     
-    func deselectCell(at indexPath: IndexPath) {
+    func deselectCell(at indexPath: IndexPath, isForced: Bool = false) {
         collectionView.deselectItem(at: indexPath, animated: false)
-        guard var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else { return }
+        guard isForced, var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else { return }
         photoCell.isSelected = false
     }
     
-    func deselectOldestIfNeeded() {
-        if selectedArray.count >= pickerConfig.assetsMaximumSelectionCount, let firstSelectedAsset = selectedArray.first, let indexToDeselect = AssetsManager.shared.assetArray.firstIndex(of: firstSelectedAsset) {
+    func deselectOldestIfNeeded(isForced: Bool = false) {
+        if selectedArray.count > pickerConfig.assetsMaximumSelectionCount, let firstSelectedAsset = selectedArray.first, let indexToDeselect = AssetsManager.shared.assetArray.firstIndex(of: firstSelectedAsset) {
             let indexPathToDeselect = IndexPath(row: indexToDeselect, section: 0)
             deselect(at: indexPathToDeselect)
-            deselectCell(at: indexPathToDeselect)
+            deselectCell(at: indexPathToDeselect, isForced: isForced)
         }
     }
     
