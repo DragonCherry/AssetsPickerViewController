@@ -25,7 +25,6 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         }
         let asset = AssetsManager.shared.assetArray[indexPath.row]
         photoCell.asset = asset
-        photoCell.isSelected = isSelected(at: indexPath)
         photoCell.isVideo = asset.mediaType == .video
         if photoCell.isVideo {
             photoCell.duration = asset.duration
@@ -34,7 +33,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        registerTapGestureIfNeeded(cell: cell, indexPath: indexPath)
+        //registerTapGestureIfNeeded(cell: cell, indexPath: indexPath)
         
         guard var photoCell = cell as? AssetsPhotoCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
@@ -49,13 +48,9 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         }
         
         if let selectedAsset = selectedMap[asset.localIdentifier] {
-            // update cell UI as selected
-            photoCell.isSelected = true
             if let targetIndex = selectedArray.firstIndex(of: selectedAsset) {
                 photoCell.count = targetIndex + 1
             }
-        } else {
-            photoCell.isSelected = false
         }
         
         fetchService.cancelFetching(at: indexPath)

@@ -45,17 +45,15 @@ extension AssetsPhotoViewController {
     }
     
     func selectCell(at indexPath: IndexPath) {
+        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
         guard var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else { return }
         photoCell.isSelected = true
-//        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
-//        checkInconsistencyForSelection()
     }
     
     func deselectCell(at indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: false)
         guard var photoCell = collectionView.cellForItem(at: indexPath) as? AssetsPhotoCellProtocol else { return }
         photoCell.isSelected = false
-//        collectionView.deselectItem(at: indexPath, animated: false)
-//        checkInconsistencyForSelection()
     }
     
     func deselectOldestIfNeeded() {

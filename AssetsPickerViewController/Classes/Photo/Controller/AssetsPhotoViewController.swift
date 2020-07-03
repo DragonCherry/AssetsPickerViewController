@@ -78,8 +78,8 @@ open class AssetsPhotoViewController: UIViewController {
         layout.scrollDirection = .vertical
         
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.allowsMultipleSelection = false
-        view.allowsSelection = false
+        view.allowsMultipleSelection = true
+        view.allowsSelection = true
         view.alwaysBounceVertical = true
         view.register(self.pickerConfig.assetCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsPhotoFooterView.classForCoder(), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerReuseIdentifier)
