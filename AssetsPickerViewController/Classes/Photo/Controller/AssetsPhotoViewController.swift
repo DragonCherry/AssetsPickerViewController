@@ -63,7 +63,7 @@ open class AssetsPhotoViewController: UIViewController {
     
     var selectedArray = [PHAsset]()
     var selectedMap = [String: PHAsset]()
-    
+    var isDragSelectionEnabled: Bool = false
     var didSetInitialPosition: Bool = false
     
     var isPortrait: Bool = true
@@ -78,8 +78,8 @@ open class AssetsPhotoViewController: UIViewController {
         layout.scrollDirection = .vertical
         
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.allowsMultipleSelection = false
-        view.allowsSelection = false
+        view.allowsMultipleSelection = true
+        view.allowsSelection = true
         view.alwaysBounceVertical = true
         view.register(self.pickerConfig.assetCellType, forCellWithReuseIdentifier: self.cellReuseIdentifier)
         view.register(AssetsPhotoFooterView.classForCoder(), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerReuseIdentifier)
@@ -257,5 +257,14 @@ open class AssetsPhotoViewController: UIViewController {
     
     deinit {
         logd("Released \(type(of: self))")
+    }
+}
+
+extension UICollectionView {
+    var fullyVisibleCells: [UICollectionViewCell] {
+        return self.visibleCells.filter { cell in
+            let cellRect = self.convert(cell.frame, to: self.superview)
+            return self.frame.contains(cellRect)
+        }
     }
 }
