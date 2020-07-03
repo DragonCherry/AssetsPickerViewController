@@ -2,7 +2,7 @@
 //  AssetsPhotoViewController+Model.swift
 //  AssetsPickerViewController
 //
-//  Created by JY on 2020/07/03.
+//  Created by DragonCherry on 2020/07/03.
 //
 
 import UIKit
