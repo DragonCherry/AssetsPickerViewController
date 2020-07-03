@@ -16,7 +16,7 @@ public protocol AssetsAlbumViewControllerDelegate {
 }
 
 // MARK: - AssetsAlbumViewController
-open class AssetsAlbumViewController: UIViewController, ManageFetching {
+open class AssetsAlbumViewController: UIViewController {
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         return AssetsPickerConfig.statusBarStyle
@@ -28,7 +28,7 @@ open class AssetsAlbumViewController: UIViewController, ManageFetching {
     
     let cellReuseIdentifier: String = UUID().uuidString
     let headerReuseIdentifier: String = UUID().uuidString
-    var requestMap = [IndexPath: PHImageRequestID]()
+    let fetchService = AssetsFetchService()
     
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
@@ -226,7 +226,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
         
         if LogConfig.isAlbumCellLogEnabled { logi("[\(indexPath.section)][\(indexPath.row)] willDisplay[\(albumCell.titleText ?? "")]") }
         
-        cancelFetching(at: indexPath)
+        fetchService.cancelFetching(at: indexPath)
         if let requestId = AssetsManager.shared.imageOfAlbum(at: indexPath, size: pickerConfig.albumCacheSize, isNeedDegraded: true, completion: { (image) in
             if let image = image {
                 if LogConfig.isAlbumImageSizeLogEnabled {
@@ -249,12 +249,12 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
                 albumCell.imageView.image = nil
             }
         }) {
-            registerFetching(requestId: requestId, at: indexPath)
+            fetchService.registerFetching(requestId: requestId, at: indexPath)
         }
     }
     
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        cancelFetching(at: indexPath)
+        fetchService.cancelFetching(at: indexPath)
     }
     
     public func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
