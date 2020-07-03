@@ -202,12 +202,13 @@ extension AssetsManager {
         return sortedAlbumsArray[indexPath.section][indexPath.row].localizedTitle
     }
     
-    open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) {
-        if let fetchResult = fetchMap[sortedAlbumsArray[indexPath.section][indexPath.row].localIdentifier] {
-            if let asset = pickerConfig.assetsIsScrollToBottom == true ? fetchResult.lastObject : fetchResult.firstObject {
+    open func imageOfAlbum(at indexPath: IndexPath, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?) -> Void)) -> PHImageRequestID? {
+        let album = sortedAlbumsArray[indexPath.section][indexPath.row]
+        if let fetchResult = fetchMap[album.localIdentifier] {
+            if let asset = pickerConfig.assetsIsScrollToBottom ? fetchResult.lastObject : fetchResult.firstObject {
                 let options = PHImageRequestOptions()
                 options.isNetworkAccessAllowed = true
-                imageManager.requestImage(
+                return imageManager.requestImage(
                     for: asset,
                     targetSize: size,
                     contentMode: .aspectFill,
@@ -227,6 +228,7 @@ extension AssetsManager {
         } else {
             completion(nil)
         }
+        return nil
     }
     
     @discardableResult

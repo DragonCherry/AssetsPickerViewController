@@ -72,36 +72,3 @@ extension AssetsPhotoViewController {
         selectedMap.removeValue(forKey: targetAsset.localIdentifier)
     }
 }
-
-
-// MARK: - Image Fetching IDs
-extension AssetsPhotoViewController {
-    
-    func cancelFetching(at indexPath: IndexPath) {
-        if let requestId = requestIdMap[indexPath] {
-            requestIdMap.removeValue(forKey: indexPath)
-            if LogConfig.isFetchLogEnabled { logd("Canceled ID: \(requestId) at: \(indexPath.row) (\(requestIdMap.count))") }
-            AssetsManager.shared.cancelRequest(requestId: requestId)
-        }
-    }
-    
-    func registerFetching(requestId: PHImageRequestID, at indexPath: IndexPath) {
-        requestIdMap[indexPath] = requestId
-        if LogConfig.isFetchLogEnabled { logd("Registered ID: \(requestId) at: \(indexPath.row) (\(requestIdMap.count))") }
-    }
-    
-    func removeFetching(indexPath: IndexPath) {
-        if let requestId = requestIdMap[indexPath] {
-            requestIdMap.removeValue(forKey: indexPath)
-            if LogConfig.isFetchLogEnabled { logd("Removed ID: \(requestId) at: \(indexPath.row) (\(requestIdMap.count))") }
-        }
-    }
-    
-    func isFetching(indexPath: IndexPath) -> Bool {
-        if let _ = requestIdMap[indexPath] {
-            return true
-        } else {
-            return false
-        }
-    }
-}

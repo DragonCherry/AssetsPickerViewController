@@ -13,7 +13,7 @@ import Device
 import SnapKit
 
 // MARK: - AssetsPhotoViewController
-open class AssetsPhotoViewController: UIViewController {
+open class AssetsPhotoViewController: UIViewController, ManageFetching {
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         return AssetsPickerConfig.statusBarStyle
@@ -28,7 +28,7 @@ open class AssetsPhotoViewController: UIViewController {
     let cellReuseIdentifier: String = UUID().uuidString
     let footerReuseIdentifier: String = UUID().uuidString
     
-    var requestIdMap = [IndexPath: PHImageRequestID]()
+    var requestMap = [IndexPath: PHImageRequestID]()
     
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(barButtonSystemItem: .cancel,

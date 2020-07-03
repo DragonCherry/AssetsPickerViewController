@@ -72,14 +72,11 @@ extension AssetsPhotoViewController {
         AssetsManager.shared.selectAsync(album: album, completion: { [weak self] (result) in
             guard let `self` = self else { return }
             guard result else { return }
+            self.collectionView.reloadData()
+            self.scrollToLastItemIfNeeded()
+            self.loadingPlaceholderView.isHidden = true
+            self.loadingActivityIndicatorView.stopAnimating()
             self.updateNavigationStatus()
-            self.collectionView.performBatchUpdates({ [weak self] in
-                self?.collectionView.reloadData()
-            }) { [weak self] (_) in
-                self?.scrollToLastItemIfNeeded()
-                self?.loadingPlaceholderView.isHidden = true
-                self?.loadingActivityIndicatorView.stopAnimating()
-            }
         })
     }
     

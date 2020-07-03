@@ -11,12 +11,9 @@ import AssetsPickerViewController
 class BasicUsageController: CommonExampleController {
     
     override func pressedPick(_ sender: Any) {
-        let pickerConfig = AssetsPickerConfig()
-        pickerConfig.assetsMaximumSelectionCount = 5
         let picker = AssetsPickerViewController()
-        picker.pickerConfig = pickerConfig
+        picker.isShowLog = true
         picker.pickerDelegate = self
-        
         present(picker, animated: true, completion: nil)
     }
 }
