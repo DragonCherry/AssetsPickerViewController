@@ -58,11 +58,11 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             photoCell.isSelected = false
         }
         
-        cancelFetching(at: indexPath)
+        fetchService.cancelFetching(at: indexPath)
         let requestId = AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { [weak self] (image, isDegraded) in
-            if self?.isFetching(indexPath: indexPath) ?? true {
+            if self?.fetchService.isFetching(indexPath: indexPath) ?? true {
                 if !isDegraded {
-                    self?.removeFetching(indexPath: indexPath)
+                    self?.fetchService.removeFetching(indexPath: indexPath)
                 }
                 UIView.transition(
                     with: photoCell.imageView,
@@ -75,7 +75,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
                 )
             }
         })
-        registerFetching(requestId: requestId, at: indexPath)
+        fetchService.registerFetching(requestId: requestId, at: indexPath)
         
         if LogConfig.isCellLogEnabled {
             logd("[\(indexPath.row)] isSelected: \(photoCell.isSelected), isVideo: \(photoCell.isVideo), count: \(photoCell.count)")
@@ -83,7 +83,7 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        cancelFetching(at: indexPath)
+        fetchService.cancelFetching(at: indexPath)
     }
     
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {

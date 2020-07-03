@@ -1,35 +1,33 @@
 //
-//  RequestFetching.swift
+//  AssetsFetchService.swift
 //  AssetsPickerViewController
 //
-//  Created by JY on 2020/07/03.
+//  Created by DragonCherry on 2020/07/03.
 //
 
 import Photos
 
 // MARK: - Image Fetching IDs
-protocol ManageFetching: NSObject {
+class AssetsFetchService {
     
-    var requestMap: [IndexPath: PHImageRequestID] { get set }
-}
+    var requestMap = [IndexPath: PHImageRequestID]()
 
-extension ManageFetching {
     func cancelFetching(at indexPath: IndexPath) {
         if let requestId = requestMap[indexPath] {
-            self.requestMap.removeValue(forKey: indexPath)
+            requestMap.removeValue(forKey: indexPath)
             if LogConfig.isFetchLogEnabled { logd("Canceled ID: \(requestId) at: \(indexPath.row) (\(self.requestMap.count))") }
             AssetsManager.shared.cancelRequest(requestId: requestId)
         }
     }
     
     func registerFetching(requestId: PHImageRequestID, at indexPath: IndexPath) {
-        self.requestMap[indexPath] = requestId
+        requestMap[indexPath] = requestId
         if LogConfig.isFetchLogEnabled { logd("Registered ID: \(requestId) at: \(indexPath.row) (\(self.requestMap.count))") }
     }
     
     func removeFetching(indexPath: IndexPath) {
         if let requestId = requestMap[indexPath] {
-            self.requestMap.removeValue(forKey: indexPath)
+            requestMap.removeValue(forKey: indexPath)
             if LogConfig.isFetchLogEnabled { logd("Removed ID: \(requestId) at: \(indexPath.row) (\(self.requestMap.count))") }
         }
     }
