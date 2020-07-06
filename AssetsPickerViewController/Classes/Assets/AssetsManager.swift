@@ -340,22 +340,23 @@ extension AssetsManager {
         }
     }
     
-    open func selectAsync(album newAlbum: PHAssetCollection, completion: @escaping (Bool) -> Void) {
+    open func selectAsync(album newAlbum: PHAssetCollection, completion: @escaping (Bool, [PHAsset]) -> Void) {
         if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
             logi("Selected same album.")
-            completion(false)
+            completion(false, [])
         }
         self.selectedAlbum = newAlbum
         if let fetchResult = fetchMap[newAlbum.localIdentifier] {
             resourceLoadingQueue.async { [weak self] in
                 let indexSet = IndexSet(0..<fetchResult.count)
-                self?.assetArray = fetchResult.objects(at: indexSet)
+                let photos = fetchResult.objects(at: indexSet)
+                self?.assetArray = photos
                 DispatchQueue.main.async {
-                    completion(true)
+                    completion(true, photos)
                 }
             }
         } else {
-            completion(false)
+            completion(false, [])
         }
     }
 }
@@ -517,12 +518,8 @@ extension AssetsManager {
             }
             
             // set default album
-            self.selectAsync(album: self.defaultAlbum ?? self.cameraRollAlbum) { [weak self] (result) in
-                guard let `self` = self else {
-                    completion?([])
-                    return
-                }
-                completion?(self.assetArray)
+            self.selectAsync(album: self.defaultAlbum ?? self.cameraRollAlbum) { result, photos in
+                completion?(photos)
             }
         })
         

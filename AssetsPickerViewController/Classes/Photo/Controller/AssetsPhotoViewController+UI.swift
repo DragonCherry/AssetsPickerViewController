@@ -67,14 +67,15 @@ extension AssetsPhotoViewController {
     func select(album: PHAssetCollection) {
         loadingPlaceholderView.isHidden = false
         loadingActivityIndicatorView.startAnimating()
-        AssetsManager.shared.selectAsync(album: album, completion: { [weak self] (result) in
+        AssetsManager.shared.selectAsync(album: album, completion: { [weak self] (result, photos) in
             guard let `self` = self else { return }
             guard result else { return }
             self.collectionView.reloadData()
             self.scrollToLastItemIfNeeded()
+            self.preselectItemsIfNeeded(photos: photos)
+            self.updateNavigationStatus()
             self.loadingPlaceholderView.isHidden = true
             self.loadingActivityIndicatorView.stopAnimating()
-            self.updateNavigationStatus()
         })
     }
     
@@ -97,7 +98,23 @@ extension AssetsPhotoViewController {
             self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
         }
     }
-    
+
+    func preselectItemsIfNeeded(photos: [PHAsset]) {
+        if selectedArray.count > 0 {
+            // initialize preselected assets
+            selectedArray.forEach({ [weak self] (asset) in
+                if let row = photos.firstIndex(of: asset) {
+                    let indexPathToSelect = IndexPath(row: row, section: 0)
+                    let scrollPosition = UICollectionView.ScrollPosition(rawValue: 0)
+                    self?.collectionView.selectItem(at: indexPathToSelect,
+                                                    animated: false,
+                                                    scrollPosition: scrollPosition)
+                }
+            })
+            updateSelectionCount()
+        }
+    }
+
     func updateSelectionCount() {
         let visibleIndexPaths = collectionView.indexPathsForVisibleItems
         let assets = AssetsManager.shared.assetArray
