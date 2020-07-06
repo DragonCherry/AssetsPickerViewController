@@ -11,6 +11,8 @@ import Photos
 // MARK: - AssetsManagerDelegate
 extension AssetsPhotoViewController: AssetsManagerDelegate {
     
+    public func assetsManagerFetched(manager: AssetsManager) {}
+    
     public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {
         if oldStatus != .authorized {
             if newStatus == .authorized {
