@@ -1,3 +1,13 @@
+
+Really sorry for my late update for following features.
+
+"Recent Changes"
+
+- takes and auto-selects photo or video took inside picker
+- multiple selection by dragging cells (from iOS 13)
+- bug fixes
+
+
 ## AssetsPickerViewController
 
 [![Version](https://img.shields.io/cocoapods/v/AssetsPickerViewController.svg?style=flat)](http://cocoapods.org/pods/AssetsPickerViewController)
@@ -94,12 +104,14 @@ Customizable Album & Asset Layout
 
 - supports dark mode from iOS 13
 
-- takes and auto-selectes photo or video took inside picker
+- takes and auto-selects photo or video took inside picker
+
+- multiple selection by dragging cells (from iOS 13)
+
 
 ## Features To-do
 
-- multiple selection by dragging cells
-
+- Cropping image before select
 
 ## Basic Usage
 
