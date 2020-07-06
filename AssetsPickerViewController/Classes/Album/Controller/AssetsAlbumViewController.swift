@@ -99,7 +99,6 @@ open class AssetsAlbumViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(loadingPlaceholderView)
         view.addSubview(loadingActivityIndicatorView)
-        view.setNeedsUpdateConstraints()
         
         AssetsManager.shared.subscribe(subscriber: self)
     }
@@ -331,6 +330,10 @@ extension AssetsAlbumViewController {
 
 // MARK: - AssetsManagerDelegate
 extension AssetsAlbumViewController: AssetsManagerDelegate {
+    
+    public func assetsManagerFetched(manager: AssetsManager) {
+        collectionView.reloadData()
+    }
     
     public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {}
     

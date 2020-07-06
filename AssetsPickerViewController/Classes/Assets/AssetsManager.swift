@@ -14,6 +14,7 @@ public protocol AssetsManagerDelegate: class {
     
     func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus)
     func assetsManager(manager: AssetsManager, reloadedAlbumsInSection section: Int)
+    func assetsManagerFetched(manager: AssetsManager)
     
     func assetsManager(manager: AssetsManager, insertedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath])
     func assetsManager(manager: AssetsManager, removedAlbums albums: [PHAssetCollection], at indexPaths: [IndexPath])
@@ -498,6 +499,12 @@ extension AssetsManager {
                     self.fetchedAlbumsArray.append(momentEntry.fetchedAlbums)
                     self.sortedAlbumsArray.append(momentEntry.sortedAlbums)
                     self.albumsFetchArray.append(momentEntry.fetchResult)
+                }
+                self.subscribers.forEach { [weak self] (delegate) in
+                    guard let `self` = self else { return }
+                    DispatchQueue.main.async {
+                        delegate.assetsManagerFetched(manager: self)
+                    }
                 }
                 self.isFetchedAlbums = true
             }
