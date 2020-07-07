@@ -1,0 +1,31 @@
+
+/* Common */
+"Cancel" = "रद्द करें";
+"Done" = "पूर्ण हुआ";
+"Photo" = "चित्र";
+"Video" = "वीडियो";
+
+/* Albums */
+"Title_Albums" = "एल्बम";
+"Title_Section_MyAlbums" = "मेरे एलबम";
+
+/* Footer */
+"Footer_Photos" = "%@ चित्र";
+"Footer_Videos" = "%@ वीडियो";
+"Footer_Items" = "%@ चित्र, %@ वीडियो";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "%@ चित्र चयनित";
+"Title_Selected_Photos" = "%@ चित्र चयनित";
+"Title_Selected_Video" = "%@ वीडियो चयनित";
+"Title_Selected_Videos" = "%@ वीडियो चयनित";
+"Title_Selected_Items" = "%@ आइटम चयनित";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "कोई चित्र या वीडियो नहीं";
+"Message_No_Items" = "आप कैमरा का उपयोग करके चित्र या वीडियो ले सकते हैं, अथवा iTunes का उपयोग करके चित्र या वीडियो अपने %@ पर सिंक कर सकते हैं।";
+"Message_No_Items_Camera" = "आप iTunes का उपयोग करके अपने %@ पर चित्र और वीडियो सिंक कर सकते हैं।";
+
+/* No Permission */
+"Title_No_Permission" = "यह ऐप आपके चित्रों या वीडियो तक नहीं पहुंच सकता।";
+"Message_No_Permission" = "आप निजता सेटिंग्स में पहुंच सक्षम कर सकते हैं।";

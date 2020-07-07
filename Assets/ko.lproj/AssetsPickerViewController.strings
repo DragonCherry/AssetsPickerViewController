@@ -1,0 +1,31 @@
+
+/* Common */
+"Cancel" = "취소";
+"Done" = "완료";
+"Photo" = "사진";
+"Video" = "비디오";
+
+/* Albums */
+"Title_Albums" = "앨범";
+"Title_Section_MyAlbums" = "나의 앨범";
+
+/* Footer */
+"Footer_Photos" = "사진 %@개";
+"Footer_Videos" = "비디오 %@개";
+"Footer_Items" = "%@장의 사진, %@개의 비디오";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "%@장의 사진이 선택됨";
+"Title_Selected_Photos" = "%@장의 사진이 선택됨";
+"Title_Selected_Video" = "%@개의 비디오가 선택됨";
+"Title_Selected_Videos" = "%@개의 비디오가 선택됨";
+"Title_Selected_Items" = "%@개의 항목 선택됨";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "사진 또는 비디오 없음";
+"Message_No_Items" = "카메라를 통해 사진 및 비디오를 찍거나 iTunes를 통해 %@에서 사진 및 비디오를 iPhone에 동기화할 수 있습니다.";
+"Message_No_Items_Camera" = "iTunes를 통해 %@에서 사진 및 비디오를 동기화할 수 있습니다.";
+
+/* No Permission */
+"Title_No_Permission" = "이 앱은 귀하의 사진 또는 비디오에 접근 권한이 없습니다.";
+"Message_No_Permission" = "개인정보 설정에서 접근을 활성화할 수 있습니다.";

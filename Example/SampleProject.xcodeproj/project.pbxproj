@@ -24,13 +24,28 @@
 		E12081C21EE15D2900E4DB16 /* AssetFilterOptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12081C11EE15D2900E4DB16 /* AssetFilterOptionController.swift */; };
 		E132AF4C1FEA3E2800FEE536 /* ShowAlbumListOnStartupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E132AF4B1FEA3E2800FEE536 /* ShowAlbumListOnStartupController.swift */; };
 		E1725B7E1F7B7E640022F0A1 /* PreSelectedAssetsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1725B7D1F7B7E640022F0A1 /* PreSelectedAssetsController.swift */; };
+		E17E4DAB24B46B28008B5508 /* AssetsPickerViewController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E17E4DAA24B46B28008B5508 /* AssetsPickerViewController.framework */; };
+		E17E4DAC24B46B28008B5508 /* AssetsPickerViewController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E17E4DAA24B46B28008B5508 /* AssetsPickerViewController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E19F61021EDBDFE700B8091B /* BasicUsageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61011EDBDFE700B8091B /* BasicUsageController.swift */; };
 		E19F61041EDBDFF700B8091B /* CustomAlbumCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		E17E4DAD24B46B28008B5508 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E17E4DAC24B46B28008B5508 /* AssetsPickerViewController.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowHiddenAlbumController.swift; sourceTree = "<group>"; };
-		1592F9C610477996A6411204 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* AssetsPickerViewController_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AssetsPickerViewController_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -74,11 +89,10 @@
 		E14AF4871EF3D8D400C94BC7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		E14AF4881EF3D8DA00C94BC7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		E14AF4891EF3D8DA00C94BC7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		E159E9F4E24E25BE57C1159B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		E1725B7D1F7B7E640022F0A1 /* PreSelectedAssetsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreSelectedAssetsController.swift; sourceTree = "<group>"; };
+		E17E4DAA24B46B28008B5508 /* AssetsPickerViewController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AssetsPickerViewController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E19F61011EDBDFE700B8091B /* BasicUsageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicUsageController.swift; sourceTree = "<group>"; };
 		E19F61031EDBDFF700B8091B /* CustomAlbumCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbumCellController.swift; sourceTree = "<group>"; };
-		FED5796E98C093EFDFDF9B23 /* AssetsPickerViewController.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = AssetsPickerViewController.podspec; path = ../AssetsPickerViewController.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E17E4DAB24B46B28008B5508 /* AssetsPickerViewController.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,9 +110,9 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
-				607FACF51AFB993E008FA782 /* Podspec Metadata */,
-				607FACD21AFB9204008FA782 /* Example for AssetsPickerViewController */,
+				607FACD21AFB9204008FA782 /* Example */,
 				607FACD11AFB9204008FA782 /* Products */,
+				E17E4DA924B46B28008B5508 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,7 +124,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		607FACD21AFB9204008FA782 /* Example for AssetsPickerViewController */ = {
+		607FACD21AFB9204008FA782 /* Example */ = {
 			isa = PBXGroup;
 			children = (
 				E19F61001EDBDFA000B8091B /* ExampleUsages */,
@@ -121,7 +136,7 @@
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
-			name = "Example for AssetsPickerViewController";
+			name = Example;
 			path = AssetsPickerViewController;
 			sourceTree = "<group>";
 		};
@@ -131,16 +146,6 @@
 				607FACD41AFB9204008FA782 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
-			isa = PBXGroup;
-			children = (
-				FED5796E98C093EFDFDF9B23 /* AssetsPickerViewController.podspec */,
-				E159E9F4E24E25BE57C1159B /* README.md */,
-				1592F9C610477996A6411204 /* LICENSE */,
-			);
-			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
 		E10E44471EDBA6CB0075C641 /* Common */ = {
@@ -192,6 +197,14 @@
 			name = Filtering;
 			sourceTree = "<group>";
 		};
+		E17E4DA924B46B28008B5508 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E17E4DAA24B46B28008B5508 /* AssetsPickerViewController.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E19F61001EDBDFA000B8091B /* ExampleUsages */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,6 +226,7 @@
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
+				E17E4DAD24B46B28008B5508 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -241,7 +255,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "AssetsPickerViewController" */;
+			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "SampleProject" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -511,7 +525,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "AssetsPickerViewController" */ = {
+		607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "SampleProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				607FACED1AFB9204008FA782 /* Debug */,

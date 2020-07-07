@@ -1,0 +1,31 @@
+
+/* Common */
+"Cancel" = "Cancel";
+"Done" = "Done";
+"Photo" = "Photo";
+"Video" = "Video";
+
+/* Albums */
+"Title_Albums" = "Albums";
+"Title_Section_MyAlbums" = "My Albums";
+
+/* Footer */
+"Footer_Photos" = "%@ Photos";
+"Footer_Videos" = "%@ Videos";
+"Footer_Items" = "%@ Photos, %@ Videos";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "%@ Photo Selected";
+"Title_Selected_Photos" = "%@ Photos Selected";
+"Title_Selected_Video" = "%@ Video Selected";
+"Title_Selected_Videos" = "%@ Videos Selected";
+"Title_Selected_Items" = "%@ Items Selected";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "No Photos or Videos";
+"Message_No_Items" = "You can take photos and videos using the camera, or sync photos and videos onto your %@ using iTunes.";
+"Message_No_Items_Camera" = "You can sync photos and videos onto your %@ using iTunes.";
+
+/* No Permission */
+"Title_No_Permission" = "This app does not have access to your photos or videos.";
+"Message_No_Permission" = "You can enable access in Privacy Settings.";

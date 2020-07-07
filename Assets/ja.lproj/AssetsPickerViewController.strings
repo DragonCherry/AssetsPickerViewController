@@ -1,0 +1,31 @@
+
+/* Common */
+"Cancel" = "キャンセル";
+"Done" = "完了";
+"Photo" = "写真";
+"Video" = "動画";
+
+/* Albums */
+"Title_Albums" = "アルバム";
+"Title_Section_MyAlbums" = "私のアルバム";
+
+/* Footer */
+"Footer_Photos" = "%@ 枚の写真";
+"Footer_Videos" = "%@ 件の動画";
+"Footer_Items" = "%@ 枚の写真、%@ 件の動画";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "%@ 枚の写真が選択されました";
+"Title_Selected_Photos" = "%@ 枚の写真が選択されました";
+"Title_Selected_Video" = "%@ 件の動画が選択されました";
+"Title_Selected_Videos" = "%@ 件の動画が選択されました";
+"Title_Selected_Items" = "%@ 個のアイテムが選択されました";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "写真または動画がありません";
+"Message_No_Items" = "カメラを使用して写真または動画を撮影するか、ご利用の%@へ写真と動画を同期することができます。同期はiTunes を使用して行えます。";
+"Message_No_Items_Camera" = "iTunes を使用して、ご利用の%@へ写真と動画を同期することができます。";
+
+/* No Permission */
+"Title_No_Permission" = "このアプリはあなたの写真と動画へアクセスする許可を得ていません。";
+"Message_No_Permission" = "「プライバシー設定」からアクセスを許可できます。";

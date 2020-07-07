@@ -1,0 +1,31 @@
+
+/* Common */
+"Cancel" = "Отмена";
+"Done" = "Готово";
+"Photo" = "фотография";
+"Video" = "видео";
+
+/* Albums */
+"Title_Albums" = "Альбомы";
+"Title_Section_MyAlbums" = "Мои альбомы";
+
+/* Footer */
+"Footer_Photos" = "%@ фотографий";
+"Footer_Videos" = "%@ видео";
+"Footer_Items" = "%@ фотографий, %@ видео";
+
+/* Selected Status on Title */
+"Title_Selected_Photo" = "выбрана %@ фотография";
+"Title_Selected_Photos" = "выбрано %@ фотографий";
+"Title_Selected_Video" = "выбрано %@ видео";
+"Title_Selected_Videos" = "выбрано %@ видео";
+"Title_Selected_Items" = "выбрано %@ элементов";
+
+/* No Items in Photo Library */
+"Title_No_Items" = "Нет фотографий и видео";
+"Message_No_Items" = "Вы можете сделать фотографии или снять видео при помощи камеры либо синхронизировать фотографии и видео со своим %@ через iTunes.";
+"Message_No_Items_Camera" = "Вы можете синхронизировать фотографии и видео со своим %@ при помощи iTunes.";
+
+/* No Permission */
+"Title_No_Permission" = "У этого приложения нет доступа к вашим фотографиям и видео.";
+"Message_No_Permission" = "Вы можете включить доступ приложению в Настройках конфиденциальности.";
