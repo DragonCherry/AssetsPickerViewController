@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0E0AB8FB1EE05BED0002902B /* ShowHiddenAlbumController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */; };
-		0ED76B9C99BCC7CF96D6E7C7 /* Pods_AssetsPickerViewController_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4844A87E6E07F756E26D8BE5 /* Pods_AssetsPickerViewController_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -32,9 +31,6 @@
 /* Begin PBXFileReference section */
 		0E0AB8FA1EE05BED0002902B /* ShowHiddenAlbumController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowHiddenAlbumController.swift; sourceTree = "<group>"; };
 		1592F9C610477996A6411204 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		42159084843244398BBCF4A5 /* Pods-AssetsPickerViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Tests/Pods-AssetsPickerViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		4844A87E6E07F756E26D8BE5 /* Pods_AssetsPickerViewController_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AssetsPickerViewController_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BEE18E51A64448333376230 /* Pods-AssetsPickerViewController_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Example/Pods-AssetsPickerViewController_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* AssetsPickerViewController_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AssetsPickerViewController_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -42,9 +38,6 @@
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		8FC9EECB4B9C8308CFA54C20 /* Pods_AssetsPickerViewController_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AssetsPickerViewController_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BB946C56DEB423024F5AB0E3 /* Pods-AssetsPickerViewController_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Tests/Pods-AssetsPickerViewController_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		DF68D535ED8F5EDE6BB13809 /* Pods-AssetsPickerViewController_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AssetsPickerViewController_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-AssetsPickerViewController_Example/Pods-AssetsPickerViewController_Example.release.xcconfig"; sourceTree = "<group>"; };
 		E10E44481EDBA7020075C641 /* CommonExampleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExampleController.swift; sourceTree = "<group>"; };
 		E12081AD1EDE5DA600E4DB16 /* HideEmptyAlbumsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HideEmptyAlbumsController.swift; sourceTree = "<group>"; };
 		E12081AF1EDE794900E4DB16 /* CustomAssetCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAssetCellController.swift; sourceTree = "<group>"; };
@@ -93,7 +86,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0ED76B9C99BCC7CF96D6E7C7 /* Pods_AssetsPickerViewController_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,8 +98,6 @@
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for AssetsPickerViewController */,
 				607FACD11AFB9204008FA782 /* Products */,
-				F046B0C69710D25AFBA9FC7D /* Pods */,
-				F2D86E55C68DB898339AA93D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -213,26 +203,6 @@
 			path = ExampleUsages;
 			sourceTree = "<group>";
 		};
-		F046B0C69710D25AFBA9FC7D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				5BEE18E51A64448333376230 /* Pods-AssetsPickerViewController_Example.debug.xcconfig */,
-				DF68D535ED8F5EDE6BB13809 /* Pods-AssetsPickerViewController_Example.release.xcconfig */,
-				BB946C56DEB423024F5AB0E3 /* Pods-AssetsPickerViewController_Tests.debug.xcconfig */,
-				42159084843244398BBCF4A5 /* Pods-AssetsPickerViewController_Tests.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		F2D86E55C68DB898339AA93D /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				4844A87E6E07F756E26D8BE5 /* Pods_AssetsPickerViewController_Example.framework */,
-				8FC9EECB4B9C8308CFA54C20 /* Pods_AssetsPickerViewController_Tests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -240,11 +210,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "AssetsPickerViewController_Example" */;
 			buildPhases = (
-				5B11DBBE125F4C61DCC0C053 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				9182F896FFE53ACA2D6E5D7A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -316,49 +284,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5B11DBBE125F4C61DCC0C053 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-AssetsPickerViewController_Example-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9182F896FFE53ACA2D6E5D7A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AssetsPickerViewController_Example/Pods-AssetsPickerViewController_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AssetsPickerViewController/AssetsPickerViewController.framework",
-				"${BUILT_PRODUCTS_DIR}/Device/Device.framework",
-				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AssetsPickerViewController.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Device.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AssetsPickerViewController_Example/Pods-AssetsPickerViewController_Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		607FACCC1AFB9204008FA782 /* Sources */ = {
@@ -543,7 +468,6 @@
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5BEE18E51A64448333376230 /* Pods-AssetsPickerViewController_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -565,7 +489,6 @@
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DF68D535ED8F5EDE6BB13809 /* Pods-AssetsPickerViewController_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
