@@ -53,6 +53,9 @@ extension AssetsPhotoViewController {
             selectedArray.append(asset)
             selectedMap[asset.localIdentifier] = asset
         }
+        if let delegate = self.delegate {
+            delegate.assetsPicker?(controller: picker, didSelect: asset, at: indexPath)
+        }
     }
     
     func deselect(at indexPath: IndexPath) {
@@ -70,5 +73,9 @@ extension AssetsPhotoViewController {
         }
         selectedArray.remove(at: targetIndex)
         selectedMap.removeValue(forKey: targetAsset.localIdentifier)
+        
+        if let delegate = self.delegate {
+            delegate.assetsPicker?(controller: picker, didDeselect: asset, at: indexPath)
+        }
     }
 }
