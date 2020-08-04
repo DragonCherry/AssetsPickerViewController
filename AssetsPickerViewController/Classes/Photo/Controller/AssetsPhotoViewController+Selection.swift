@@ -31,6 +31,11 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if LogConfig.isSelectLogEnabled { logi("shouldSelectItemAt: \(indexPath.row)") }
         
+        if let delegate = self.delegate {
+            let shouldSelect = delegate.assetsPicker?(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
+            guard shouldSelect else { return false }
+        }
+        
         if isDragSelectionEnabled {
             if selectedArray.count < pickerConfig.assetsMaximumSelectionCount {
                 select(at: indexPath)
@@ -38,11 +43,7 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
             } else {
                 return false
             }
-        } else {
-            if let delegate = self.delegate {
-                let shouldSelect = delegate.assetsPicker?(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
-                guard shouldSelect else { return false }
-            }
+        } else {    
             select(at: indexPath)
             return true
         }
