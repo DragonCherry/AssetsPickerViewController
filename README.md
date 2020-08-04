@@ -111,6 +111,8 @@ Customizable Album & Asset Layout
 
 ## Features To-do
 
+- SPM(Swift Package Manager) support
+
 - Cropping image before select
 
 ## Basic Usage
