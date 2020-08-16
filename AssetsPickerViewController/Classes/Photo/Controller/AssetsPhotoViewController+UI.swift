@@ -57,7 +57,9 @@ extension AssetsPhotoViewController {
     }
     
     func deselectOldestIfNeeded(isForced: Bool = false) {
-        if selectedArray.count > pickerConfig.assetsMaximumSelectionCount, let firstSelectedAsset = selectedArray.first, let indexToDeselect = AssetsManager.shared.assetArray.firstIndex(of: firstSelectedAsset) {
+        guard let fetchResult = AssetsManager.shared.fetchResult else { return }
+        if selectedArray.count > pickerConfig.assetsMaximumSelectionCount, let firstSelectedAsset = selectedArray.first {
+            let indexToDeselect = fetchResult.index(of: firstSelectedAsset)
             let indexPathToDeselect = IndexPath(row: indexToDeselect, section: 0)
             deselect(at: indexPathToDeselect)
             deselectCell(at: indexPathToDeselect, isForced: isForced)
@@ -67,12 +69,13 @@ extension AssetsPhotoViewController {
     func select(album: PHAssetCollection) {
         loadingPlaceholderView.isHidden = false
         loadingActivityIndicatorView.startAnimating()
-        AssetsManager.shared.selectAsync(album: album, completion: { [weak self] (result, photos) in
+        AssetsManager.shared.selectAsync(album: album, completion: { [weak self] (successful, result) in
             guard let `self` = self else { return }
-            guard result else { return }
+            guard successful else { return }
+            guard let fetchResult = result else { return }
             self.collectionView.reloadData()
             self.scrollToLastItemIfNeeded()
-            self.preselectItemsIfNeeded(photos: photos)
+            self.preselectItemsIfNeeded(result: fetchResult)
             self.updateNavigationStatus()
             self.loadingPlaceholderView.isHidden = true
             self.loadingActivityIndicatorView.stopAnimating()
@@ -90,26 +93,25 @@ extension AssetsPhotoViewController {
     
     
     func scrollToLastItemIfNeeded() {
-        let assets = AssetsManager.shared.assetArray
-        guard !assets.isEmpty else { return }
+        guard let fetchResult = AssetsManager.shared.fetchResult else { return }
+        guard !(fetchResult.count == 0) else { return }
         if pickerConfig.assetsIsScrollToBottom == true {
-            self.collectionView.scrollToItem(at: IndexPath(row: assets.count - 1, section: 0), at: .bottom, animated: false)
+            self.collectionView.scrollToItem(at: IndexPath(row: fetchResult.count - 1, section: 0), at: .bottom, animated: false)
         } else {
             self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
         }
     }
 
-    func preselectItemsIfNeeded(photos: [PHAsset]) {
+    func preselectItemsIfNeeded(result: PHFetchResult<PHAsset>) {
         if selectedArray.count > 0 {
             // initialize preselected assets
             selectedArray.forEach({ [weak self] (asset) in
-                if let row = photos.firstIndex(of: asset) {
-                    let indexPathToSelect = IndexPath(row: row, section: 0)
-                    let scrollPosition = UICollectionView.ScrollPosition(rawValue: 0)
-                    self?.collectionView.selectItem(at: indexPathToSelect,
-                                                    animated: false,
-                                                    scrollPosition: scrollPosition)
-                }
+                let row = result.index(of: asset)
+                let indexPathToSelect = IndexPath(row: row, section: 0)
+                let scrollPosition = UICollectionView.ScrollPosition(rawValue: 0)
+                self?.collectionView.selectItem(at: indexPathToSelect,
+                                                animated: false,
+                                                scrollPosition: scrollPosition)
             })
             updateSelectionCount()
         }
@@ -117,13 +119,13 @@ extension AssetsPhotoViewController {
 
     func updateSelectionCount() {
         let visibleIndexPaths = collectionView.indexPathsForVisibleItems
-        let assets = AssetsManager.shared.assetArray
+        guard let fetchResult = AssetsManager.shared.fetchResult else { return }
         for visibleIndexPath in visibleIndexPaths {
-            guard assets.count > visibleIndexPath.row else {
-                loge("Referred wrong index\(visibleIndexPath.row) while asset count is \(assets.count).")
+            guard fetchResult.count > visibleIndexPath.row else {
+                loge("Referred wrong index\(visibleIndexPath.row) while asset count is \(fetchResult.count).")
                 break
             }
-            if let selectedAsset = selectedMap[assets[visibleIndexPath.row].localIdentifier], var photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCellProtocol {
+            if let selectedAsset = selectedMap[fetchResult.object(at: visibleIndexPath.row).localIdentifier], var photoCell = collectionView.cellForItem(at: visibleIndexPath) as? AssetsPhotoCellProtocol {
                 if let selectedIndex = selectedArray.firstIndex(of: selectedAsset) {
                     photoCell.count = selectedIndex + 1
                 }
@@ -195,5 +197,101 @@ extension AssetsPhotoViewController {
             titleString = ""
         }
         return titleString
+    }
+    
+    func updateCachedAssets() {
+        let isViewVisible = isViewLoaded && view.window != nil
+        
+        if !isViewVisible {
+            return
+        }
+        
+        let bounds = collectionView.bounds
+        
+        // The preheat window is twice the height of the visible rect
+        var preheatRect = bounds
+        preheatRect = preheatRect.insetBy(dx: 0.0, dy: -0.5 * preheatRect.height)
+        
+        // If scrolled by a "reasonable" amount...
+        let delta = abs(preheatRect.midY - previousPreheatRect.midY)
+        
+        if delta > (bounds.height / 3.0) {
+            var addedIndexPaths: [IndexPath] = []
+            var removedIndexPaths: [IndexPath] = []
+            
+            computeDifferenceBetweenRect(previousPreheatRect, newRect: preheatRect, add: { (rect) in
+                let indexPaths = getIndexPathsForElements(in: rect)
+                addedIndexPaths.append(contentsOf: indexPaths)
+            }) { (rect) in
+                let indexPaths = getIndexPathsForElements(in: rect)
+                removedIndexPaths.append(contentsOf: indexPaths)
+            }
+            
+            let assetsToStartCaching = getAssets(at: addedIndexPaths)
+            let assetsToStopCaching = getAssets(at: removedIndexPaths)
+            
+            let isPortrait = UIApplication.shared.statusBarOrientation.isPortrait
+            let itemSize = isPortrait ? pickerConfig.albumPortraitCellSize : pickerConfig.albumLandscapeCellSize
+            let scale = traitCollection.displayScale
+            let targetSize = CGSize(width: itemSize.width * scale, height: itemSize.height * scale)
+            AssetsManager.shared.imageManager.startCachingImages(for: assetsToStartCaching, targetSize: targetSize, contentMode: .aspectFill, options: nil)
+            AssetsManager.shared.imageManager.stopCachingImages(for: assetsToStopCaching, targetSize: targetSize, contentMode: .aspectFill, options: nil)
+            self.previousPreheatRect = preheatRect
+        }
+    }
+    
+    func getIndexPathsForElements(in rect: CGRect) -> [IndexPath] {
+        let allLayoutAttributes = collectionView.collectionViewLayout.layoutAttributesForElements(in: rect)
+        guard let attributes = allLayoutAttributes else { return [] }
+        guard attributes.count == 0 else { return [] }
+        var indexPaths: [IndexPath] = []
+        for attribut in attributes {
+            indexPaths.append(attribut.indexPath)
+        }
+        return indexPaths
+    }
+    
+    func getAssets(at indexPaths: [IndexPath]) -> [PHAsset] {
+        if indexPaths.count == 0 { return [] }
+        guard let fetchResult = AssetsManager.shared.fetchResult else { return [] }
+        var asstes: [PHAsset] = []
+        for indexPath in indexPaths {
+            if indexPath.item < fetchResult.count && indexPath.item != 0 {
+                let index = fetchResult.count - indexPath.item
+                let asset = fetchResult.object(at: index)
+                asstes.append(asset)
+            }
+        }
+        return asstes
+    }
+    
+    func computeDifferenceBetweenRect(_ oldRect: CGRect, newRect: CGRect, add: (CGRect) -> Void, remove: (CGRect) -> Void) {
+        if newRect.intersects(oldRect) {
+            let oldMaxY = oldRect.maxY
+            let oldMinY = oldRect.minY
+            let newMaxY = newRect.maxY
+            let newMinY = newRect.minY
+            
+            if newMaxY > oldMaxY {
+                let rect = CGRect(x: newRect.origin.x, y: oldMaxY, width: newRect.size.width, height: (newMaxY - oldMaxY))
+                add(rect)
+            }
+            if oldMinY > newMinY {
+                let rect = CGRect(x: newRect.origin.x, y: newMinY, width: newRect.size.width, height: oldMinY - newMinY)
+                add(rect)
+            }
+            if newMaxY < oldMaxY {
+                let rect = CGRect(x: newRect.origin.x, y: newMaxY, width: newRect.size.width, height: oldMaxY - newMaxY)
+                remove(rect)
+            }
+            if oldMinY < newMinY {
+                let rect = CGRect(x: newRect.origin.x, y: oldMinY, width: newRect.size.width, height: newMinY - oldMinY)
+                remove(rect)
+            }
+
+        } else {
+            add(newRect)
+            remove(oldRect)
+        }
     }
 }
