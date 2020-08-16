@@ -32,7 +32,8 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
         if LogConfig.isSelectLogEnabled { logi("shouldSelectItemAt: \(indexPath.row)") }
         
         if let delegate = self.delegate {
-            let shouldSelect = delegate.assetsPicker?(controller: picker, shouldSelect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
+            guard let fetchResult = AssetsManager.shared.fetchResult else { return false }
+            let shouldSelect = delegate.assetsPicker?(controller: picker, shouldSelect: fetchResult.object(at: indexPath.row), at: indexPath) ?? true
             guard shouldSelect else { return false }
         }
         
@@ -62,7 +63,8 @@ extension AssetsPhotoViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
         if LogConfig.isSelectLogEnabled { logi("shouldDeselectItemAt: \(indexPath.row)") }
         if let delegate = self.delegate {
-            let shouldDeselect = delegate.assetsPicker?(controller: picker, shouldDeselect: AssetsManager.shared.assetArray[indexPath.row], at: indexPath) ?? true
+            guard let fetchResult = AssetsManager.shared.fetchResult else { return false }
+            let shouldDeselect = delegate.assetsPicker?(controller: picker, shouldDeselect: fetchResult.object(at: indexPath.row), at: indexPath) ?? true
             guard shouldDeselect else { return false }
         }
         deselect(at: indexPath)
@@ -86,7 +88,8 @@ extension AssetsPhotoViewController {
                 return
             }
             for selectedIndexPath in indexPathsForSelectedItems {
-                if let _ = selectedMap[AssetsManager.shared.assetArray[selectedIndexPath.row].localIdentifier] {
+                guard let fetchResult = AssetsManager.shared.fetchResult else { return }
+                if let _ = selectedMap[fetchResult.object(at: selectedIndexPath.row).localIdentifier] {
                     
                 } else {
                     loge("selected item not found in local map!")

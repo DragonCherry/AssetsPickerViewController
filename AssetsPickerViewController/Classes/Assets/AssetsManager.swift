@@ -37,7 +37,7 @@ open class AssetsManager: NSObject {
         }
     }
     
-    fileprivate let imageManager = PHCachingImageManager()
+    let imageManager = PHCachingImageManager()
     fileprivate var authorizationStatus = PHPhotoLibrary.authorizationStatus()
     var subscribers = [AssetsManagerDelegate]()
     
@@ -50,7 +50,7 @@ open class AssetsManager: NSObject {
     var fetchedAlbumsArray = [[PHAssetCollection]]()
     /// stores sorted array by applying user defined comparator, it's in decreasing order by count by default, and it might same as fetchedAlbumsArray if AssetsPickerConfig has  albumFetchOptions without albumComparator
     var sortedAlbumsArray = [[PHAssetCollection]]()
-    internal(set) open var assetArray = [PHAsset]()
+    internal(set) open var fetchResult: PHFetchResult<PHAsset>?
     
     fileprivate(set) open var defaultAlbum: PHAssetCollection?
     fileprivate(set) open var cameraRollAlbum: PHAssetCollection!
@@ -82,7 +82,7 @@ open class AssetsManager: NSObject {
         sortedAlbumsArray.removeAll()
         
         // clear assets
-        assetArray.removeAll()
+        fetchResult = nil
         
         // clear fetch results
         albumsFetchArray.removeAll()
@@ -236,8 +236,9 @@ extension AssetsManager {
     open func image(at index: Int, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?, Bool) -> Void)) -> PHImageRequestID {
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
+        guard let asset = fetchResult?.object(at: index) else { return PHInvalidImageRequestID }
         return imageManager.requestImage(
-            for: assetArray[index],
+            for: asset,
             targetSize: size,
             contentMode: .aspectFill,
             options: options,
@@ -318,13 +319,14 @@ extension AssetsManager {
             return false
         }
         self.selectedAlbum = newAlbum
-        if let fetchResult = fetchMap[newAlbum.localIdentifier] {
-            let indexSet = IndexSet(0..<fetchResult.count)
-            assetArray = fetchResult.objects(at: indexSet)
-            return true
-        } else {
+        guard let album = AssetsManager.shared.selectedAlbum else {
             return false
         }
+        guard let fetchResult = AssetsManager.shared.fetchMap[album.localIdentifier] else {
+            return false
+        }
+        self.fetchResult = fetchResult
+        return true
     }
     
     open func selectDefaultAlbum() {
@@ -347,18 +349,14 @@ extension AssetsManager {
             completion(false, [])
         }
         self.selectedAlbum = newAlbum
-        if let fetchResult = fetchMap[newAlbum.localIdentifier] {
-            resourceLoadingQueue.async { [weak self] in
-                let indexSet = IndexSet(0..<fetchResult.count)
-                let photos = fetchResult.objects(at: indexSet)
-                self?.assetArray = photos
-                DispatchQueue.main.async {
-                    completion(true, photos)
-                }
-            }
-        } else {
-            completion(false, [])
+        guard let album = AssetsManager.shared.selectedAlbum else { completion(false, [])
+            return
         }
+        guard let fetchResult = AssetsManager.shared.fetchMap[album.localIdentifier] else { completion(false, [])
+            return
+        }
+        self.fetchResult = fetchResult
+        completion(true, [])
     }
 }
 
@@ -521,7 +519,7 @@ extension AssetsManager {
             
             guard let `self` = self else { return }
             if isRefetch {
-                self.assetArray.removeAll()
+                self.fetchResult = nil
             }
             
             // set default album
