@@ -57,7 +57,7 @@ open class AssetsManager: NSObject {
     fileprivate(set) open var selectedAlbum: PHAssetCollection?
     
     fileprivate var isFetchedAlbums: Bool = false
-    fileprivate var resourceLoadingQueue: DispatchQueue = DispatchQueue(label: "com.assetspicker.loader", qos: .userInitiated)
+    fileprivate var resourceLoadingQueue: DispatchQueue = DispatchQueue(label: "com.assetspicker.loader", qos: .default)
     
     private override init() {
         super.init()
@@ -343,20 +343,20 @@ extension AssetsManager {
         }
     }
     
-    open func selectAsync(album newAlbum: PHAssetCollection, completion: @escaping (Bool, [PHAsset]) -> Void) {
+    open func selectAsync(album newAlbum: PHAssetCollection, completion: @escaping (Bool, PHFetchResult<PHAsset>?) -> Void) {
         if let oldAlbumIdentifier = self.selectedAlbum?.localIdentifier, oldAlbumIdentifier == newAlbum.localIdentifier {
             logi("Selected same album.")
-            completion(false, [])
+            completion(false, nil)
         }
         self.selectedAlbum = newAlbum
-        guard let album = AssetsManager.shared.selectedAlbum else { completion(false, [])
+        guard let album = AssetsManager.shared.selectedAlbum else { completion(false, nil)
             return
         }
-        guard let fetchResult = AssetsManager.shared.fetchMap[album.localIdentifier] else { completion(false, [])
+        guard let fetchResult = AssetsManager.shared.fetchMap[album.localIdentifier] else { completion(false, nil)
             return
         }
         self.fetchResult = fetchResult
-        completion(true, [])
+        completion(true, fetchResult)
     }
 }
 
@@ -513,7 +513,7 @@ extension AssetsManager {
         }
     }
     
-    open func fetchAssets(isRefetch: Bool = false, completion: (([PHAsset]) -> Void)? = nil) {
+    open func fetchAssets(isRefetch: Bool = false, completion: ((PHFetchResult<PHAsset>?) -> Void)? = nil) {
         
         fetchAlbums(isRefetch: isRefetch, completion: { [weak self] _ in
             
@@ -523,8 +523,8 @@ extension AssetsManager {
             }
             
             // set default album
-            self.selectAsync(album: self.defaultAlbum ?? self.cameraRollAlbum) { result, photos in
-                completion?(photos)
+            self.selectAsync(album: self.defaultAlbum ?? self.cameraRollAlbum) { successful, result in
+                completion?(result)
             }
         })
         
@@ -536,7 +536,10 @@ extension AssetsManager {
         let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: type, subtype: .any, options: fetchOption)
         var fetchedAlbums = [PHAssetCollection]()
         
-        albumFetchResult.enumerateObjects({ (album, _, _) in
+        let indexSet = IndexSet(integersIn: 0..<albumFetchResult.count)
+        let albums = albumFetchResult.objects(at: indexSet)
+        
+        for album in albums {
             // fetch assets
             self.fetchAlbum(album: album)
             
@@ -549,7 +552,7 @@ extension AssetsManager {
                 self.cameraRollAlbum = album
             }
             fetchedAlbums.append(album)
-        })
+        }
         
         // get sorted albums
         let sortedAlbums = self.sortedAlbums(fromAlbums: fetchedAlbums)

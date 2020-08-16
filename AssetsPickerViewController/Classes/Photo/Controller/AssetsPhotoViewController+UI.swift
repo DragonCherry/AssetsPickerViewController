@@ -69,12 +69,13 @@ extension AssetsPhotoViewController {
     func select(album: PHAssetCollection) {
         loadingPlaceholderView.isHidden = false
         loadingActivityIndicatorView.startAnimating()
-        AssetsManager.shared.selectAsync(album: album, completion: { [weak self] (result, photos) in
+        AssetsManager.shared.selectAsync(album: album, completion: { [weak self] (successful, result) in
             guard let `self` = self else { return }
-            guard result else { return }
+            guard successful else { return }
+            guard let fetchResult = result else { return }
             self.collectionView.reloadData()
             self.scrollToLastItemIfNeeded()
-            self.preselectItemsIfNeeded(photos: photos)
+            self.preselectItemsIfNeeded(result: fetchResult)
             self.updateNavigationStatus()
             self.loadingPlaceholderView.isHidden = true
             self.loadingActivityIndicatorView.stopAnimating()
@@ -101,17 +102,16 @@ extension AssetsPhotoViewController {
         }
     }
 
-    func preselectItemsIfNeeded(photos: [PHAsset]) {
+    func preselectItemsIfNeeded(result: PHFetchResult<PHAsset>) {
         if selectedArray.count > 0 {
             // initialize preselected assets
             selectedArray.forEach({ [weak self] (asset) in
-                if let row = photos.firstIndex(of: asset) {
-                    let indexPathToSelect = IndexPath(row: row, section: 0)
-                    let scrollPosition = UICollectionView.ScrollPosition(rawValue: 0)
-                    self?.collectionView.selectItem(at: indexPathToSelect,
-                                                    animated: false,
-                                                    scrollPosition: scrollPosition)
-                }
+                let row = result.index(of: asset)
+                let indexPathToSelect = IndexPath(row: row, section: 0)
+                let scrollPosition = UICollectionView.ScrollPosition(rawValue: 0)
+                self?.collectionView.selectItem(at: indexPathToSelect,
+                                                animated: false,
+                                                scrollPosition: scrollPosition)
             })
             updateSelectionCount()
         }
