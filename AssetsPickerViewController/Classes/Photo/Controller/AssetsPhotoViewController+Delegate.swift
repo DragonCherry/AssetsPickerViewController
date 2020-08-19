@@ -74,7 +74,8 @@ extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
         guard let pressingCell = collectionView.cellForItem(at: pressingIndexPath) else { return nil }
         previewingContext.sourceRect = pressingCell.frame
         let previewController = AssetsPreviewController()
-        previewController.asset = AssetsManager.shared.assetArray[pressingIndexPath.row]
+        guard let fetchResult = AssetsManager.shared.fetchResult else { return nil }
+        previewController.asset = fetchResult.object(at: pressingIndexPath.row)
         return previewController
     }
     
