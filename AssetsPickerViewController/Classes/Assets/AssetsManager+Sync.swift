@@ -99,8 +99,8 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                     let removedIndexes = removedIndexesSet.asArray().sorted(by: { $0.row < $1.row })
                     var removedAssets = [PHAsset]()
                     for removedIndex in removedIndexes.reversed() {
-//                        removedAssets.insert(assetArray.remove(at: removedIndex.row), at: 0)
-                        // TODO: replace assetArray to fetchResult
+                        let asset = fetchResult.object(at: removedIndex.row)
+                        removedAssets.insert(asset, at: 0)
                     }
                     // stop caching for removed assets
                     stopCache(assets: removedAssets, size: pickerConfig.assetCacheSize)

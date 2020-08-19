@@ -230,12 +230,9 @@ extension AssetsPhotoViewController {
             let assetsToStartCaching = getAssets(at: addedIndexPaths)
             let assetsToStopCaching = getAssets(at: removedIndexPaths)
             
-            let isPortrait = UIApplication.shared.statusBarOrientation.isPortrait
-            let itemSize = isPortrait ? pickerConfig.albumPortraitCellSize : pickerConfig.albumLandscapeCellSize
-            let scale = traitCollection.displayScale
-            let targetSize = CGSize(width: itemSize.width * scale, height: itemSize.height * scale)
-            AssetsManager.shared.imageManager.startCachingImages(for: assetsToStartCaching, targetSize: targetSize, contentMode: .aspectFill, options: nil)
-            AssetsManager.shared.imageManager.stopCachingImages(for: assetsToStopCaching, targetSize: targetSize, contentMode: .aspectFill, options: nil)
+            let targetSize = pickerConfig.assetCacheSize
+            AssetsManager.shared.cache(assets: assetsToStartCaching, size: targetSize)
+            AssetsManager.shared.stopCache(assets: assetsToStopCaching, size: targetSize)
             self.previousPreheatRect = preheatRect
         }
     }

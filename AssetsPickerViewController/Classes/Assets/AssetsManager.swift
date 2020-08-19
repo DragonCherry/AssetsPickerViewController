@@ -37,7 +37,7 @@ open class AssetsManager: NSObject {
         }
     }
     
-    let imageManager = PHCachingImageManager()
+    fileprivate let imageManager = PHCachingImageManager()
     fileprivate var authorizationStatus = PHPhotoLibrary.authorizationStatus()
     var subscribers = [AssetsManagerDelegate]()
     
