@@ -98,10 +98,13 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 if let removedIndexesSet = assetsChangeDetails.removedIndexes {
                     let removedIndexes = removedIndexesSet.asArray().sorted(by: { $0.row < $1.row })
                     var removedAssets = [PHAsset]()
+                    let result = assetsChangeDetails.fetchResultAfterChanges
                     for removedIndex in removedIndexes.reversed() {
-//                        removedAssets.insert(assetArray.remove(at: removedIndex.row), at: 0)
-                        // TODO: replace assetArray to fetchResult
+                        let asset = fetchResult.object(at: removedIndex.row)
+                        removedAssets.insert(asset, at: 0)
                     }
+                    // update date source
+                    self.fetchResult = result
                     // stop caching for removed assets
                     stopCache(assets: removedAssets, size: pickerConfig.assetCacheSize)
                     notifySubscribers({ $0.assetsManager(manager: self, removedAssets: removedAssets, at: removedIndexes) }, condition: removedAssets.count > 0)
@@ -110,12 +113,13 @@ extension AssetsManager: PHPhotoLibraryChangeObserver {
                 if let insertedIndexesSet = assetsChangeDetails.insertedIndexes {
                     let insertedIndexes = insertedIndexesSet.asArray().sorted(by: { $0.row < $1.row })
                     var insertedAssets = [PHAsset]()
+                    let result = assetsChangeDetails.fetchResultAfterChanges
                     for insertedIndex in insertedIndexes {
-                        let insertedAsset = assetsChangeDetails.fetchResultAfterChanges.object(at: insertedIndex.row)
+                        let insertedAsset = result.object(at: insertedIndex.row)
                         insertedAssets.append(insertedAsset)
-//                        assetArray.insert(insertedAsset, at: insertedIndex.row)
-                        // TODO: replace assetArray to fetchResult
                     }
+                    // update date source
+                    self.fetchResult = result
                     // start caching for inserted assets
                     cache(assets: insertedAssets, size: pickerConfig.assetCacheSize)
                     notifySubscribers({ $0.assetsManager(manager: self, insertedAssets: insertedAssets, at: insertedIndexes) }, condition: insertedAssets.count > 0)
