@@ -199,7 +199,7 @@ extension AssetsPhotoViewController {
         return titleString
     }
     
-    func updateCachedAssets() {
+    func updateCachedAssets(force: Bool = false) {
         let isViewVisible = isViewLoaded && view.window != nil
         
         if !isViewVisible {
@@ -215,11 +215,11 @@ extension AssetsPhotoViewController {
         // If scrolled by a "reasonable" amount...
         let delta = abs(preheatRect.midY - previousPreheatRect.midY)
         
-        if delta > (bounds.height / 3.0) {
+        if (delta > (bounds.height / 3.0)) || force {
             var addedIndexPaths: [IndexPath] = []
             var removedIndexPaths: [IndexPath] = []
             
-            computeDifferenceBetweenRect(previousPreheatRect, newRect: preheatRect, add: { (rect) in
+            computeDifferenceBetweenRect(previousPreheatRect, newRect: preheatRect, added: { (rect) in
                 let indexPaths = getIndexPathsForElements(in: rect)
                 addedIndexPaths.append(contentsOf: indexPaths)
             }) { (rect) in
@@ -262,7 +262,7 @@ extension AssetsPhotoViewController {
         return asstes
     }
     
-    func computeDifferenceBetweenRect(_ oldRect: CGRect, newRect: CGRect, add: (CGRect) -> Void, remove: (CGRect) -> Void) {
+    func computeDifferenceBetweenRect(_ oldRect: CGRect, newRect: CGRect, added: (CGRect) -> Void, removed: (CGRect) -> Void) {
         if newRect.intersects(oldRect) {
             let oldMaxY = oldRect.maxY
             let oldMinY = oldRect.minY
@@ -271,24 +271,24 @@ extension AssetsPhotoViewController {
             
             if newMaxY > oldMaxY {
                 let rect = CGRect(x: newRect.origin.x, y: oldMaxY, width: newRect.size.width, height: (newMaxY - oldMaxY))
-                add(rect)
+                added(rect)
             }
             if oldMinY > newMinY {
                 let rect = CGRect(x: newRect.origin.x, y: newMinY, width: newRect.size.width, height: oldMinY - newMinY)
-                add(rect)
+                added(rect)
             }
             if newMaxY < oldMaxY {
                 let rect = CGRect(x: newRect.origin.x, y: newMaxY, width: newRect.size.width, height: oldMaxY - newMaxY)
-                remove(rect)
+                removed(rect)
             }
             if oldMinY < newMinY {
                 let rect = CGRect(x: newRect.origin.x, y: oldMinY, width: newRect.size.width, height: newMinY - oldMinY)
-                remove(rect)
+                removed(rect)
             }
 
         } else {
-            add(newRect)
-            remove(oldRect)
+            added(newRect)
+            removed(oldRect)
         }
     }
 }

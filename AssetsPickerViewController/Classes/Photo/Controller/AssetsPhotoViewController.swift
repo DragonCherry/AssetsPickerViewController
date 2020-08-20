@@ -247,7 +247,6 @@ open class AssetsPhotoViewController: UIViewController {
         if traitCollection.forceTouchCapability == .available {
             previewing = registerForPreviewing(with: self, sourceView: collectionView)
         }
-        updateCachedAssets()
     }
     
     override open func viewDidDisappear(_ animated: Bool) {
@@ -261,10 +260,6 @@ open class AssetsPhotoViewController: UIViewController {
     
     deinit {
         logd("Released \(type(of: self))")
-    }
-    
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        updateCachedAssets()
     }
 }
 

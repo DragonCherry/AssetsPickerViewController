@@ -45,11 +45,12 @@ extension AssetsPhotoViewController: UIGestureRecognizerDelegate {
 }
 
 // MARK: - UIScrollViewDelegate
-//extension AssetsPhotoViewController: UIScrollViewDelegate {
-//    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+extension AssetsPhotoViewController: UIScrollViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 //        logi("contentOffset: \(scrollView.contentOffset)")
-//    }
-//}
+        updateCachedAssets()
+    }
+}
 
 // MARK: - AssetsAlbumViewControllerDelegate
 extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
