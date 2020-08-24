@@ -58,6 +58,7 @@ open class AssetsManager: NSObject {
     
     fileprivate var isFetchedAlbums: Bool = false
     fileprivate var resourceLoadingQueue: DispatchQueue = DispatchQueue(label: "com.assetspicker.loader", qos: .userInitiated)
+    fileprivate var albumLoadingQueue: DispatchQueue = DispatchQueue(label: "com.assetspicker.album.loader", qos: .default)
     
     private override init() {
         super.init()
@@ -540,18 +541,33 @@ extension AssetsManager {
         let albums = albumFetchResult.objects(at: indexSet)
         
         for album in albums {
-            // fetch assets
-            self.fetchAlbum(album: album)
             
             // set default album
             if album.assetCollectionSubtype == self.pickerConfig.albumDefaultType {
                 self.defaultAlbum = album
+                
+                // fetch assets
+                self.fetchAlbum(album: album)
             }
             // save alternative album
             if album.assetCollectionSubtype == .smartAlbumUserLibrary {
                 self.cameraRollAlbum = album
+                
+                // fetch assets
+                self.fetchAlbum(album: album)
             }
+            
             fetchedAlbums.append(album)
+        }
+        
+        // fetch all assets
+        self.fetchAlbumAsync(albums: albums) { [weak self] _ in
+            guard let `self` = self else { return }
+            // update sorted albums from albumMap
+            let fetched = Array(self.albumMap.values)
+            let albums = `self`.sortedAlbums(fromAlbums: fetched)
+            self.sortedAlbumsArray.removeAll()
+            self.sortedAlbumsArray.append(albums)
         }
         
         // get sorted albums
@@ -596,6 +612,27 @@ extension AssetsManager {
         return fetchResult
     }
     
+    func fetchAlbumAsync(albums: [PHAssetCollection], completion: @escaping (([PHFetchResult<PHAsset>]) -> Void)) {
+        
+        self.albumLoadingQueue.async {
+            
+            var resuls: [PHFetchResult<PHAsset>] = []
+            
+            for album in albums {
+                let fetchResult = PHAsset.fetchAssets(in: album, options: self.pickerConfig.assetFetchOptions?[album.assetCollectionType])
+                
+                // cache fetch result
+                self.fetchMap[album.localIdentifier] = fetchResult
+                
+                // cache album
+                self.albumMap[album.localIdentifier] = album
+                
+                resuls.append(fetchResult)
+            }
+            
+            completion(resuls)
+        }
+    }
 }
 
 // MARK: - IndexSet Utility

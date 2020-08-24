@@ -81,6 +81,7 @@ extension AssetsPhotoViewController {
                 self.collectionView.reloadData()
                 self.preselectItemsIfNeeded(result: fetchResult)
                 self.scrollToLastItemIfNeeded()
+                self.updateCachedAssets(force: true)
                 // hide loading
                 self.loadingPlaceholderView.isHidden = true
                 self.loadingActivityIndicatorView.stopAnimating()
