@@ -22,13 +22,13 @@ class AssetsFetchService {
     
     func registerFetching(requestId: PHImageRequestID, at indexPath: IndexPath) {
         requestMap[indexPath] = requestId
-        if LogConfig.isFetchLogEnabled { logd("Registered ID: \(requestId) at: \(indexPath.row) (\(self.requestMap.count))") }
+        if LogConfig.isFetchLogEnabled { logd("Requested ID: \(requestId) at: \(indexPath.row) (\(self.requestMap.count))") }
     }
     
     func removeFetching(indexPath: IndexPath) {
         if let requestId = requestMap[indexPath] {
             requestMap.removeValue(forKey: indexPath)
-            if LogConfig.isFetchLogEnabled { logd("Removed ID: \(requestId) at: \(indexPath.row) (\(self.requestMap.count))") }
+            if LogConfig.isFetchLogEnabled { logd("Finished ID: \(requestId) at: \(indexPath.row) (\(self.requestMap.count))") }
         }
     }
     

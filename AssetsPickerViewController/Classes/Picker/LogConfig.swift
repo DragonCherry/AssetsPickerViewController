@@ -8,7 +8,7 @@
 import Foundation
 
 class LogConfig {
-    static var isFetchLogEnabled = false
+    static var isFetchLogEnabled = true
     static var isCellLogEnabled = false
     static var isSelectLogEnabled = false
     static var isAlbumImageSizeLogEnabled = false

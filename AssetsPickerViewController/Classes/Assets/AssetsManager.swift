@@ -236,6 +236,7 @@ extension AssetsManager {
     open func image(at index: Int, size: CGSize, isNeedDegraded: Bool = true, completion: @escaping ((UIImage?, Bool) -> Void)) -> PHImageRequestID {
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
+        options.resizeMode = .exact
         return imageManager.requestImage(
             for: assetArray[index],
             targetSize: size,
