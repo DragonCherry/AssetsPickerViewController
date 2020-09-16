@@ -29,6 +29,12 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         if photoCell.isVideo {
             photoCell.duration = asset.duration
         }
+        
+        if #available(iOS 13.0, *) {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            cell.addInteraction(interaction)
+        }
+        
         return cell
     }
     
