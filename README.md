@@ -1,12 +1,10 @@
 
 Really sorry for my late update for following features.
 
-"Recent Changes"
+"Recent Bug Fixes"
 
-- takes and auto-selects photo or video took inside picker
-- multiple selection by dragging cells (from iOS 13)
-- bug fixes
-
+- Fixed not to show empty photo cell built by Xcode12
+- Fixed responseless preview on newer iPhone
 
 ## AssetsPickerViewController
 
