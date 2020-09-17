@@ -1,10 +1,5 @@
 
-Really sorry for my late update for following features.
-
-"Recent Bug Fixes"
-
-- Fixed not to show empty photo cell built by Xcode12
-- Fixed responseless preview on newer iPhone
+Now iOS 14 supports multiple asset picker by default. I think we better use PHPickerViewController than this library!
 
 ## AssetsPickerViewController
 
