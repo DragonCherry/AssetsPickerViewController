@@ -1,5 +1,5 @@
 
-Now iOS 14 supports multiple asset picker by default. I think we better use PHPickerViewController than this library!
+# Now iOS 14 supports multiple asset picker by default. I recommend use PHPickerViewController instead of this picker for many reasons.
 
 ## AssetsPickerViewController
 
