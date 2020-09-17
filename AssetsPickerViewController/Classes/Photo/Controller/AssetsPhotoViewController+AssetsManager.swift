@@ -14,15 +14,30 @@ extension AssetsPhotoViewController: AssetsManagerDelegate {
     public func assetsManagerFetched(manager: AssetsManager) {}
     
     public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {
-        if oldStatus != .authorized {
-            if newStatus == .authorized {
+        if #available(iOS 14, *) {
+            if newStatus == .limited {
                 updateNoPermissionView()
                 AssetsManager.shared.fetchAssets(isRefetch: true, completion: { [weak self] (_) in
-                    self?.collectionView.reloadData()
+                    DispatchQueue.main.async { [weak self] in
+                        self?.collectionView.reloadData()
+                    }
                 })
+            } else {
+                updateNoPermissionView()
             }
         } else {
-            updateNoPermissionView()
+            if oldStatus != .authorized {
+                if newStatus == .authorized {
+                    updateNoPermissionView()
+                    AssetsManager.shared.fetchAssets(isRefetch: true, completion: { [weak self] (_) in
+                        DispatchQueue.main.async { [weak self] in
+                            self?.collectionView.reloadData()
+                        }
+                    })
+                }
+            } else {
+                updateNoPermissionView()
+            }
         }
     }
     
