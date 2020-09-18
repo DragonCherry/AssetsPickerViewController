@@ -26,10 +26,6 @@ public protocol AssetsManagerDelegate: class {
     func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath])
 }
 
-public protocol AssetsManagerLoadDelegate: AnyObject {
-    func assetAsynchronousLoadingDidCompleted(_ manager: AssetsManager)
-}
-
 // MARK: - AssetsManager
 open class AssetsManager: NSObject {
     
@@ -60,10 +56,7 @@ open class AssetsManager: NSObject {
     fileprivate(set) open var cameraRollAlbum: PHAssetCollection!
     fileprivate(set) open var selectedAlbum: PHAssetCollection?
     
-    fileprivate(set) open var isLoading: Bool = false
-    open weak var loadDelegate: AssetsManagerLoadDelegate?
-    
-    fileprivate var isFetchedAlbums: Bool = false
+    fileprivate(set) var isFetchedAlbums: Bool = false
     fileprivate var resourceLoadingQueue: DispatchQueue = DispatchQueue(label: "com.assetspicker.loader", qos: .userInitiated)
     fileprivate var albumLoadingQueue: DispatchQueue = DispatchQueue(label: "com.assetspicker.album.loader", qos: .default)
     
@@ -490,18 +483,22 @@ extension AssetsManager {
             guard let `self` = self else { return }
             if !self.isFetchedAlbums {
                 
-                let smartAlbumEntry = self.fetchAlbums(forAlbumType: .smartAlbum)
+                var types: [PHAssetCollectionType] = [ .smartAlbum, .album ]
+                
+                let smartAlbumEntry = self.fetchDefaultAlbums(forAlbumType: .smartAlbum)
                 self.fetchedAlbumsArray.append(smartAlbumEntry.fetchedAlbums)
                 self.sortedAlbumsArray.append(smartAlbumEntry.sortedAlbums)
                 self.albumsFetchArray.append(smartAlbumEntry.fetchResult)
                 
-                let albumEntry = self.fetchAlbums(forAlbumType: .album)
+                let albumEntry = self.fetchDefaultAlbums(forAlbumType: .album)
                 self.fetchedAlbumsArray.append(albumEntry.fetchedAlbums)
                 self.sortedAlbumsArray.append(albumEntry.sortedAlbums)
                 self.albumsFetchArray.append(albumEntry.fetchResult)
                 
                 if self.pickerConfig.albumIsShowMomentAlbums {
-                    let momentEntry = self.fetchAlbums(forAlbumType: .moment)
+                    types.append(.moment)
+                    
+                    let momentEntry = self.fetchDefaultAlbums(forAlbumType: .moment)
                     self.fetchedAlbumsArray.append(momentEntry.fetchedAlbums)
                     self.sortedAlbumsArray.append(momentEntry.sortedAlbums)
                     self.albumsFetchArray.append(momentEntry.fetchResult)
@@ -512,7 +509,35 @@ extension AssetsManager {
                         delegate.assetsManagerFetched(manager: self)
                     }
                 }
-                self.isFetchedAlbums = true
+                
+                let group = DispatchGroup()
+                
+                self.albumLoadingQueue.async {
+                    var fetchedAlbumsArray: [[PHAssetCollection]] = []
+                    var sortedAlbumsArray: [[PHAssetCollection]] = []
+                    var albumsFetchArray: [PHFetchResult<PHAssetCollection>] = []
+                    
+                    for type in types {
+                        group.enter()
+                        self.fetchAlbumsAsync(forAlbumType: type) { (entry) in
+                            fetchedAlbumsArray.append(entry.fetchedAlbums)
+                            sortedAlbumsArray.append(entry.sortedAlbums)
+                            albumsFetchArray.append(entry.fetchResult)
+                            group.leave()
+                        }
+                    }
+                    self.fetchedAlbumsArray = fetchedAlbumsArray
+                    self.sortedAlbumsArray = sortedAlbumsArray
+                    self.albumsFetchArray = albumsFetchArray
+                    
+                    self.subscribers.forEach { [weak self] (delegate) in
+                        guard let `self` = self else { return }
+                        DispatchQueue.main.async {
+                            delegate.assetsManagerFetched(manager: self)
+                        }
+                    }
+                    self.isFetchedAlbums = true
+                }
             }
             // notify
             DispatchQueue.main.async {
@@ -538,7 +563,7 @@ extension AssetsManager {
         
     }
     
-    func fetchAlbums(forAlbumType type: PHAssetCollectionType) -> (fetchedAlbums: [PHAssetCollection], sortedAlbums: [PHAssetCollection], fetchResult: PHFetchResult<PHAssetCollection>) {
+    func fetchDefaultAlbums(forAlbumType type: PHAssetCollectionType) -> (fetchedAlbums: [PHAssetCollection], sortedAlbums: [PHAssetCollection], fetchResult: PHFetchResult<PHAssetCollection>) {
         
         let fetchOption = pickerConfig.albumFetchOptions?[type]
         let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: type, subtype: .any, options: fetchOption)
@@ -555,7 +580,6 @@ extension AssetsManager {
                 
                 // fetch assets
                 self.fetchAlbum(album: album)
-                fetchedAlbums.append(album)
             }
             // save alternative album
             if album.assetCollectionSubtype == .smartAlbumUserLibrary {
@@ -563,23 +587,9 @@ extension AssetsManager {
                 
                 // fetch assets
                 self.fetchAlbum(album: album)
-                fetchedAlbums.append(album)
             }
-        }
-        
-        self.isLoading = true
-        // fetch all assets
-        self.fetchAlbumAsync(albums: albums) { [weak self] _ in
-            guard let `self` = self else { return }
-            // update sorted albums from albumMap
-            let fetched = Array(self.albumMap.values)
-            let albums = `self`.sortedAlbums(fromAlbums: fetched)
-            self.sortedAlbumsArray.removeAll()
-            self.sortedAlbumsArray.append(albums)
-            DispatchQueue.main.async {
-                self.isLoading = false
-                self.loadDelegate?.assetAsynchronousLoadingDidCompleted(self)
-            }
+            
+            fetchedAlbums.append(album)
         }
         
         // get sorted albums
@@ -608,6 +618,114 @@ extension AssetsManager {
         
         // append album fetch result
         return (fetchedAlbums, sortedAlbums, albumFetchResult)
+    }
+    
+    func fetchAlbums(forAlbumType type: PHAssetCollectionType) -> (fetchedAlbums: [PHAssetCollection], sortedAlbums: [PHAssetCollection], fetchResult: PHFetchResult<PHAssetCollection>) {
+        
+        let fetchOption = pickerConfig.albumFetchOptions?[type]
+        let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: type, subtype: .any, options: fetchOption)
+        var fetchedAlbums = [PHAssetCollection]()
+        
+        let indexSet = IndexSet(integersIn: 0..<albumFetchResult.count)
+        let albums = albumFetchResult.objects(at: indexSet)
+        
+        for album in albums {
+            // fetch assets
+            self.fetchAlbum(album: album)
+            
+            // set default album
+            if album.assetCollectionSubtype == self.pickerConfig.albumDefaultType {
+                self.defaultAlbum = album
+            }
+            // save alternative album
+            if album.assetCollectionSubtype == .smartAlbumUserLibrary {
+                self.cameraRollAlbum = album
+            }
+            
+            fetchedAlbums.append(album)
+        }
+        
+        // get sorted albums
+        let sortedAlbums = self.sortedAlbums(fromAlbums: fetchedAlbums)
+        
+        // set default album
+        if let defaultAlbum = self.defaultAlbum {
+            logi("Default album is \"\(defaultAlbum.localizedTitle ?? "")\"")
+        } else {
+            if let defaultAlbum = self.defaultAlbum {
+                logi("Set default album \"\(defaultAlbum.localizedTitle ?? "")\"")
+            } else {
+                if let cameraRollAlbum = self.cameraRollAlbum {
+                    self.defaultAlbum = cameraRollAlbum
+                    logw("Set default album with fallback default album \"\(cameraRollAlbum.localizedTitle ?? "")\"")
+                } else {
+                    if let firstAlbum = sortedAlbums.first, type == .smartAlbum {
+                        self.defaultAlbum = firstAlbum
+                        loge("Set default album with first item \"\(firstAlbum.localizedTitle ?? "")\"")
+                    } else {
+                        logc("Is this case could happen? Please raise an issue if you've met this message.")
+                    }
+                }
+            }
+        }
+        
+        // append album fetch result
+        return (fetchedAlbums, sortedAlbums, albumFetchResult)
+    }
+    
+    func fetchAlbumsAsync(forAlbumType type: PHAssetCollectionType, complection: ((fetchedAlbums: [PHAssetCollection], sortedAlbums: [PHAssetCollection], fetchResult: PHFetchResult<PHAssetCollection>)) -> Void) {
+        
+        let fetchOption = pickerConfig.albumFetchOptions?[type]
+        let albumFetchResult = PHAssetCollection.fetchAssetCollections(with: type, subtype: .any, options: fetchOption)
+        var fetchedAlbums = [PHAssetCollection]()
+        
+        let indexSet = IndexSet(integersIn: 0..<albumFetchResult.count)
+        let albums = albumFetchResult.objects(at: indexSet)
+        
+        for album in albums {
+            // fetch assets
+            self.fetchAlbum(album: album)
+            
+            // set default album
+            if album.assetCollectionSubtype == self.pickerConfig.albumDefaultType {
+                self.defaultAlbum = album
+            }
+            // save alternative album
+            if album.assetCollectionSubtype == .smartAlbumUserLibrary {
+                self.cameraRollAlbum = album
+            }
+            
+            fetchedAlbums.append(album)
+        }
+        
+        // get sorted albums
+        let sortedAlbums = self.sortedAlbums(fromAlbums: fetchedAlbums)
+        
+        // set default album
+        if let defaultAlbum = self.defaultAlbum {
+            logi("Default album is \"\(defaultAlbum.localizedTitle ?? "")\"")
+        } else {
+            if let defaultAlbum = self.defaultAlbum {
+                logi("Set default album \"\(defaultAlbum.localizedTitle ?? "")\"")
+            } else {
+                if let cameraRollAlbum = self.cameraRollAlbum {
+                    self.defaultAlbum = cameraRollAlbum
+                    logw("Set default album with fallback default album \"\(cameraRollAlbum.localizedTitle ?? "")\"")
+                } else {
+                    if let firstAlbum = sortedAlbums.first, type == .smartAlbum {
+                        self.defaultAlbum = firstAlbum
+                        loge("Set default album with first item \"\(firstAlbum.localizedTitle ?? "")\"")
+                    } else {
+                        logc("Is this case could happen? Please raise an issue if you've met this message.")
+                    }
+                }
+            }
+        }
+        
+        let result = (fetchedAlbums, sortedAlbums, albumFetchResult)
+        
+        // append album fetch result
+        complection(result)
     }
     
     @discardableResult

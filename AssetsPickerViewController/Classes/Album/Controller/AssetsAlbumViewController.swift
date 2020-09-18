@@ -111,20 +111,18 @@ open class AssetsAlbumViewController: UIViewController {
         if #available(iOS 11.0, *) {
             navigationController?.navigationBar.prefersLargeTitles = true
         }
-        
-        AssetsManager.shared.loadDelegate = self
 
         collectionView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
         
-        let isLoading = AssetsManager.shared.isLoading
-        if isLoading {
-            loadingActivityIndicatorView.startAnimating()
-            loadingPlaceholderView.isHidden = false
-        } else {
+        let isFetchedAlbums = AssetsManager.shared.isFetchedAlbums
+        if isFetchedAlbums {
             loadingActivityIndicatorView.stopAnimating()
             loadingPlaceholderView.isHidden = true
+        } else {
+            loadingActivityIndicatorView.startAnimating()
+            loadingPlaceholderView.isHidden = false
         }
         
         if #available(iOS 13.0, *) {
@@ -343,6 +341,8 @@ extension AssetsAlbumViewController: AssetsManagerDelegate {
     
     public func assetsManagerFetched(manager: AssetsManager) {
         collectionView.reloadData()
+        loadingActivityIndicatorView.stopAnimating()
+        loadingPlaceholderView.isHidden = true
     }
     
     public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {}
@@ -375,12 +375,4 @@ extension AssetsAlbumViewController: AssetsManagerDelegate {
     public func assetsManager(manager: AssetsManager, insertedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, removedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
-}
-
-extension AssetsAlbumViewController: AssetsManagerLoadDelegate {
-    public func assetAsynchronousLoadingDidCompleted(_ manager: AssetsManager) {
-        collectionView.reloadData()
-        loadingActivityIndicatorView.stopAnimating()
-        loadingPlaceholderView.isHidden = true
-    }
 }
