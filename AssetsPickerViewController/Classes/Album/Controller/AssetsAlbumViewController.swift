@@ -341,8 +341,14 @@ extension AssetsAlbumViewController: AssetsManagerDelegate {
     
     public func assetsManagerFetched(manager: AssetsManager) {
         collectionView.reloadData()
-        loadingActivityIndicatorView.stopAnimating()
-        loadingPlaceholderView.isHidden = true
+        let isFetchedAlbums = AssetsManager.shared.isFetchedAlbums
+        if isFetchedAlbums {
+            loadingActivityIndicatorView.stopAnimating()
+            loadingPlaceholderView.isHidden = true
+        } else {
+            loadingActivityIndicatorView.startAnimating()
+            loadingPlaceholderView.isHidden = false
+        }
     }
     
     public func assetsManager(manager: AssetsManager, authorizationStatusChanged oldStatus: PHAuthorizationStatus, newStatus: PHAuthorizationStatus) {}
