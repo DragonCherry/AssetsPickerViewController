@@ -26,6 +26,10 @@ public protocol AssetsManagerDelegate: class {
     func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath])
 }
 
+public protocol AssetsManagerLoadDelegate: AnyObject {
+    func assetAsynchronousLoadingDidCompleted(_ manager: AssetsManager)
+}
+
 // MARK: - AssetsManager
 open class AssetsManager: NSObject {
     
@@ -55,6 +59,9 @@ open class AssetsManager: NSObject {
     fileprivate(set) open var defaultAlbum: PHAssetCollection?
     fileprivate(set) open var cameraRollAlbum: PHAssetCollection!
     fileprivate(set) open var selectedAlbum: PHAssetCollection?
+    
+    fileprivate(set) open var isLoading: Bool = false
+    open weak var loadDelegate: AssetsManagerLoadDelegate?
     
     fileprivate var isFetchedAlbums: Bool = false
     fileprivate var resourceLoadingQueue: DispatchQueue = DispatchQueue(label: "com.assetspicker.loader", qos: .userInitiated)
@@ -548,6 +555,7 @@ extension AssetsManager {
                 
                 // fetch assets
                 self.fetchAlbum(album: album)
+                fetchedAlbums.append(album)
             }
             // save alternative album
             if album.assetCollectionSubtype == .smartAlbumUserLibrary {
@@ -555,11 +563,11 @@ extension AssetsManager {
                 
                 // fetch assets
                 self.fetchAlbum(album: album)
+                fetchedAlbums.append(album)
             }
-            
-            fetchedAlbums.append(album)
         }
         
+        self.isLoading = true
         // fetch all assets
         self.fetchAlbumAsync(albums: albums) { [weak self] _ in
             guard let `self` = self else { return }
@@ -568,6 +576,10 @@ extension AssetsManager {
             let albums = `self`.sortedAlbums(fromAlbums: fetched)
             self.sortedAlbumsArray.removeAll()
             self.sortedAlbumsArray.append(albums)
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.loadDelegate?.assetAsynchronousLoadingDidCompleted(self)
+            }
         }
         
         // get sorted albums

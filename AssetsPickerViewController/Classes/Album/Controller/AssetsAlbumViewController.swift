@@ -111,12 +111,22 @@ open class AssetsAlbumViewController: UIViewController {
         if #available(iOS 11.0, *) {
             navigationController?.navigationBar.prefersLargeTitles = true
         }
+        
+        AssetsManager.shared.loadDelegate = self
 
         collectionView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
         
-        loadingPlaceholderView.isHidden = true
+        let isLoading = AssetsManager.shared.isLoading
+        if isLoading {
+            loadingActivityIndicatorView.startAnimating()
+            loadingPlaceholderView.isHidden = false
+        } else {
+            loadingActivityIndicatorView.stopAnimating()
+            loadingPlaceholderView.isHidden = true
+        }
+        
         if #available(iOS 13.0, *) {
             loadingPlaceholderView.backgroundColor = .systemBackground
         } else {
@@ -367,3 +377,10 @@ extension AssetsAlbumViewController: AssetsManagerDelegate {
     public func assetsManager(manager: AssetsManager, updatedAssets assets: [PHAsset], at indexPaths: [IndexPath]) {}
 }
 
+extension AssetsAlbumViewController: AssetsManagerLoadDelegate {
+    public func assetAsynchronousLoadingDidCompleted(_ manager: AssetsManager) {
+        collectionView.reloadData()
+        loadingActivityIndicatorView.stopAnimating()
+        loadingPlaceholderView.isHidden = true
+    }
+}
