@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import PhotosUI
-import Device
 import SnapKit
 
 // MARK: - AssetsPhotoViewController
