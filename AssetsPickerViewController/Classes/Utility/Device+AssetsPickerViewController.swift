@@ -5,6 +5,7 @@
 //  Created by DragonCherry on 19/12/2017.
 //
 
+import UIKit
 import Device
 
 extension Device {
