@@ -15,7 +15,11 @@ extension String {
             let customConfig = AssetsPickerConfig.customStringConfig,
             let localizedKey = AssetsPickerLocalizedStringKey(rawValue: key),
             let string = customConfig[localizedKey] else {
+#if SWIFT_PACKAGE
+                self = Bundle.module.localizedString(forKey: key, value: key, table:  "AssetsPickerViewController")
+#else
                 self = Bundle.assetsPickerBundle.localizedString(forKey: key, value: key, table:  "AssetsPickerViewController")
+#endif
                 return
         }
         self = string

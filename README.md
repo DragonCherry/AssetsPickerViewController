@@ -101,10 +101,10 @@ Customizable Album & Asset Layout
 
 - multiple selection by dragging cells (from iOS 13)
 
+- SPM(Swift Package Manager) support
+
 
 ## Features To-do
-
-- SPM(Swift Package Manager) support
 
 - Cropping image before select
 

@@ -6,6 +6,7 @@
 //
 //
 
+import UIKit
 import SnapKit
 
 fileprivate let kDimmerViewKey                          = "kDimmerViewKey"
