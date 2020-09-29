@@ -134,13 +134,11 @@ extension AssetsPhotoViewController {
     }
     
     func updateNavigationStatus() {
+        doneButtonItem.isEnabled = selectedArray.count >= (pickerConfig.assetsMinimumSelectionCount >= 0 ? pickerConfig.assetsMinimumSelectionCount : 1)
         
         if let album = AssetsManager.shared.selectedAlbum, selectedArray.isEmpty {
             title = self.title(forAlbum: album)
         } else {
-            
-            doneButtonItem.isEnabled = selectedArray.count >= (pickerConfig.assetsMinimumSelectionCount >= 0 ? pickerConfig.assetsMinimumSelectionCount : 1)
-            
             let counts: (imageCount: Int, videoCount: Int) = selectedArray.reduce((0, 0)) { (result, asset) -> (Int, Int) in
                 let imageCount = asset.mediaType == .image ? 1 : 0
                 let videoCount = asset.mediaType == .video ? 1 : 0
