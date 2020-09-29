@@ -8,6 +8,7 @@
 import Foundation
 import AVFoundation
 import Photos
+import UIKit
 
 protocol AssetsPickerManagerDelegate: NSObject {
     func assetsPickerManagerSavedAsset(identifier: String)
