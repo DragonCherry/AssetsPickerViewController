@@ -64,6 +64,21 @@ extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
     }
 }
 
+@available(iOS 13.0, *)
+extension AssetsPhotoViewController: UIContextMenuInteractionDelegate {
+    public func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] in
+            guard let `self` = self else { return nil }
+            let pointInCollectionView = self.collectionView.convert(location, from: interaction.view)
+            guard let pressingIndexPath = self.collectionView.indexPathForItem(at: pointInCollectionView) else { return nil }
+            let previewController = AssetsPreviewController()
+            guard let fetchResult = AssetsManager.shared.fetchResult else { return nil }
+            previewController.asset = fetchResult.object(at: pressingIndexPath.row)
+            return previewController
+        }, actionProvider: nil)
+    }
+}
+
 // MARK - UIViewControllerPreviewingDelegate
 @available(iOS 9.0, *)
 extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {

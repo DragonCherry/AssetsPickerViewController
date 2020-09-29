@@ -1,12 +1,5 @@
 
-Really sorry for my late update for following features.
-
-"Recent Changes"
-
-- takes and auto-selects photo or video took inside picker
-- multiple selection by dragging cells (from iOS 13)
-- bug fixes
-
+# Now iOS 14 supports multiple asset picker by default. I recommend use PHPickerViewController instead of this picker for many reasons.
 
 ## AssetsPickerViewController
 

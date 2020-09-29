@@ -32,12 +32,16 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
         } else {
             photoCell.asset = nil
         }
+        
+        if #available(iOS 13.0, *) {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            cell.addInteraction(interaction)
+        }
+        
         return cell
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        //registerTapGestureIfNeeded(cell: cell, indexPath: indexPath)
-        
         guard var photoCell = cell as? AssetsPhotoCellProtocol else {
             logw("Failed to cast UICollectionViewCell.")
             return
@@ -59,28 +63,39 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             photoCell.asset = nil
         }
         
-        fetchService.cancelFetching(at: indexPath)
-        let requestId = AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { [weak self] (image, isDegraded) in
-            if self?.fetchService.isFetching(indexPath: indexPath) ?? true {
-                if !isDegraded {
-                    self?.fetchService.removeFetching(indexPath: indexPath)
-                }
-                UIView.transition(
-                    with: photoCell.imageView,
-                    duration: 0.125,
-                    options: .transitionCrossDissolve,
-                    animations: {
-                        photoCell.imageView.image = image
-                },
-                    completion: nil
-                )
-            }
-        })
-        fetchService.registerFetching(requestId: requestId, at: indexPath)
+        tryFetchImage(forCell: photoCell, forIndexPath: indexPath)
         
         if LogConfig.isCellLogEnabled {
             logd("[\(indexPath.row)] isSelected: \(photoCell.isSelected), isVideo: \(photoCell.isVideo), count: \(photoCell.count)")
         }
+    }
+    
+    func tryFetchImage(forCell cell: AssetsPhotoCellProtocol, forIndexPath indexPath: IndexPath, isRetry: Bool = false) {
+        let requestId = AssetsManager.shared.image(at: indexPath.row, size: pickerConfig.assetCacheSize, completion: { [weak self] (image, isDegraded) in
+            guard let fetchService = self?.fetchService else { return }
+            guard fetchService.isFetching(indexPath: indexPath) else { return }
+            if !isDegraded {
+                fetchService.removeFetching(indexPath: indexPath)
+            }
+            UIView.transition(
+                with: cell.imageView,
+                duration: 0.125,
+                options: .transitionCrossDissolve,
+                animations: { [weak self] in
+                    if let image = image, image.size.height > 0, image.size.height > 0 {
+                        cell.imageView.image = image
+                    } else {
+                        if !isRetry {
+                            self?.tryFetchImage(forCell: cell, forIndexPath: indexPath, isRetry: true)
+                        } else {
+                            logw("Failed to set right image at \(indexPath)")
+                        }
+                    }
+            },
+                completion: nil
+            )
+        })
+        fetchService.registerFetching(requestId: requestId, at: indexPath)
     }
     
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

@@ -22,9 +22,9 @@ class CustomAlbumCell: UICollectionViewCell, AssetsAlbumCellProtocol {
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                contentView.dim(animated: false, color: .gray, alpha: 0.3)
+                contentView.dmr_dim(animated: false, color: .gray, alpha: 0.3)
             } else {
-                contentView.undim()
+                contentView.dmr_undim()
             }
         }
     }

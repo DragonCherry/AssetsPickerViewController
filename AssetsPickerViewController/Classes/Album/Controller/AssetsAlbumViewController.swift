@@ -269,7 +269,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
             logw("Failed to cast UICollectionViewCell.")
             return false
         }
-        albumCell.imageView.dim(animated: false, color: .ap_label, alpha: 0.5)
+        albumCell.imageView.dmr_dim(animated: false, color: .ap_label, alpha: 0.5)
         return true
     }
     
@@ -278,7 +278,7 @@ extension AssetsAlbumViewController: UICollectionViewDataSource {
             logw("Failed to cast UICollectionViewCell.")
             return
         }
-        albumCell.imageView.undim()
+        albumCell.imageView.dmr_undim()
     }
 }
 

@@ -41,7 +41,7 @@ class CustomAssetCellOverlay: UIView {
     }
     
     private func commonInit() {
-        dim(animated: false, color: .white, alpha: 0.25)
+        dmr_dim(animated: false, color: .white, alpha: 0.25)
         addSubview(circleView)
         addSubview(countLabel)
         
