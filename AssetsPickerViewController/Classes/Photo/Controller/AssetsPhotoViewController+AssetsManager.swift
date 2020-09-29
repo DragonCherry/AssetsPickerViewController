@@ -115,11 +115,18 @@ extension AssetsPhotoViewController {
                 completion(nil)
                 return
             }
-            guard let savedAssetEntry = AssetsManager.shared.assetArray.enumerated().first(where: { $0.element.localIdentifier == newlySavedIdentifier }) else {
-                completion(nil)
+            var index: Int = NSNotFound
+            guard let fetchResult = AssetsManager.shared.fetchResult else { return }
+            fetchResult.enumerateObjects { (asset, idx, stop) in
+                if asset.localIdentifier == newlySavedIdentifier {
+                    index = idx
+                    stop.pointee = true
+                }
+            }
+            if index == NSNotFound {
                 return
             }
-            let ip = IndexPath(row: savedAssetEntry.offset, section: 0)
+            let ip = IndexPath(row: index, section: 0)
             indexPathToSelect = ip
             if selectedArray.count < pickerConfig.assetsMaximumSelectionCount {
                 select(at: ip)

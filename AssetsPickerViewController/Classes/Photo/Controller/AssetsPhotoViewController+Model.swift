@@ -36,8 +36,10 @@ extension AssetsPhotoViewController {
     
     func isSelected(at indexPath: IndexPath) -> Bool {
         let manager = AssetsManager.shared
-        guard indexPath.row < manager.assetArray.count else { return false }
-        if let _ = selectedMap[manager.assetArray[indexPath.row].localIdentifier] {
+        guard let fetchResult = manager.fetchResult else { return false }
+        guard indexPath.row < fetchResult.count else { return false }
+        let asset = fetchResult.object(at: indexPath.row)
+        if let _ = selectedMap[asset.localIdentifier] {
             return true
         } else {
             return false
@@ -47,8 +49,9 @@ extension AssetsPhotoViewController {
     func select(at indexPath: IndexPath) {
         defer { logSelectStatus(indexPath, isSelect: true) }
         let manager = AssetsManager.shared
-        guard indexPath.row < manager.assetArray.count else { return }
-        let asset = manager.assetArray[indexPath.row]
+        guard let fetchResult = manager.fetchResult else { return }
+        guard indexPath.row < fetchResult.count else { return }
+        let asset = fetchResult.object(at: indexPath.row)
         if let _ = selectedMap[asset.localIdentifier] {} else {
             selectedArray.append(asset)
             selectedMap[asset.localIdentifier] = asset
@@ -61,8 +64,9 @@ extension AssetsPhotoViewController {
     func deselect(at indexPath: IndexPath) {
         defer { logSelectStatus(indexPath, isSelect: false) }
         let manager = AssetsManager.shared
-        guard indexPath.row < manager.assetArray.count else { return }
-        let asset = manager.assetArray[indexPath.row]
+        guard let fetchResult = manager.fetchResult else { return }
+        guard indexPath.row < fetchResult.count else { return }
+        let asset = fetchResult.object(at: indexPath.row)
         guard let targetAsset = selectedMap[asset.localIdentifier] else {
             logw("Invalid status.")
             return

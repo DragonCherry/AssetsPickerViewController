@@ -73,13 +73,15 @@ extension AssetsPhotoViewController {
         let manager = AssetsManager.shared
         manager.subscribe(subscriber: self)
         manager.fetchAlbums { _ in
-            manager.fetchAssets() { [weak self] photos in
+            manager.fetchAssets() { [weak self] result in
                 guard let `self` = self else { return }
-                self.updateEmptyView(count: photos.count)
+                guard let fetchResult = result else { return }
+                self.updateEmptyView(count: fetchResult.count)
                 self.updateNavigationStatus()
                 self.collectionView.reloadData()
-                self.preselectItemsIfNeeded(photos: photos)
+                self.preselectItemsIfNeeded(result: fetchResult)
                 self.scrollToLastItemIfNeeded()
+                self.updateCachedAssets(force: true)
                 // hide loading
                 self.loadingPlaceholderView.isHidden = true
                 self.loadingActivityIndicatorView.stopAnimating()

@@ -45,11 +45,12 @@ extension AssetsPhotoViewController: UIGestureRecognizerDelegate {
 }
 
 // MARK: - UIScrollViewDelegate
-//extension AssetsPhotoViewController: UIScrollViewDelegate {
-//    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+extension AssetsPhotoViewController: UIScrollViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 //        logi("contentOffset: \(scrollView.contentOffset)")
-//    }
-//}
+        updateCachedAssets()
+    }
+}
 
 // MARK: - AssetsAlbumViewControllerDelegate
 extension AssetsPhotoViewController: AssetsAlbumViewControllerDelegate {
@@ -71,7 +72,8 @@ extension AssetsPhotoViewController: UIContextMenuInteractionDelegate {
             let pointInCollectionView = self.collectionView.convert(location, from: interaction.view)
             guard let pressingIndexPath = self.collectionView.indexPathForItem(at: pointInCollectionView) else { return nil }
             let previewController = AssetsPreviewController()
-            previewController.asset = AssetsManager.shared.assetArray[pressingIndexPath.row]
+            guard let fetchResult = AssetsManager.shared.fetchResult else { return nil }
+            previewController.asset = fetchResult.object(at: pressingIndexPath.row)
             return previewController
         }, actionProvider: nil)
     }
@@ -88,7 +90,8 @@ extension AssetsPhotoViewController: UIViewControllerPreviewingDelegate {
         guard let pressingCell = collectionView.cellForItem(at: pressingIndexPath) else { return nil }
         previewingContext.sourceRect = pressingCell.frame
         let previewController = AssetsPreviewController()
-        previewController.asset = AssetsManager.shared.assetArray[pressingIndexPath.row]
+        guard let fetchResult = AssetsManager.shared.fetchResult else { return nil }
+        previewController.asset = fetchResult.object(at: pressingIndexPath.row)
         return previewController
     }
     

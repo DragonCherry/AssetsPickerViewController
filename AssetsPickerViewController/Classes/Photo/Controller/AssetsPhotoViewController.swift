@@ -29,6 +29,8 @@ open class AssetsPhotoViewController: UIViewController {
     
     let fetchService = AssetsFetchService()
     
+    var previousPreheatRect: CGRect = .zero
+    
     lazy var cancelButtonItem: UIBarButtonItem = {
         let buttonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
                                          target: self,
@@ -179,7 +181,8 @@ open class AssetsPhotoViewController: UIViewController {
         super.viewDidLayoutSubviews()
         if !didSetInitialPosition {
             if pickerConfig.assetsIsScrollToBottom {
-                let count = AssetsManager.shared.assetArray.count
+                guard let fetchResult = AssetsManager.shared.fetchResult else { return }
+                let count = fetchResult.count
                 if count > 0 {
                     if self.collectionView.collectionViewLayout.collectionViewContentSize.height > 0 {
                         let lastRow = self.collectionView.numberOfItems(inSection: 0) - 1
@@ -193,13 +196,13 @@ open class AssetsPhotoViewController: UIViewController {
     
     open func deselectAll() {
         var indexPaths = [IndexPath]()
+        guard let fetchResult = AssetsManager.shared.fetchResult else { return }
         for selectedAsset in selectedArray {
-            if let row = AssetsManager.shared.assetArray.firstIndex(of: selectedAsset) {
-                let indexPath = IndexPath(row: row, section: 0)
-                deselectCell(at: indexPath)
-                delegate?.assetsPicker?(controller: picker, didDeselect: selectedAsset, at: indexPath)
-                indexPaths.append(indexPath)
-            }
+            let row = fetchResult.index(of: selectedAsset)
+            let indexPath = IndexPath(row: row, section: 0)
+            deselectCell(at: indexPath)
+            delegate?.assetsPicker?(controller: picker, didDeselect: selectedAsset, at: indexPath)
+            indexPaths.append(indexPath)
         }
         updateSelectionCount()
         updateNavigationStatus()

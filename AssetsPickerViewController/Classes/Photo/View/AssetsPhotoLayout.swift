@@ -38,8 +38,9 @@ open class AssetsPhotoLayout: UICollectionViewFlowLayout {
 extension AssetsPhotoLayout {
     
     open func expectedContentHeight(forViewSize size: CGSize, isPortrait: Bool) -> CGFloat {
-        var rows = AssetsManager.shared.assetArray.count / (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
-        let remainder = AssetsManager.shared.assetArray.count % (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
+        guard let fetchResult = AssetsManager.shared.fetchResult else { return 0.0 }
+        var rows = fetchResult.count / (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
+        let remainder = fetchResult.count % (isPortrait ? pickerConfig.assetPortraitColumnCount : pickerConfig.assetLandscapeColumnCount)
         rows += remainder > 0 ? 1 : 0
         
         let cellSize = isPortrait ? pickerConfig.assetPortraitCellSize(forViewSize: UIScreen.main.portraitContentSize) : pickerConfig.assetLandscapeCellSize(forViewSize: UIScreen.main.landscapeContentSize)

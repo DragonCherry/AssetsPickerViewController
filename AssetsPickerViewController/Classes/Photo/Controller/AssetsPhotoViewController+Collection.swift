@@ -12,7 +12,7 @@ import Photos
 extension AssetsPhotoViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = AssetsManager.shared.assetArray.count
+        let count = AssetsManager.shared.fetchResult?.count ?? 0
         updateEmptyView(count: count)
         return count
     }
@@ -23,11 +23,14 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             logw("Failed to cast UICollectionViewCell.")
             return cell
         }
-        let asset = AssetsManager.shared.assetArray[indexPath.row]
-        photoCell.asset = asset
-        photoCell.isVideo = asset.mediaType == .video
-        if photoCell.isVideo {
-            photoCell.duration = asset.duration
+        if let asset = AssetsManager.shared.fetchResult?.object(at: indexPath.row) {
+            photoCell.asset = asset
+            photoCell.isVideo = asset.mediaType == .video
+            if photoCell.isVideo {
+                photoCell.duration = asset.duration
+            }
+        } else {
+            photoCell.asset = nil
         }
         
         if #available(iOS 13.0, *) {
@@ -44,17 +47,20 @@ extension AssetsPhotoViewController: UICollectionViewDataSource {
             return
         }
         
-        let asset = AssetsManager.shared.assetArray[indexPath.row]
-        photoCell.asset = asset
-        photoCell.isVideo = asset.mediaType == .video
-        if photoCell.isVideo {
-            photoCell.duration = asset.duration
-        }
-        
-        if let selectedAsset = selectedMap[asset.localIdentifier] {
-            if let targetIndex = selectedArray.firstIndex(of: selectedAsset) {
-                photoCell.count = targetIndex + 1
+        if let asset = AssetsManager.shared.fetchResult?.object(at: indexPath.row) {
+            photoCell.asset = asset
+            photoCell.isVideo = asset.mediaType == .video
+            if photoCell.isVideo {
+                photoCell.duration = asset.duration
             }
+            
+            if let selectedAsset = selectedMap[asset.localIdentifier] {
+                if let targetIndex = selectedArray.firstIndex(of: selectedAsset) {
+                    photoCell.count = targetIndex + 1
+                }
+            }
+        } else {
+            photoCell.asset = nil
         }
         
         tryFetchImage(forCell: photoCell, forIndexPath: indexPath)
@@ -129,8 +135,10 @@ extension AssetsPhotoViewController: UICollectionViewDataSourcePrefetching {
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         var assets = [PHAsset]()
         for indexPath in indexPaths {
-            if AssetsManager.shared.assetArray.count > indexPath.row {
-                assets.append(AssetsManager.shared.assetArray[indexPath.row])
+            let count = AssetsManager.shared.fetchResult?.count ?? 0
+            if count > indexPath.row {
+                guard let asset = AssetsManager.shared.fetchResult?.object(at: indexPath.row) else { return }
+                assets.append(asset)
             }
         }
         AssetsManager.shared.cache(assets: assets, size: pickerConfig.assetCacheSize)
