@@ -9,7 +9,8 @@
 import UIKit
 import Photos
 
-open class AssetsPickerConfig {
+@objcMembers
+open class AssetsPickerConfig : NSObject {
 
     // MARK: - Localized Strings Config
 
@@ -93,6 +94,7 @@ open class AssetsPickerConfig {
     open var assetIsForcedSelectAssetFromCamera: Bool = true
     
     // MARK: Fetch
+    open var isVideoAllowed: Bool = false
     open var assetFetchOptions: [PHAssetCollectionType: PHFetchOptions]?
     
     // MARK: Custom Layout
@@ -126,7 +128,7 @@ open class AssetsPickerConfig {
         return CGSize(width: edge, height: edge)
     }
     
-    public init() {}
+    public override init() {}
     
     @discardableResult
     open func prepare() -> Self {
@@ -180,7 +182,11 @@ open class AssetsPickerConfig {
                 NSSortDescriptor(key: "creationDate", ascending: true),
                 NSSortDescriptor(key: "modificationDate", ascending: true)
             ]
-            options.predicate = NSPredicate(format: "mediaType = %d OR mediaType = %d", PHAssetMediaType.image.rawValue, PHAssetMediaType.video.rawValue)
+            options.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
+            if isVideoAllowed {
+                options.predicate = NSPredicate(format: "mediaType = %d OR mediaType = %d", PHAssetMediaType.image.rawValue, PHAssetMediaType.video.rawValue)
+            }
+            
             assetFetchOptions = [
                 .smartAlbum: options,
                 .album: options,
