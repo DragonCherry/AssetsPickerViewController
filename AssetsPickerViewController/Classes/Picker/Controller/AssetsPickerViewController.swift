@@ -22,6 +22,7 @@ import Photos
 }
 
 // MARK: - AssetsPickerViewController
+@objcMembers
 open class AssetsPickerViewController: UINavigationController {
     
     @objc open weak var pickerDelegate: AssetsPickerViewControllerDelegate?
