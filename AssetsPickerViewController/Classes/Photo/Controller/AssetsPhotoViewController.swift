@@ -156,6 +156,7 @@ open class AssetsPhotoViewController: UIViewController {
             guard let `self` = self else { return }
             self.updateNoPermissionView()
             if isGranted {
+                AssetsManager.shared.registerObserver()
                 self.setupAssets()
             } else {
                 self.delegate?.assetsPickerCannotAccessPhotoLibrary?(controller: self.picker)

@@ -69,7 +69,6 @@ open class AssetsPickerViewController: UINavigationController {
         controller.pickerConfig = config
         self.photoViewController = controller
         
-        AssetsManager.shared.registerObserver()
         viewControllers = [photoViewController]
     }
     
